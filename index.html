@@ -41,8 +41,6 @@
             color: #F8F5F0; 
             -webkit-font-smoothing: antialiased; 
         }
-        
-        /* Hide scrollbar for clean UI */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }
@@ -68,26 +66,30 @@
         .glass-header { 
             background: rgba(5, 5, 5, 0.8); 
             backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
             border-bottom: 1px solid rgba(255,255,255,0.05); 
         }
 
-        /* Loading Animation */
-        @keyframes fadeUp { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #D4AF37;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-up { animation: fadeUp 0.6s ease-out forwards; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative selection:bg-brand-gold selection:text-brand-black">
+<body class="min-h-screen flex flex-col relative">
 
-    <header class="glass-header fixed top-0 w-full z-50 transition-all duration-300">
+    <header class="glass-header fixed top-0 w-full z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20 md:h-24">
                 <!-- Logo -->
-                <div class="flex items-center gap-4 cursor-pointer group select-none" onclick="app.openAdminModal()">
-                    <div class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-brand-gold to-brand-copper rounded-none flex items-center justify-center text-brand-black text-2xl font-serif font-bold shadow-lg group-hover:scale-105 transition-transform duration-300">Z</div>
+                <div class="flex items-center gap-4 select-none">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-brand-gold to-brand-copper flex items-center justify-center text-brand-black text-2xl font-serif font-bold shadow-lg">Z</div>
                     <div class="flex flex-col justify-center">
                         <span class="text-brand-light text-lg md:text-xl font-serif font-bold uppercase tracking-[0.2em] leading-none">Footwear By</span>
                         <span class="text-brand-copper text-sm md:text-md font-serif font-bold uppercase tracking-[0.3em] leading-tight mt-1">Zak</span>
@@ -96,7 +98,7 @@
                 
                 <!-- Cart Button -->
                 <button onclick="app.toggleCart()" class="w-12 h-12 rounded-full border border-brand-border flex items-center justify-center text-brand-light hover:text-brand-gold hover:border-brand-gold transition-all relative group bg-brand-dark">
-                    <i class="fa-solid fa-shopping-bag group-hover:scale-110 transition-transform"></i>
+                    <i class="fa-solid fa-shopping-bag"></i>
                     <span id="cartBadge" class="absolute -top-2 -right-2 bg-brand-gold text-brand-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full opacity-0 transition-opacity">0</span>
                 </button>
             </div>
@@ -105,7 +107,6 @@
 
     <main class="flex-grow pt-24">
         <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden px-4 py-20">
-            <!-- Background Accent -->
             <div class="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-copper via-brand-black to-brand-black"></div>
             
             <div class="relative z-10 max-w-4xl mx-auto text-center animate-fade-up">
@@ -114,9 +115,9 @@
                     The Pinnacle of <br><span class="text-gradient font-italic">Leather Artistry.</span>
                 </h1>
                 <p class="text-brand-gray text-md md:text-xl max-w-2xl mx-auto font-light leading-relaxed mb-10">
-                    Masterfully crafted oxfords, loafers, and boots designed for the modern gentleman. Experience unmatched luxury delivered to your doorstep.
+                    Masterfully crafted footwear designed for the modern gentleman. Experience unmatched luxury delivered to your doorstep.
                 </p>
-                <a href="#collection" class="inline-flex items-center justify-center btn-gold px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] rounded-none shadow-2xl">
+                <a href="#collection" class="inline-flex items-center justify-center btn-gold px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] shadow-2xl">
                     Explore Collection <i class="fa-solid fa-chevron-right ml-3 text-[10px]"></i>
                 </a>
             </div>
@@ -130,16 +131,14 @@
                 </div>
                 
                 <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    <!-- Products injected here -->
+                    <!-- Loading Spinner -->
+                    <div class="col-span-full flex justify-center py-20">
+                        <div class="loader"></div>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
-
-    <footer class="bg-brand-black border-t border-brand-border py-12 text-center">
-        <div class="w-12 h-12 bg-brand-border/50 mx-auto rounded-none flex items-center justify-center text-brand-copper font-serif font-bold mb-6">Z</div>
-        <p class="text-brand-gray text-xs tracking-[0.2em] uppercase">© 2026 Footwear by Zak. All rights reserved.</p>
-    </footer>
 
     <div id="cartModal" class="fixed inset-0 bg-brand-black/90 backdrop-blur-sm z-[100] hidden opacity-0 transition-opacity duration-300">
         <div class="absolute right-0 top-0 bottom-0 w-full md:w-[450px] bg-brand-dark border-l border-brand-border shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300" id="cartDrawer">
@@ -172,138 +171,80 @@
         </div>
     </div>
 
-    <div id="adminAuthModal" class="fixed inset-0 bg-brand-black/95 z-[200] hidden items-center justify-center p-4">
-        <div class="bg-brand-card border border-brand-border p-8 w-full max-w-sm text-center shadow-2xl">
-            <h3 class="text-2xl font-serif font-bold text-brand-light mb-2">Studio Portal</h3>
-            <p class="text-brand-gray text-[10px] font-bold uppercase tracking-[0.2em] mb-8">Authorized Personnel Only</p>
-            
-            <input type="password" id="adminPass" placeholder="Passcode" class="w-full bg-brand-dark border border-brand-border text-center p-4 mb-6 font-mono text-xl text-brand-light outline-none focus:border-brand-copper tracking-widest">
-            
-            <div class="flex gap-3">
-                <button onclick="app.closeAdminModal()" class="flex-1 bg-brand-dark border border-brand-border text-brand-gray py-3 font-bold uppercase text-[10px] tracking-widest hover:text-brand-light transition-colors">Close</button>
-                <button onclick="app.verifyAdmin()" class="flex-1 btn-gold py-3 font-bold uppercase text-[10px] tracking-widest">Enter</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="adminDashboard" class="fixed inset-0 bg-brand-black z-[150] hidden flex-col">
-        <div class="glass-header px-6 py-4 flex justify-between items-center border-b border-brand-border">
-            <h2 class="font-serif font-bold text-brand-light text-xl tracking-wide text-gradient">ZAK | Admin</h2>
-            <button onclick="app.closeDashboard()" class="text-brand-gray hover:text-white uppercase text-[10px] font-bold tracking-widest flex items-center gap-2 border border-brand-border px-4 py-2">
-                <i class="fa-solid fa-power-off"></i> Exit System
-            </button>
-        </div>
-        
-        <div class="flex-1 overflow-y-auto p-6 md:p-12">
-            <div class="max-w-4xl mx-auto">
-                
-                <!-- Settings Panel -->
-                <div class="bg-brand-card border border-brand-border p-6 mb-10">
-                    <h3 class="text-sm font-bold text-brand-light uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-brands fa-whatsapp text-brand-copper"></i> Business WhatsApp Number</h3>
-                    <p class="text-xs text-brand-gray mb-4">Enter the number where customer orders will be sent (include country code, e.g., 923001234567).</p>
-                    <div class="flex gap-4">
-                        <input type="text" id="adminPhone" placeholder="e.g. 923001234567" class="flex-1 bg-brand-dark border border-brand-border p-3 text-sm text-brand-light outline-none focus:border-brand-copper">
-                        <button onclick="app.savePhone()" class="btn-gold px-6 font-bold uppercase text-[10px] tracking-widest">Save Number</button>
-                    </div>
-                </div>
-
-                <!-- Product Entry Form -->
-                <div class="bg-brand-card border border-brand-border p-6 md:p-8 mb-10">
-                    <h3 class="text-xl font-serif font-bold text-brand-light mb-6 border-b border-brand-border pb-4">Add New Footwear</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-[10px] text-brand-gray uppercase tracking-widest font-bold block mb-2">Shoe Name</label>
-                                <input type="text" id="pName" placeholder="e.g. The Sovereign Oxford" class="w-full bg-brand-dark border border-brand-border p-3 text-sm text-brand-light outline-none focus:border-brand-copper">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-[10px] text-brand-gray uppercase tracking-widest font-bold block mb-2">Price (PKR)</label>
-                                    <input type="number" id="pPrice" placeholder="e.g. 15000" class="w-full bg-brand-dark border border-brand-border p-3 text-sm text-brand-light outline-none focus:border-brand-copper">
-                                </div>
-                                <div>
-                                    <label class="text-[10px] text-brand-gray uppercase tracking-widest font-bold block mb-2">Category</label>
-                                    <select id="pCategory" class="w-full bg-brand-dark border border-brand-border p-3 text-sm text-brand-light outline-none focus:border-brand-copper">
-                                        <option value="Oxfords">Oxfords</option>
-                                        <option value="Loafers">Loafers</option>
-                                        <option value="Boots">Boots</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-brand-gray uppercase tracking-widest font-bold block mb-2">Image URL</label>
-                            <input type="text" id="pImage" placeholder="Paste image link here" class="w-full bg-brand-dark border border-brand-border p-3 text-sm text-brand-light outline-none focus:border-brand-copper mb-4">
-                            
-                            <!-- Help Box -->
-                            <div class="bg-brand-dark/50 border border-brand-border p-4 text-xs text-brand-gray">
-                                <i class="fa-solid fa-circle-info text-brand-copper mb-2"></i><br>
-                                To get an image URL easily, upload your shoe photo to a free site like <strong>postimages.org</strong> and paste the "Direct Link" here.
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="app.addProduct()" class="w-full mt-6 btn-gold py-4 font-bold uppercase text-[10px] tracking-[0.2em]">Publish to Catalog</button>
-                </div>
-
-                <!-- Live Inventory -->
-                <h3 class="text-xl font-serif font-bold text-brand-light mb-6">Current Inventory</h3>
-                <div id="adminInventory" class="space-y-4">
-                    <!-- Admin items loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
+        // ==========================================
+        // 1. YOUR SETTINGS
+        // ==========================================
+        
+        // Put your business WhatsApp number here:
+        const whatsappNumber = "923001234567"; 
+
+        // CRITICAL: Paste your Google Sheet TSV Publish link here:
+        // (Make sure it ends in pub?output=tsv)
+        const googleSheetUrl = ""; 
+
+        // ==========================================
+
         const app = {
-            // State
             products: [],
             cart: [],
-            adminPhone: "923000000000",
             
-            // Initialization
             init() {
-                this.loadData();
-                this.renderStorefront();
+                this.loadProductsFromGoogle();
                 this.updateCartBadge();
             },
 
-            // Data Management (Local Storage for Vercel/Static hosting)
-            loadData() {
-                const savedProducts = localStorage.getItem('zak_products');
-                const savedPhone = localStorage.getItem('zak_phone');
+            async loadProductsFromGoogle() {
+                const grid = document.getElementById('productGrid');
                 
-                if (savedProducts) {
-                    this.products = JSON.parse(savedProducts);
-                } else {
-                    // Default Demo Products if empty
-                    this.products = [
-                        { id: '1', name: "The Executive Oxford", price: 18500, category: "Oxfords", image: "https://images.unsplash.com/photo-1614252209825-90055b8dc8e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" },
-                        { id: '2', name: "Midnight Tassel Loafer", price: 15200, category: "Loafers", image: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" }
-                    ];
-                    this.saveData();
+                if (!googleSheetUrl) {
+                    grid.innerHTML = `
+                        <div class="col-span-full bg-brand-card border border-brand-border p-8 text-center">
+                            <h3 class="text-brand-gold font-bold mb-2">STORE IS ALMOST READY!</h3>
+                            <p class="text-brand-gray text-sm">Please follow the Guide to paste your Google Sheet link into the code.</p>
+                        </div>`;
+                    return;
                 }
 
-                if (savedPhone) {
-                    this.adminPhone = savedPhone;
-                    document.getElementById('adminPhone').value = this.adminPhone;
+                try {
+                    // Fetch the spreadsheet data
+                    const response = await fetch(googleSheetUrl);
+                    const data = await response.text();
+                    
+                    // Convert TSV (Tab Separated Values) to Javascript Array
+                    const rows = data.split('\n');
+                    const productsList = [];
+                    
+                    // Skip the first row (headers)
+                    for (let i = 1; i < rows.length; i++) {
+                        const cols = rows[i].split('\t'); // Split by Tab
+                        
+                        if (cols.length >= 5 && cols[1].trim() !== '') {
+                            productsList.push({
+                                id: cols[0].trim(),
+                                name: cols[1].trim(),
+                                price: parseInt(cols[2].replace(/[^0-9]/g, '')),
+                                category: cols[3].trim(),
+                                image: cols[4].trim()
+                            });
+                        }
+                    }
+
+                    this.products = productsList;
+                    this.renderStorefront();
+
+                } catch (error) {
+                    console.error("Error loading Google Sheet:", error);
+                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-red-500 text-xs tracking-widest uppercase border border-brand-border bg-brand-card">Could not load products. Please check the Google Sheet link.</div>`;
                 }
             },
 
-            saveData() {
-                localStorage.setItem('zak_products', JSON.stringify(this.products));
-                localStorage.setItem('zak_phone', this.adminPhone);
-                this.renderStorefront();
-                this.renderAdminInventory();
-            },
-
-            // UI Rendering: Storefront
             renderStorefront() {
                 const grid = document.getElementById('productGrid');
                 grid.innerHTML = '';
                 
                 if (this.products.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-brand-gray text-xs tracking-widest uppercase border border-brand-border bg-brand-card">No products currently available.</div>`;
+                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-brand-gray text-xs tracking-widest uppercase border border-brand-border bg-brand-card">No products currently available in the Google Sheet.</div>`;
                     return;
                 }
 
@@ -324,14 +265,13 @@
                 });
             },
 
-            // Cart Logic
+            // CART LOGIC
             toggleCart() {
                 const modal = document.getElementById('cartModal');
                 const drawer = document.getElementById('cartDrawer');
                 
                 if (modal.classList.contains('hidden')) {
                     modal.classList.remove('hidden');
-                    // Small delay to allow display:block to apply before animating opacity/transform
                     setTimeout(() => {
                         modal.classList.remove('opacity-0');
                         drawer.classList.remove('translate-x-full');
@@ -352,7 +292,6 @@
                     this.cart.push(product);
                     this.updateCartBadge();
                     
-                    // Show brief confirmation
                     const btn = event.target;
                     const originalText = btn.innerText;
                     btn.innerText = "Added!";
@@ -409,7 +348,6 @@
                 totalEl.innerText = `PKR ${total.toLocaleString()}`;
             },
 
-            // WhatsApp Checkout
             checkoutViaWhatsApp() {
                 if (this.cart.length === 0) {
                     alert("Your cart is empty.");
@@ -437,125 +375,18 @@
                 
                 orderDetails += `%0A*TOTAL AMOUNT:* PKR ${total.toLocaleString()}`;
 
-                // Redirect to WhatsApp
-                const waUrl = `https://wa.me/${this.adminPhone}?text=${orderDetails}`;
+                const waUrl = `https://wa.me/${whatsappNumber}?text=${orderDetails}`;
                 window.open(waUrl, '_blank');
                 
-                // Clear Cart
                 this.cart = [];
                 this.updateCartBadge();
                 this.toggleCart();
-            },
-
-            // Admin Logic
-            openAdminModal() {
-                document.getElementById('adminAuthModal').classList.remove('hidden');
-                document.getElementById('adminAuthModal').classList.add('flex');
-            },
-
-            closeAdminModal() {
-                document.getElementById('adminAuthModal').classList.add('hidden');
-                document.getElementById('adminAuthModal').classList.remove('flex');
-                document.getElementById('adminPass').value = '';
-            },
-
-            verifyAdmin() {
-                const pass = document.getElementById('adminPass').value;
-                if (pass === '5003') {
-                    this.closeAdminModal();
-                    document.getElementById('adminDashboard').classList.remove('hidden');
-                    document.getElementById('adminDashboard').classList.add('flex');
-                    this.renderAdminInventory();
-                } else {
-                    alert('Incorrect Passcode.');
-                }
-            },
-
-            closeDashboard() {
-                document.getElementById('adminDashboard').classList.add('hidden');
-                document.getElementById('adminDashboard').classList.remove('flex');
-            },
-
-            savePhone() {
-                const phone = document.getElementById('adminPhone').value.replace(/[^0-9]/g, '');
-                if (phone.length < 10) {
-                    alert("Please enter a valid phone number with country code.");
-                    return;
-                }
-                this.adminPhone = phone;
-                this.saveData();
-                alert("Business WhatsApp number saved!");
-            },
-
-            addProduct() {
-                const name = document.getElementById('pName').value.trim();
-                const price = document.getElementById('pPrice').value;
-                const category = document.getElementById('pCategory').value;
-                let image = document.getElementById('pImage').value.trim();
-
-                if (!name || !price) {
-                    alert('Shoe Name and Price are required.');
-                    return;
-                }
-                
-                if (!image) {
-                    image = `https://placehold.co/600x600/111/D4AF37?text=${encodeURIComponent(name)}`;
-                }
-
-                const newProduct = {
-                    id: Date.now().toString(),
-                    name,
-                    price: Number(price),
-                    category,
-                    image
-                };
-
-                this.products.unshift(newProduct); // Add to beginning
-                this.saveData();
-                
-                // Clear Form
-                document.getElementById('pName').value = '';
-                document.getElementById('pPrice').value = '';
-                document.getElementById('pImage').value = '';
-                
-                alert('Product added to catalog successfully!');
-            },
-
-            deleteProduct(id) {
-                if (confirm("Permanently delete this product from your inventory?")) {
-                    this.products = this.products.filter(p => p.id !== id);
-                    this.saveData();
-                }
-            },
-
-            renderAdminInventory() {
-                const container = document.getElementById('adminInventory');
-                container.innerHTML = '';
-                
-                if (this.products.length === 0) {
-                    container.innerHTML = `<p class="text-brand-gray text-xs uppercase tracking-widest">Inventory is empty.</p>`;
-                    return;
-                }
-
-                this.products.forEach(p => {
-                    container.innerHTML += `
-                        <div class="bg-brand-black border border-brand-border p-4 flex items-center gap-4">
-                            <img src="${p.image}" class="w-16 h-16 object-cover border border-brand-border">
-                            <div class="flex-1">
-                                <h4 class="font-bold text-brand-light text-sm">${p.name}</h4>
-                                <div class="text-brand-gold text-xs mt-1 font-serif">PKR ${Number(p.price).toLocaleString()} | <span class="text-brand-gray font-sans uppercase">${p.category}</span></div>
-                            </div>
-                            <button onclick="app.deleteProduct('${p.id}')" class="text-brand-gray hover:text-red-500 px-4 py-2 border border-brand-border hover:border-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    `;
-                });
             }
         };
 
-        // Initialize App on load
         window.addEventListener('DOMContentLoaded', () => {
             app.init();
         });
     </script>
 </body>
-</html>
+</html> 
