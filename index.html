@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -87,7 +87,6 @@
     <header class="glass-header fixed top-0 w-full z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20 md:h-24">
-                <!-- Logo -->
                 <div class="flex items-center gap-4 select-none">
                     <div class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-brand-gold to-brand-copper flex items-center justify-center text-brand-black text-2xl font-serif font-bold shadow-lg">Z</div>
                     <div class="flex flex-col justify-center">
@@ -96,7 +95,6 @@
                     </div>
                 </div>
                 
-                <!-- Cart Button -->
                 <button onclick="app.toggleCart()" class="w-12 h-12 rounded-full border border-brand-border flex items-center justify-center text-brand-light hover:text-brand-gold hover:border-brand-gold transition-all relative group bg-brand-dark">
                     <i class="fa-solid fa-shopping-bag"></i>
                     <span id="cartBadge" class="absolute -top-2 -right-2 bg-brand-gold text-brand-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full opacity-0 transition-opacity">0</span>
@@ -131,7 +129,6 @@
                 </div>
                 
                 <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    <!-- Loading Spinner -->
                     <div class="col-span-full flex justify-center py-20">
                         <div class="loader"></div>
                     </div>
@@ -139,6 +136,13 @@
             </div>
         </section>
     </main>
+
+    <div id="detailModal" class="fixed inset-0 bg-brand-black/90 backdrop-blur-md z-[110] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-brand-dark border border-brand-border max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="app.closeDetail()" class="absolute top-4 right-4 text-brand-gray hover:text-brand-light text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <div id="detailContent"></div>
+        </div>
+    </div>
 
     <div id="cartModal" class="fixed inset-0 bg-brand-black/90 backdrop-blur-sm z-[100] hidden opacity-0 transition-opacity duration-300">
         <div class="absolute right-0 top-0 bottom-0 w-full md:w-[450px] bg-brand-dark border-l border-brand-border shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300" id="cartDrawer">
@@ -149,7 +153,6 @@
             </div>
             
             <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-6">
-                <!-- Cart items go here -->
             </div>
             
             <div class="p-6 bg-brand-black border-t border-brand-border">
@@ -158,7 +161,6 @@
                     <span id="cartTotal" class="text-brand-gold font-serif font-bold text-2xl">PKR 0</span>
                 </div>
                 
-                <!-- WhatsApp Checkout Form -->
                 <div class="space-y-4 mb-6">
                     <input type="text" id="customerName" placeholder="Full Name" class="w-full bg-brand-dark border border-brand-border p-3 text-sm text-brand-light outline-none focus:border-brand-copper rounded-none placeholder-brand-gray/50">
                     <input type="text" id="customerAddress" placeholder="Delivery Address" class="w-full bg-brand-dark border border-brand-border p-3 text-sm text-brand-light outline-none focus:border-brand-copper rounded-none placeholder-brand-gray/50">
@@ -173,16 +175,12 @@
 
     <script>
         // ==========================================
-        // 1. YOUR SETTINGS
+        // YOUR WHATSAPP NUMBER CONFIGURATION
         // ==========================================
-        
-        // Put your business WhatsApp number here:
-        const whatsappNumber = "923001234567"; 
+        const whatsappNumber = "923001234567"; // Replace with your WhatsApp number
 
-        // CRITICAL: Paste your Google Sheet TSV Publish link here:
-        // (Make sure it ends in pub?output=tsv)
+        // YOUR PUBLISHED GOOGLE SHEET CSV LINK:
         const googleSheetUrl = ""; 
-
         // ==========================================
 
         const app = {
@@ -194,48 +192,72 @@
                 this.updateCartBadge();
             },
 
+            parseCSV(text) {
+                const results = [];
+                const rows = text.split('\n');
+                
+                for(let i = 1; i < rows.length; i++) {
+                    const row = rows[i].trim();
+                    if(!row) continue;
+                    
+                    // Simple CSV parser handling quotes for multi-image commas
+                    const cols = [];
+                    let inQuotes = false;
+                    let currentVal = '';
+                    
+                    for(let charIdx = 0; charIdx < row.length; charIdx++) {
+                        const char = row[charIdx];
+                        if(char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if(char === ',' && !inQuotes) {
+                            cols.push(currentVal.trim());
+                            currentVal = '';
+                        } else {
+                            currentVal += char;
+                        }
+                    }
+                    cols.push(currentVal.trim());
+                    const cleanedCols = cols.map(c => c.replace(/^"|"$/g, '').trim());
+                    
+                    if(cleanedCols.length >= 5) {
+                        // Image column can have multiple comma-separated URLs
+                        const rawImages = cleanedCols[4] || '';
+                        const imageArray = rawImages.split(',').map(img => img.trim()).filter(img => img.length > 0);
+                        
+                        results.push({
+                            id: cleanedCols[0],
+                            name: cleanedCols[1],
+                            price: parseInt(cleanedCols[2].replace(/[^0-9]/g, '')),
+                            category: cleanedCols[3],
+                            images: imageArray.length > 0 ? imageArray : ['https://placehold.co/600x600/111/D4AF37?text=Shoe']
+                        });
+                    }
+                }
+                return results;
+            },
+
             async loadProductsFromGoogle() {
                 const grid = document.getElementById('productGrid');
                 
                 if (!googleSheetUrl) {
                     grid.innerHTML = `
-                        <div class="col-span-full bg-brand-card border border-brand-border p-8 text-center">
-                            <h3 class="text-brand-gold font-bold mb-2">STORE IS ALMOST READY!</h3>
-                            <p class="text-brand-gray text-sm">Please follow the Guide to paste your Google Sheet link into the code.</p>
+                        <div class="col-span-full bg-brand-card border border-brand-border p-10 text-center">
+                            <h3 class="text-brand-gold font-bold mb-3 tracking-widest text-sm">STORE IS READY FOR YOUR SPREADSHEET!</h3>
+                            <p class="text-brand-gray text-sm leading-relaxed max-w-lg mx-auto">
+                                In Column E of your Google Sheet, you can now paste <strong class="text-brand-light">3 to 5 image links separated by commas</strong> (e.g., <code class="text-brand-copper">link1.jpg, link2.jpg, link3.jpg</code>). Clicking any product will open a gorgeous image gallery slider!
+                            </p>
                         </div>`;
                     return;
                 }
 
                 try {
-                    // Fetch the spreadsheet data
                     const response = await fetch(googleSheetUrl);
                     const data = await response.text();
-                    
-                    // Convert TSV (Tab Separated Values) to Javascript Array
-                    const rows = data.split('\n');
-                    const productsList = [];
-                    
-                    // Skip the first row (headers)
-                    for (let i = 1; i < rows.length; i++) {
-                        const cols = rows[i].split('\t'); // Split by Tab
-                        
-                        if (cols.length >= 5 && cols[1].trim() !== '') {
-                            productsList.push({
-                                id: cols[0].trim(),
-                                name: cols[1].trim(),
-                                price: parseInt(cols[2].replace(/[^0-9]/g, '')),
-                                category: cols[3].trim(),
-                                image: cols[4].trim()
-                            });
-                        }
-                    }
-
-                    this.products = productsList;
+                    this.products = this.parseCSV(data);
                     this.renderStorefront();
-
                 } catch (error) {
                     console.error("Error loading Google Sheet:", error);
-                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-red-500 text-xs tracking-widest uppercase border border-brand-border bg-brand-card">Could not load products. Please check the Google Sheet link.</div>`;
+                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-red-500 text-xs tracking-widest uppercase border border-brand-border bg-brand-card">Could not load products. Please check your Google Sheet CSV publish link.</div>`;
                 }
             },
 
@@ -244,19 +266,22 @@
                 grid.innerHTML = '';
                 
                 if (this.products.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-brand-gray text-xs tracking-widest uppercase border border-brand-border bg-brand-card">No products currently available in the Google Sheet.</div>`;
+                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-brand-gray text-xs tracking-widest uppercase border border-brand-border bg-brand-card">No products currently available in your Google Sheet.</div>`;
                     return;
                 }
 
                 this.products.forEach(p => {
+                    const mainImg = p.images[0];
+                    const badgeText = p.images.length > 1 ? `${p.images.length} Photos` : p.category;
+                    
                     grid.innerHTML += `
                         <div class="bg-brand-card border border-brand-border group hover:border-brand-copper transition-colors duration-300 flex flex-col">
-                            <div class="relative h-80 overflow-hidden bg-brand-dark">
-                                <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" onerror="this.src='https://placehold.co/600x600/111/D4AF37?text=Shoe'">
-                                <div class="absolute top-4 left-4 bg-brand-black/80 backdrop-blur text-brand-light text-[10px] font-bold uppercase tracking-widest px-3 py-1 border border-brand-border">${p.category}</div>
+                            <div class="relative h-80 overflow-hidden bg-brand-dark cursor-pointer" onclick="app.openDetail('${p.id}')">
+                                <img src="${mainImg}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" onerror="this.src='https://placehold.co/600x600/111/D4AF37?text=Shoe'">
+                                <div class="absolute top-4 left-4 bg-brand-black/80 backdrop-blur text-brand-light text-[10px] font-bold uppercase tracking-widest px-3 py-1 border border-brand-border">${badgeText}</div>
                             </div>
                             <div class="p-6 flex flex-col flex-1">
-                                <h3 class="font-serif font-bold text-xl text-brand-light mb-2 group-hover:text-brand-copper transition-colors">${p.name}</h3>
+                                <h3 onclick="app.openDetail('${p.id}')" class="font-serif font-bold text-xl text-brand-light mb-2 group-hover:text-brand-copper transition-colors cursor-pointer">${p.name}</h3>
                                 <div class="text-brand-gold font-serif font-bold text-lg mb-6">PKR ${Number(p.price).toLocaleString()}</div>
                                 <button onclick="app.addToCart('${p.id}')" class="mt-auto w-full bg-brand-dark border border-brand-border text-brand-light py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-light hover:text-brand-black transition-all">Add to Cart</button>
                             </div>
@@ -265,7 +290,61 @@
                 });
             },
 
-            // CART LOGIC
+            openDetail(id) {
+                const p = this.products.find(item => item.id === id);
+                if(!p) return;
+
+                const modal = document.getElementById('detailModal');
+                const content = document.getElementById('detailContent');
+
+                let thumbnailsHTML = '';
+                p.images.forEach((img, idx) => {
+                    thumbnailsHTML += `
+                        <img src="${img}" onclick="app.switchMainImage('${img}', this)" class="w-16 h-16 object-cover border ${idx === 0 ? 'border-brand-gold' : 'border-brand-border'} cursor-pointer opacity-70 hover:opacity-100 transition-all" onerror="this.src='https://placehold.co/100x100/111/D4AF37?text=Shoe'">
+                    `;
+                });
+
+                content.innerHTML = `
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="md:w-1/2 flex flex-col gap-4">
+                            <div class="h-80 bg-brand-dark border border-brand-border overflow-hidden">
+                                <img id="activeMainImage" src="${p.images[0]}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x600/111/D4AF37?text=Shoe'">
+                            </div>
+                            <div class="flex gap-2 overflow-x-auto pb-2">
+                                ${thumbnailsHTML}
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 flex flex-col justify-between">
+                            <div>
+                                <span class="text-brand-copper text-xs font-bold uppercase tracking-widest">${p.category}</span>
+                                <h2 class="font-serif font-bold text-2xl text-brand-light mt-2 mb-4">${p.name}</h2>
+                                <div class="text-brand-gold font-serif font-bold text-xl mb-6">PKR ${Number(p.price).toLocaleString()}</div>
+                                <p class="text-brand-gray text-sm leading-relaxed mb-6">Handcrafted with premium leather finishes. Each pair reflects exceptional artistry and tailored comfort.</p>
+                            </div>
+                            <button onclick="app.addToCart('${p.id}'); app.closeDetail();" class="w-full btn-gold py-4 text-xs font-bold uppercase tracking-widest">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            },
+
+            switchMainImage(url, thumbEl) {
+                document.getElementById('activeMainImage').src = url;
+                const thumbs = thumbEl.parentElement.querySelectorAll('img');
+                thumbs.forEach(t => t.classList.remove('border-brand-gold'));
+                thumbs.forEach(t => t.classList.add('border-brand-border'));
+                thumbEl.classList.remove('border-brand-border');
+                thumbEl.classList.add('border-brand-gold');
+            },
+
+            closeDetail() {
+                const modal = document.getElementById('detailModal');
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            },
+
             toggleCart() {
                 const modal = document.getElementById('cartModal');
                 const drawer = document.getElementById('cartDrawer');
@@ -335,7 +414,7 @@
                     total += Number(item.price);
                     container.innerHTML += `
                         <div class="flex gap-4 items-center bg-brand-black p-3 border border-brand-border">
-                            <img src="${item.image}" class="w-16 h-16 object-cover border border-brand-border">
+                            <img src="${item.images[0]}" class="w-16 h-16 object-cover border border-brand-border" onerror="this.src='https://placehold.co/100x100/111/D4AF37?text=Shoe'">
                             <div class="flex-1">
                                 <h4 class="text-sm font-bold text-brand-light">${item.name}</h4>
                                 <div class="text-brand-gold text-xs font-serif mt-1">PKR ${Number(item.price).toLocaleString()}</div>
@@ -389,4 +468,15 @@
         });
     </script>
 </body>
-</html> 
+</html>
+```
+eof
+
+### How to add 3 to 5 pictures for each shoe:
+
+Now you can add multiple photos for any shoe directly in your Google Sheet! 
+
+1. In **Column E (Image)** of your Google Sheet, paste your image links.
+2. If you want multiple pictures, just separate each link with a comma `,`. 
+   * *Example:* `https://link1.jpg, https://link2.jpg, https://link3.jpg`
+3. When customers view your live website, they can click on any shoe to open a gorgeous image gallery modal with thumbnail previews to switch between all 3 to 5 photos instantly!
