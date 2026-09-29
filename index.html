@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOOTWEAR BY ZAK | Premium Leather Studio</title>
-    <meta name="description" content="Premium handcrafted leather oxfords, loafers, and boots in Pakistan. Cash on delivery available.">
+    <meta name="description" content="Premium handcrafted leather oxfords, loafers, and boots in Pakistan. Cash on delivery and bank transfer available.">
     
     <!-- Scripts & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,10 +22,10 @@
                     },
                     colors: { 
                         brand: { 
-                            black: '#050505',
+                            black: '#030303',
                             dark: '#0a0a0a', 
                             card: '#121212', 
-                            gold: '#D4AF37',       // Classic luxury gold
+                            gold: '#D4AF37',       
                             goldDark: '#AA8C2C', 
                             light: '#F5F5F5', 
                             gray: '#888888',
@@ -35,6 +35,7 @@
                     animation: {
                         'fade-in': 'fadeIn 0.6s ease-out forwards',
                         'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -44,6 +45,10 @@
                         slideUp: {
                             '0%': { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
                         }
                     }
                 }
@@ -54,15 +59,14 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #050505; 
+            background-color: #030303; 
             color: #F5F5F5; 
             -webkit-font-smoothing: antialiased; 
             overflow-x: hidden;
         }
         
-        /* Elegant Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-track { background: #030303; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
 
@@ -104,14 +108,14 @@
             background-color: #D4AF37;
             color: #050505;
             border-color: #D4AF37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
         }
 
-        /* Input Styles */
         .luxury-input {
             width: 100%;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.02);
             border: 1px solid #222;
-            padding: 12px 16px;
+            padding: 14px 16px;
             color: white;
             border-radius: 8px;
             font-size: 0.875rem;
@@ -121,17 +125,15 @@
         .luxury-input:focus {
             border-color: #D4AF37;
             background: rgba(255,255,255,0.05);
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
         }
 
-        /* Subtle grid background */
         .bg-grid {
-            background-size: 40px 40px;
+            background-size: 50px 50px;
             background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                               linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
         }
 
-        /* NEW: Luxury Shimmer Loading & Image Reveal */
         .shimmer {
             position: relative;
             overflow: hidden;
@@ -142,7 +144,7 @@
             position: absolute;
             top: 0; right: 0; bottom: 0; left: 0;
             transform: translateX(-100%);
-            background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(212,175,55,0.05) 20%, rgba(255,255,255,0) 60%);
+            background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(212,175,55,0.08) 20%, rgba(255,255,255,0) 60%);
             animation: shimmer 2s infinite;
         }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
@@ -159,7 +161,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <a href="#" onclick="window.scrollTo(0,0)" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 bg-brand-gold flex items-center justify-center text-black text-lg font-serif font-bold rounded-sm group-hover:scale-105 transition-transform duration-500">Z</div>
+                    <div class="w-10 h-10 bg-brand-gold flex items-center justify-center text-black text-lg font-serif font-bold rounded-sm group-hover:scale-105 transition-transform duration-500 shadow-[0_0_15px_rgba(212,175,55,0.3)]">Z</div>
                     <div class="flex flex-col">
                         <span class="text-brand-light text-sm font-serif font-bold tracking-[0.25em] leading-none uppercase">Footwear By</span>
                         <span class="text-brand-gold text-[10px] font-semibold tracking-[0.4em] uppercase mt-1.5">Zak Studio</span>
@@ -167,18 +169,19 @@
                 </a>
                 
                 <div class="flex items-center gap-3 sm:gap-5">
-                    <button onclick="app.openTrackOrder()" class="hidden sm:flex items-center gap-2 text-brand-gray hover:text-brand-gold transition-colors text-[10px] font-bold uppercase tracking-widest">
-                        <i class="fa-solid fa-truck-fast"></i> Track
+                    <!-- Track Order Button -->
+                    <button onclick="app.openTrackOrder()" class="hidden sm:flex items-center gap-2 text-brand-gray hover:text-brand-gold transition-colors text-[10px] font-bold uppercase tracking-widest border border-brand-border px-4 py-2 rounded-full hover:border-brand-gold bg-brand-black/50">
+                        <i class="fa-solid fa-truck-fast"></i> Track Order
                     </button>
                     
-                    <!-- Auth Button -->
-                    <button onclick="app.toggleAuthModal()" id="navAuthBtn" class="w-10 h-10 rounded-full border border-brand-border flex items-center justify-center text-brand-gray hover:text-brand-gold hover:border-brand-gold transition-all relative bg-brand-black/50">
-                        <i class="fa-regular fa-user text-sm"></i>
+                    <!-- Auth Button (Login/Signup) -->
+                    <button onclick="app.toggleAuthModal()" id="navAuthBtn" class="w-10 h-10 rounded-full border border-brand-border flex items-center justify-center text-brand-gray hover:text-brand-gold hover:border-brand-gold transition-all relative bg-brand-black/50 group" title="Account">
+                        <i class="fa-regular fa-user text-sm group-hover:scale-110 transition-transform"></i>
                     </button>
 
                     <!-- Cart Button -->
-                    <button onclick="app.toggleCart()" class="w-10 h-10 rounded-full border border-brand-border flex items-center justify-center text-brand-gray hover:text-brand-gold hover:border-brand-gold transition-all relative bg-brand-black/50">
-                        <i class="fa-solid fa-bag-shopping text-sm"></i>
+                    <button onclick="app.toggleCart()" class="w-10 h-10 rounded-full border border-brand-border flex items-center justify-center text-brand-gray hover:text-brand-gold hover:border-brand-gold transition-all relative bg-brand-black/50 group" title="Shopping Bag">
+                        <i class="fa-solid fa-bag-shopping text-sm group-hover:scale-110 transition-transform"></i>
                         <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-brand-gold text-black text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full opacity-0 scale-75 transition-all duration-300">0</span>
                     </button>
                 </div>
@@ -188,26 +191,27 @@
 
     <!-- ================== HERO SECTION ================== -->
     <main class="flex-grow pt-20">
-        <section class="relative min-h-[60vh] lg:min-h-[75vh] flex items-center justify-center overflow-hidden px-4 py-16 bg-brand-black bg-grid">
-            <!-- Luxury gradient overlay with subtle movement -->
-            <div class="absolute inset-0 z-0 opacity-30 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-gold/20 via-brand-black to-brand-black animate-pulse duration-[5000ms]"></div>
+        <section class="relative min-h-[65vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden px-4 py-16 bg-brand-black bg-grid">
+            <!-- Dynamic ambient lighting -->
+            <div class="absolute inset-0 z-0 opacity-40 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-gold/10 via-brand-black to-brand-black animate-pulse duration-[7000ms]"></div>
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-gold/5 rounded-full blur-[100px] animate-float"></div>
             
             <div class="relative z-10 max-w-5xl mx-auto text-center animate-fade-in">
-                <span class="inline-block py-1.5 px-5 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-[9px] sm:text-[10px] font-bold tracking-[0.4em] uppercase mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+                <span class="inline-block py-1.5 px-5 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-[9px] sm:text-[10px] font-bold tracking-[0.4em] uppercase mb-8 backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.15)]">
                     Masterfully Crafted in Pakistan
                 </span>
                 <h1 class="text-5xl sm:text-7xl lg:text-8xl font-serif font-normal text-white tracking-tight leading-[1.1] mb-8 drop-shadow-2xl">
                     The Pinnacle of <br/>
                     <span class="gold-text italic font-medium relative inline-block mt-2">
                         Leather Artistry.
-                        <div class="absolute -bottom-2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-50"></div>
+                        <div class="absolute -bottom-2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-70"></div>
                     </span>
                 </h1>
                 <p class="text-brand-gray text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed mb-12">
                     Discover our exclusive collection of premium oxfords, loafers, and boots. Designed for the modern gentleman, tailored for absolute perfection, and built to leave a legacy.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-                    <a href="#collection" class="w-full sm:w-auto btn-gold px-12 py-4 rounded-sm text-[11px] font-bold uppercase tracking-[0.25em] text-center shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                    <a href="#collection" class="w-full sm:w-auto btn-gold px-12 py-4 rounded-sm text-[11px] font-bold uppercase tracking-[0.25em] text-center shadow-[0_0_25px_rgba(212,175,55,0.25)]">
                         Explore The Atelier
                     </a>
                 </div>
@@ -215,24 +219,24 @@
         </section>
 
         <!-- ================== STOREFRONT GRID ================== -->
-        <section id="collection" class="py-20 sm:py-32 bg-brand-dark relative z-10">
+        <section id="collection" class="py-20 sm:py-32 bg-brand-dark relative z-10 border-t border-brand-border/50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                     <div>
                         <h2 class="text-3xl sm:text-4xl font-serif font-medium text-white tracking-tight">The Collection</h2>
-                        <div class="w-12 h-0.5 bg-brand-gold mt-4 mb-4"></div>
+                        <div class="w-12 h-0.5 bg-brand-gold mt-5 mb-5 shadow-[0_0_10px_rgba(212,175,55,0.5)]"></div>
                         <p class="text-brand-gray text-xs tracking-wider uppercase">Select a category to explore</p>
                     </div>
-                    <div id="categoryFilters" class="flex flex-wrap gap-2">
-                        <!-- Filters load here -->
+                    <div id="categoryFilters" class="flex flex-wrap gap-3">
+                        <!-- Filters load here dynamically -->
                     </div>
                 </div>
                 
                 <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
                     <!-- Skeleton Loader -->
-                    <div class="col-span-full flex flex-col items-center justify-center py-32">
+                    <div class="col-span-full flex flex-col items-center justify-center py-32 animate-pulse">
                         <div class="loader-ring mb-6"></div>
-                        <p class="text-brand-gray text-[10px] tracking-[0.2em] uppercase">Accessing Atelier Inventory...</p>
+                        <p class="text-brand-gray text-[10px] tracking-[0.2em] uppercase">Synchronizing Studio Inventory...</p>
                     </div>
                 </div>
             </div>
@@ -240,38 +244,39 @@
     </main>
 
     <!-- ================== FOOTER ================== -->
-    <footer class="bg-brand-black border-t border-brand-border py-16">
+    <footer class="bg-brand-black border-t border-brand-border pt-20 pb-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                <div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="md:col-span-2">
                     <a href="#" class="flex items-center gap-4 mb-6">
                         <div class="w-8 h-8 bg-brand-gold flex items-center justify-center text-black text-sm font-serif font-bold rounded-sm">Z</div>
                         <span class="text-brand-light text-xs font-serif font-bold tracking-[0.2em] uppercase">Footwear By Zak</span>
                     </a>
-                    <p class="text-brand-gray text-xs leading-relaxed max-w-xs font-light">Elevating traditional craftsmanship with uncompromising premium materials for the modern professional.</p>
+                    <p class="text-brand-gray text-xs leading-relaxed max-w-sm font-light">Elevating traditional craftsmanship with uncompromising premium materials. Every pair is a testament to timeless style and durability for the modern professional.</p>
                 </div>
                 <div>
                     <h4 class="text-white text-[10px] font-bold uppercase tracking-[0.2em] mb-6">Client Services</h4>
-                    <ul class="space-y-3 text-brand-gray text-xs font-light">
-                        <li><button onclick="app.openTrackOrder()" class="hover:text-brand-gold transition-colors">Track My Order</button></li>
-                        <li><button onclick="app.openSizeGuide()" class="hover:text-brand-gold transition-colors">Size Guide</button></li>
-                        <li><a href="#" class="hover:text-brand-gold transition-colors">Shipping & Returns</a></li>
+                    <ul class="space-y-4 text-brand-gray text-xs font-light">
+                        <li><button onclick="app.openTrackOrder()" class="hover:text-brand-gold transition-colors flex items-center gap-2"><i class="fa-solid fa-truck-fast w-4"></i> Track Order</button></li>
+                        <li><button onclick="app.toggleAuthModal()" class="hover:text-brand-gold transition-colors flex items-center gap-2"><i class="fa-regular fa-user w-4"></i> My Account</button></li>
+                        <li><button onclick="app.openSizeGuide()" class="hover:text-brand-gold transition-colors flex items-center gap-2"><i class="fa-solid fa-ruler w-4"></i> Size Guide</button></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-white text-[10px] font-bold uppercase tracking-[0.2em] mb-6">Contact Studio</h4>
-                    <ul class="space-y-3 text-brand-gray text-xs font-light">
+                    <ul class="space-y-4 text-brand-gray text-xs font-light">
                         <li class="flex items-center gap-3"><i class="fa-brands fa-whatsapp text-brand-gold w-4"></i> +92 320 0217208</li>
                         <li class="flex items-center gap-3"><i class="fa-regular fa-envelope text-brand-gold w-4"></i> contact@footwearbyzak.com</li>
                         <li class="flex items-center gap-3"><i class="fa-solid fa-location-dot text-brand-gold w-4"></i> Mingora, KP, Pakistan</li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-brand-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="border-t border-brand-border/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-brand-gray text-[9px] uppercase tracking-[0.2em]">&copy; 2026 Footwear By Zak. All rights reserved.</p>
-                <div class="flex gap-4 text-brand-gray text-sm">
+                <div class="flex gap-5 text-brand-gray text-sm">
                     <a href="#" class="hover:text-brand-gold transition-colors"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" class="hover:text-brand-gold transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-brand-gold transition-colors"><i class="fa-brands fa-tiktok"></i></a>
                 </div>
             </div>
         </div>
@@ -281,55 +286,147 @@
 
     <!-- Auth Modal (Sign In / Sign Up) -->
     <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[120] hidden opacity-0 transition-opacity duration-400 flex items-center justify-center p-4">
-        <div class="bg-brand-card border border-brand-border max-w-md w-full p-8 relative rounded-xl shadow-2xl transform transition-transform scale-95 duration-400">
+        <div class="bg-brand-card border border-brand-border max-w-md w-full p-8 relative rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform transition-transform scale-95 duration-400">
             <button onclick="app.closeAuthModal()" class="absolute top-4 right-4 text-brand-gray hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-brand-black border border-brand-border"><i class="fa-solid fa-xmark"></i></button>
             
             <div class="text-center mb-8">
-                <div class="w-12 h-12 bg-brand-gold/10 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-4 text-xl border border-brand-gold/20"><i class="fa-solid fa-gem"></i></div>
+                <div class="w-12 h-12 bg-brand-gold/10 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-4 text-xl border border-brand-gold/20 shadow-[0_0_15px_rgba(212,175,55,0.15)]"><i class="fa-solid fa-gem"></i></div>
                 <h3 class="text-2xl font-serif font-medium text-white" id="authTitle">Client Access</h3>
-                <p class="text-brand-gray text-xs mt-2" id="authSubtitle">Sign in to sync your bag and view orders.</p>
+                <p class="text-brand-gray text-xs mt-2 font-light" id="authSubtitle">Sign in to sync your bag across devices.</p>
             </div>
 
             <!-- Login Form -->
             <div id="loginForm" class="space-y-4">
-                <input type="email" id="loginEmail" placeholder="Email Address" class="luxury-input">
-                <input type="password" id="loginPassword" placeholder="Password" class="luxury-input">
-                <button onclick="app.handleLogin()" class="w-full btn-gold py-3.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] mt-2">Sign In</button>
+                <div class="relative">
+                    <i class="fa-regular fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-gray text-xs"></i>
+                    <input type="email" id="loginEmail" placeholder="Email Address" class="luxury-input pl-10">
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-gray text-xs"></i>
+                    <input type="password" id="loginPassword" placeholder="Password" class="luxury-input pl-10">
+                </div>
+                <button onclick="app.handleLogin()" class="w-full btn-gold py-3.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] mt-2 shadow-lg">Sign In</button>
                 <p class="text-center text-brand-gray text-xs mt-4">New to the studio? <button onclick="app.switchAuthView('register')" class="text-brand-gold hover:underline">Create Account</button></p>
             </div>
 
-            <!-- Register Form (Hidden by default) -->
+            <!-- Register Form -->
             <div id="registerForm" class="space-y-4 hidden">
-                <input type="text" id="regName" placeholder="Full Name" class="luxury-input">
-                <input type="email" id="regEmail" placeholder="Email Address" class="luxury-input">
-                <input type="password" id="regPassword" placeholder="Create Password" class="luxury-input">
-                <button onclick="app.handleRegister()" class="w-full btn-gold py-3.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] mt-2">Create Account</button>
+                <div class="relative">
+                    <i class="fa-regular fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-gray text-xs"></i>
+                    <input type="email" id="regEmail" placeholder="Email Address" class="luxury-input pl-10">
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-gray text-xs"></i>
+                    <input type="password" id="regPassword" placeholder="Create Password" class="luxury-input pl-10">
+                </div>
+                <button onclick="app.handleRegister()" class="w-full btn-gold py-3.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] mt-2 shadow-lg">Create Account</button>
                 <p class="text-center text-brand-gray text-xs mt-4">Already a client? <button onclick="app.switchAuthView('login')" class="text-brand-gold hover:underline">Sign In</button></p>
             </div>
             
-            <!-- Logged In Profile View (Hidden by default) -->
+            <!-- Logged In Profile View -->
             <div id="profileView" class="hidden text-center space-y-6">
-                <div class="p-4 bg-brand-black border border-brand-border rounded-lg">
-                    <p class="text-brand-gray text-xs uppercase tracking-widest mb-1">Welcome Back</p>
-                    <p class="text-white font-medium truncate" id="profileEmail">user@example.com</p>
+                <div class="p-6 bg-brand-black border border-brand-border rounded-lg">
+                    <div class="w-16 h-16 bg-brand-card border border-brand-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-user-check text-brand-gold text-2xl"></i>
+                    </div>
+                    <p class="text-brand-gray text-[10px] uppercase tracking-widest mb-1">Welcome Back</p>
+                    <p class="text-white font-medium truncate text-sm" id="profileEmail">user@example.com</p>
                 </div>
                 <button onclick="app.handleLogout()" class="w-full bg-brand-border hover:bg-[#333] text-white py-3.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] transition-colors">Sign Out</button>
             </div>
         </div>
     </div>
 
+    <!-- Shopping Cart Drawer -->
+    <div id="cartModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden opacity-0 transition-opacity duration-300">
+        <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[480px] bg-brand-card border-l border-brand-border shadow-2xl flex flex-col transform translate-x-full transition-transform duration-400 ease-out" id="cartDrawer">
+            
+            <div class="p-6 border-b border-brand-border/50 flex justify-between items-center bg-brand-black">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-brand-gold/10 flex items-center justify-center text-brand-gold">
+                        <i class="fa-solid fa-bag-shopping text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-serif font-medium text-white tracking-wide">Your Bag</h3>
+                </div>
+                <button onclick="app.toggleCart()" class="text-brand-gray hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-brand-card border border-brand-border"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Cart items dynamically load here -->
+            </div>
+            
+            <!-- Checkout Section -->
+            <div class="p-6 bg-brand-black border-t border-brand-border/50 space-y-5 overflow-y-auto max-h-[50vh]">
+                <div class="flex justify-between items-end mb-4 border-b border-brand-border/50 pb-4">
+                    <span class="text-brand-gray uppercase tracking-[0.2em] text-[10px] font-bold">Subtotal</span>
+                    <span id="cartTotal" class="text-brand-gold font-serif font-medium text-2xl leading-none">PKR 0</span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-brand-gray text-[9px] font-bold uppercase tracking-[0.2em] block mb-2 ml-1">Client Details</label>
+                        <input type="text" id="customerName" placeholder="Full Name" class="luxury-input mb-3">
+                        <input type="email" id="customerEmail" placeholder="Email Address" class="luxury-input mb-3">
+                        <input type="text" id="customerAddress" placeholder="Complete Delivery Address & City" class="luxury-input">
+                    </div>
+                    
+                    <div class="pt-2">
+                        <label class="text-brand-gray text-[9px] font-bold uppercase tracking-[0.2em] block mb-2 ml-1">Payment Method</label>
+                        <div class="relative">
+                            <select id="paymentMethod" onchange="app.handlePaymentMethodChange()" class="luxury-input appearance-none cursor-pointer pr-10">
+                                <option value="cod">Cash on Delivery (COD)</option>
+                                <option value="bank">Direct Bank Transfer</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-brand-gray text-xs pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details Box (Hidden by default) -->
+                    <div id="bankDetailsBox" class="hidden bg-brand-card border border-brand-gold/30 rounded-lg p-5 mt-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-brand-gold/5 rounded-bl-full"></div>
+                        <p class="text-[10px] text-brand-gray mb-4 font-light leading-relaxed">Transfer total amount to the account below. Your order will be verified and dispatched immediately upon confirmation.</p>
+                        <div class="space-y-2 bg-brand-black p-3 rounded border border-brand-border/50">
+                            <div class="flex justify-between text-xs"><span class="text-brand-gray">Bank:</span> <span class="text-white font-medium">Meezan Bank</span></div>
+                            <div class="flex justify-between text-xs"><span class="text-brand-gray">Title:</span> <span class="text-white font-medium">Zak Footwear Studio</span></div>
+                            <div class="flex justify-between text-xs items-center">
+                                <span class="text-brand-gray">Account:</span> 
+                                <span class="text-brand-gold font-mono tracking-wider font-bold">0123 4567 8910</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="app.generateReceipt()" class="w-full btn-gold py-4.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] shadow-xl mt-4 flex items-center justify-center gap-2">
+                    Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal (Size Selector & Gallery) -->
+    <div id="detailModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[110] hidden opacity-0 transition-opacity duration-400 flex items-center justify-center p-4 sm:p-8">
+        <div class="bg-brand-card border border-brand-border max-w-5xl w-full relative max-h-[95vh] overflow-y-auto rounded-xl shadow-2xl flex flex-col">
+            <button onclick="app.closeDetail()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-brand-black/80 backdrop-blur border border-brand-border text-brand-gray hover:text-brand-gold flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="detailContent" class="h-full">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Order Tracking Modal -->
     <div id="trackModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[120] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
-        <div class="bg-brand-card border border-brand-border max-w-md w-full rounded-xl shadow-2xl overflow-hidden relative">
+        <div class="bg-brand-card border border-brand-border max-w-md w-full rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden relative">
             <div class="p-6 border-b border-brand-border/50 flex justify-between items-center bg-brand-black">
-                <h3 class="text-lg font-serif font-medium text-white"><i class="fa-solid fa-truck-fast text-brand-gold mr-3"></i> Track Order</h3>
+                <h3 class="text-lg font-serif font-medium text-white flex items-center"><i class="fa-solid fa-satellite-dish text-brand-gold mr-3"></i> Track Order</h3>
                 <button onclick="app.closeTrackOrder()" class="text-brand-gray hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-brand-card border border-brand-border"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-6 space-y-5 bg-brand-card">
-                <p class="text-brand-gray text-xs font-light leading-relaxed">Enter the Order ID from your digital receipt to request a live status update from our studio.</p>
-                <input type="text" id="trackOrderId" placeholder="e.g. FBZ-8492" class="luxury-input uppercase font-mono tracking-wider">
+                <p class="text-brand-gray text-xs font-light leading-relaxed">Enter the specific Order ID from your digital receipt (e.g. FBZ-8492) to request a live status update from the studio via WhatsApp.</p>
+                <input type="text" id="trackOrderId" placeholder="FBZ-XXXX" class="luxury-input uppercase font-mono tracking-wider text-center text-lg">
                 <button onclick="app.submitTrackOrder()" class="w-full bg-brand-border hover:bg-brand-gold hover:text-black text-white py-4 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] transition-all">
-                    Check Status
+                    Check Live Status
                 </button>
             </div>
         </div>
@@ -339,24 +436,28 @@
     <div id="receiptModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[150] hidden opacity-0 transition-opacity duration-400 flex items-center justify-center p-4">
         <div class="bg-brand-card border border-brand-border max-w-md w-full rounded-xl shadow-2xl overflow-hidden relative text-center">
             <div class="p-8 flex flex-col items-center">
-                <div class="w-14 h-14 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center text-2xl mb-4 border border-emerald-500/20">
+                <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-5 border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                     <i class="fa-solid fa-check"></i>
                 </div>
                 <h3 class="text-2xl font-serif font-medium text-white mb-2">Order Prepared</h3>
-                <p class="text-brand-gray text-xs font-light mb-6">Screenshot this receipt. Scan the QR code to verify details, or send it to us on WhatsApp to finalize checkout.</p>
+                <p class="text-brand-gray text-xs font-light mb-6 leading-relaxed px-4">Please screenshot this receipt for your records. Click the button below to send this directly to our studio on WhatsApp to finalize.</p>
                 
-                <div class="bg-white p-3 rounded-lg mb-6 inline-block shadow-lg border-4 border-brand-black">
+                <!-- The QR Code -->
+                <div class="bg-white p-3.5 rounded-lg mb-6 inline-block shadow-lg border-4 border-brand-black relative">
+                    <div class="absolute -top-3 -right-3 bg-brand-gold text-black text-[8px] font-bold px-2 py-1 rounded shadow-lg uppercase">Scan Me</div>
                     <div id="qrcodeDisplay"></div>
                 </div>
                 
-                <div class="w-full bg-brand-black rounded-lg p-5 border border-brand-border mb-6 text-left space-y-3">
-                    <div class="flex justify-between text-xs"><span class="text-brand-gray">Order ID:</span> <span class="text-white font-mono font-bold tracking-wider" id="receiptOrderId"></span></div>
+                <!-- The Data -->
+                <div class="w-full bg-brand-black rounded-lg p-5 border border-brand-border mb-6 text-left space-y-3 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-brand-gold"></div>
+                    <div class="flex justify-between text-xs"><span class="text-brand-gray">Order ID:</span> <span class="text-white font-mono font-bold tracking-wider text-brand-gold" id="receiptOrderId"></span></div>
                     <div class="flex justify-between text-xs"><span class="text-brand-gray">Client:</span> <span class="text-white" id="receiptName"></span></div>
-                    <div class="border-t border-brand-border/50 pt-3 flex justify-between text-xs"><span class="text-brand-gray">Total Amount:</span> <span class="text-brand-gold font-bold">PKR <span id="receiptTotal"></span></span></div>
+                    <div class="border-t border-brand-border/50 pt-3 flex justify-between text-xs items-center"><span class="text-brand-gray">Total Amount:</span> <span class="text-brand-gold font-bold text-lg">PKR <span id="receiptTotal"></span></span></div>
                 </div>
 
-                <button onclick="app.sendToWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-black py-4 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] transition-all flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> Send to Studio
+                <button onclick="app.sendToWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-black py-4.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Send to Studio
                 </button>
                 <button onclick="app.closeReceipt()" class="mt-5 text-brand-gray text-[9px] uppercase tracking-[0.2em] hover:text-white transition-colors">Cancel</button>
             </div>
@@ -367,7 +468,7 @@
     <div id="sizeGuideModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[120] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
         <div class="bg-brand-card border border-brand-border max-w-lg w-full rounded-xl shadow-2xl overflow-hidden relative">
             <div class="p-6 border-b border-brand-border/50 flex justify-between items-center bg-brand-black">
-                <h3 class="text-lg font-serif font-medium text-white">Men's Size Guide</h3>
+                <h3 class="text-lg font-serif font-medium text-white flex items-center"><i class="fa-solid fa-ruler-horizontal text-brand-gold mr-3"></i> Men's Size Guide</h3>
                 <button onclick="app.closeSizeGuide()" class="text-brand-gray hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-brand-card border border-brand-border"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-6 overflow-x-auto bg-brand-card">
@@ -395,68 +496,6 @@
         </div>
     </div>
 
-    <!-- Product Detail Modal -->
-    <div id="detailModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[110] hidden opacity-0 transition-opacity duration-400 flex items-center justify-center p-4 sm:p-8">
-        <div class="bg-brand-card border border-brand-border max-w-5xl w-full relative max-h-[95vh] overflow-y-auto rounded-xl shadow-2xl flex flex-col">
-            <button onclick="app.closeDetail()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-brand-black/80 backdrop-blur border border-brand-border text-brand-gray hover:text-brand-gold flex items-center justify-center transition-colors">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div id="detailContent" class="h-full"></div>
-        </div>
-    </div>
-
-    <!-- Shopping Cart Drawer -->
-    <div id="cartModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden opacity-0 transition-opacity duration-300">
-        <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[450px] bg-brand-card border-l border-brand-border shadow-2xl flex flex-col transform translate-x-full transition-transform duration-400 ease-out" id="cartDrawer">
-            
-            <div class="p-6 border-b border-brand-border/50 flex justify-between items-center bg-brand-black">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-bag-shopping text-brand-gold"></i>
-                    <h3 class="text-lg font-serif font-medium text-white tracking-wide">Your Bag</h3>
-                </div>
-                <button onclick="app.toggleCart()" class="text-brand-gray hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-brand-card border border-brand-border"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4">
-                <!-- Cart items load here -->
-            </div>
-            
-            <div class="p-6 bg-brand-black border-t border-brand-border/50 space-y-5">
-                <div class="flex justify-between items-end mb-2">
-                    <span class="text-brand-gray uppercase tracking-[0.2em] text-[10px]">Subtotal</span>
-                    <span id="cartTotal" class="text-brand-gold font-serif font-medium text-2xl leading-none">PKR 0</span>
-                </div>
-                
-                <div class="space-y-3">
-                    <input type="text" id="customerName" placeholder="Full Name" class="luxury-input">
-                    <input type="email" id="customerEmail" placeholder="Email Address (Optional)" class="luxury-input">
-                    <input type="text" id="customerAddress" placeholder="Complete Delivery Address & City" class="luxury-input">
-                    
-                    <div class="mt-4">
-                        <label class="text-brand-gray text-[9px] font-bold uppercase tracking-[0.2em] block mb-2 ml-1">Payment Method</label>
-                        <select id="paymentMethod" onchange="app.handlePaymentMethodChange()" class="luxury-input appearance-none cursor-pointer">
-                            <option value="cod">Cash on Delivery (COD)</option>
-                            <option value="bank">Direct Bank Transfer</option>
-                        </select>
-                    </div>
-
-                    <div id="bankDetailsBox" class="hidden bg-brand-card border border-brand-border rounded-lg p-4 mt-2">
-                        <p class="text-[10px] text-brand-gray mb-3 font-light">Transfer total amount to the account below. Order dispatches upon confirmation.</p>
-                        <div class="space-y-1.5">
-                            <div class="flex justify-between text-xs"><span class="text-brand-gray">Bank:</span> <span class="text-white font-medium">Meezan Bank</span></div>
-                            <div class="flex justify-between text-xs"><span class="text-brand-gray">Title:</span> <span class="text-white font-medium">Zak Footwear Studio</span></div>
-                            <div class="flex justify-between text-xs"><span class="text-brand-gray">Account:</span> <span class="text-brand-gold font-mono tracking-wider">0123 4567 8910 1112</span></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button onclick="app.generateReceipt()" class="w-full btn-gold py-4 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] shadow-lg mt-2">
-                    Complete Purchase
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none"></div>
 
@@ -466,7 +505,7 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Environment Variables Handling
+        // Firebase Configuration Injection
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'zak-footwear';
         const rawConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
         let appFirebase = null;
@@ -481,19 +520,18 @@
                 auth = getAuth(appFirebase);
             }
         } catch (e) {
-            console.error("Firebase init failed (Continuing in local mode):", e);
+            console.error("Firebase init failed (Operating in Local Storage Mode):", e);
         }
 
-        // ==========================================
-        // ⚙️ SYSTEM CONFIGURATION
-        // ==========================================
+        // =========================================================================
+        // ⚙️ SYSTEM CONFIGURATION - EDIT THIS SECTION
+        // =========================================================================
         const whatsappNumber = "923200217208"; 
         
         // 🔗 PASTE YOUR GOOGLE SHEET CSV LINK BETWEEN THE QUOTES BELOW:
         // Example: "https://docs.google.com/spreadsheets/d/.../pub?output=csv"
         const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS3jBv9bom_Y1flXrWsgMeMGu0POtRKut_jr0B9HbXoMm4j5Y-H3yrSBKNKs6Me7ERNSyl6ZgHQTiYk/pub?output=csv"; 
-        
-        const availableSizes = [39, 40, 41, 42, 43, 44, 45, 46];
+        // =========================================================================
 
         const app = {
             products: [],
@@ -502,27 +540,24 @@
             selectedSizeForDetail: null,
             currentOrderDetails: "", 
             qrCodeObj: null,
-            user: null, // Firebase Auth User
+            user: null, 
             
             async init() {
                 this.loadProductsFromGoogle();
                 this.updateCartBadge();
                 
-                // Initialize Auth State if Firebase exists
                 if (auth) {
                     this.initAuth();
                 }
             },
 
-            // --- Authentication Logic ---
+            // --- Authentication & Profile Logic ---
             async initAuth() {
                 try {
                     const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
                     if (initialToken) {
                         await signInWithCustomToken(auth, initialToken);
                     } else {
-                        // Use anonymous login if no token so db rules pass if we need public data
-                        // However, we want actual sign-up flow. Anonymous helps read.
                         await signInAnonymously(auth); 
                     }
                 } catch(e) { console.error("Auth init error:", e); }
@@ -531,12 +566,12 @@
                     this.user = user;
                     const navBtn = document.getElementById('navAuthBtn');
                     if (user && !user.isAnonymous) {
-                        navBtn.innerHTML = '<i class="fa-solid fa-user-check text-brand-gold text-sm"></i>';
+                        navBtn.innerHTML = '<i class="fa-solid fa-user-check text-brand-gold text-sm group-hover:scale-110 transition-transform"></i>';
                         document.getElementById('profileEmail').innerText = user.email;
                         this.loadCartFromCloud();
                     } else {
-                        navBtn.innerHTML = '<i class="fa-regular fa-user text-sm"></i>';
-                        this.cart = []; // Reset local cart on logout
+                        navBtn.innerHTML = '<i class="fa-regular fa-user text-sm group-hover:scale-110 transition-transform"></i>';
+                        this.cart = []; 
                         this.updateCartBadge();
                         this.renderCart();
                     }
@@ -547,7 +582,6 @@
                 const modal = document.getElementById('authModal');
                 if(modal.classList.contains('hidden')) {
                     modal.classList.remove('hidden');
-                    // Check state to show correct view
                     if (this.user && !this.user.isAnonymous) {
                         this.switchAuthView('profile');
                     } else {
@@ -573,25 +607,27 @@
                 if (view === 'login') {
                     document.getElementById('loginForm').classList.remove('hidden');
                     document.getElementById('authTitle').innerText = "Client Access";
-                    document.getElementById('authSubtitle').innerText = "Sign in to access your atelier profile.";
+                    document.getElementById('authSubtitle').innerText = "Sign in to securely access your atelier profile.";
                 } else if (view === 'register') {
                     document.getElementById('registerForm').classList.remove('hidden');
                     document.getElementById('authTitle').innerText = "Create Profile";
-                    document.getElementById('authSubtitle').innerText = "Join to save your bespoke preferences.";
+                    document.getElementById('authSubtitle').innerText = "Join the studio to save bespoke preferences.";
                 } else if (view === 'profile') {
                     document.getElementById('profileView').classList.remove('hidden');
                     document.getElementById('authTitle').innerText = "Your Atelier";
-                    document.getElementById('authSubtitle').innerText = "Manage your preferences.";
+                    document.getElementById('authSubtitle').innerText = "Manage your preferences and bag.";
                 }
             },
 
             async handleLogin() {
-                if(!auth) return this.showToast("Database system not configured.", "error");
+                if(!auth) return this.showToast("Database not configured.", "error");
                 const email = document.getElementById('loginEmail').value;
                 const pass = document.getElementById('loginPassword').value;
+                if(!email || !pass) return this.showToast("Please enter email and password.", "error");
+                
                 try {
                     await signInWithEmailAndPassword(auth, email, pass);
-                    this.showToast("Signed in successfully.", "success");
+                    this.showToast("Signed in securely.", "success");
                     this.closeAuthModal();
                 } catch(e) {
                     this.showToast("Invalid credentials.", "error");
@@ -599,12 +635,14 @@
             },
 
             async handleRegister() {
-                if(!auth) return this.showToast("Database system not configured.", "error");
+                if(!auth) return this.showToast("Database not configured.", "error");
                 const email = document.getElementById('regEmail').value;
                 const pass = document.getElementById('regPassword').value;
+                if(!email || !pass) return this.showToast("Please enter email and password.", "error");
+
                 try {
                     await createUserWithEmailAndPassword(auth, email, pass);
-                    this.showToast("Profile created. Welcome.", "success");
+                    this.showToast("Profile created. Welcome to the Studio.", "success");
                     this.closeAuthModal();
                 } catch(e) {
                     this.showToast(e.message, "error");
@@ -615,7 +653,6 @@
                 if(!auth) return;
                 try {
                     await signOut(auth);
-                    // Sign back in anonymously so reading public data still works if needed
                     await signInAnonymously(auth);
                     this.showToast("Signed out safely.", "success");
                     this.closeAuthModal();
@@ -628,8 +665,8 @@
             async syncCartToCloud() {
                 if(!db || !this.user || this.user.isAnonymous) return;
                 try {
+                    // Strict Firebase path rule implemented
                     const docRef = doc(db, 'artifacts', appId, 'users', this.user.uid, 'storeData', 'cart');
-                    // Store minimal serializable data
                     const cartData = this.cart.map(c => ({
                         productId: c.product.id,
                         size: c.size
@@ -656,15 +693,14 @@
                 } catch (e) { console.error("Load cart error", e); }
             },
 
-
-            // --- Core App Logic ---
+            // --- Core App UI ---
             showToast(message, type = 'success') {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 
                 const icon = type === 'success' ? '<i class="fa-solid fa-check text-brand-gold"></i>' : '<i class="fa-solid fa-exclamation text-red-400"></i>';
                 
-                toast.className = `glass-panel text-white px-5 py-3.5 rounded-lg shadow-2xl flex items-center gap-3 text-sm font-medium transform translate-y-10 opacity-0 transition-all duration-400 border border-brand-border/50`;
+                toast.className = `glass-panel text-white px-5 py-3.5 rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex items-center gap-3 text-sm font-medium transform translate-y-10 opacity-0 transition-all duration-400 border border-brand-border/50`;
                 toast.innerHTML = `${icon} ${message}`;
                 
                 container.appendChild(toast);
@@ -677,7 +713,6 @@
 
             parseCSV(text) {
                 const results = [];
-                // GLITCH-FREE FIX: Handle carriage returns, newlines, and completely ignore empty rows securely
                 let rows = text.replace(/\r/g, '').split('\n');
                 
                 for(let i = 1; i < rows.length; i++) {
@@ -703,18 +738,36 @@
                     
                     const cleanedCols = cols.map(c => c.replace(/^"|"$/g, '').trim());
                     
-                    // ERROR PREVENTION: Ensure we actually have an ID and Name before displaying it
                     if(cleanedCols.length >= 2 && cleanedCols[0]) {
-                        const rawImages = cleanedCols[4] || '';
-                        const imageArray = rawImages.split(',').map(img => img.trim()).filter(img => img.length > 0);
-                        const parsedPrice = parseInt((cleanedCols[2] || '0').replace(/[^0-9]/g, ''));
+                        // NEW MODERN LAYOUT:
+                        // 0: ID | 1: Name | 2: Original Price | 3: Sale Price | 4: Category | 5: Stock | 6: Sizes | 7: Img1 | 8: Img2 | 9: Img3 | 10: Img4
+                        
+                        const parsedOrigPrice = parseInt((cleanedCols[2] || '0').replace(/[^0-9]/g, ''));
+                        let parsedSalePrice = parseInt((cleanedCols[3] || '0').replace(/[^0-9]/g, ''));
+                        if(isNaN(parsedSalePrice) || parsedSalePrice === 0) parsedSalePrice = parsedOrigPrice; 
+                        
+                        const stockStatus = (cleanedCols[5] || '').toLowerCase().includes('out') ? 'Out of Stock' : 'In Stock';
+                        
+                        const rawSizes = cleanedCols[6] || '39, 40, 41, 42, 43, 44, 45, 46';
+                        const sizesArray = rawSizes.split(',').map(s => s.trim()).filter(s => s !== '');
+
+                        const imagesArray = [];
+                        for(let imgIdx = 7; imgIdx <= 10; imgIdx++) {
+                            if(cleanedCols[imgIdx] && cleanedCols[imgIdx].startsWith('http')) {
+                                imagesArray.push(cleanedCols[imgIdx]);
+                            }
+                        }
+                        if(imagesArray.length === 0) imagesArray.push('https://placehold.co/800x800/121212/D4AF37?text=Image+Pending');
                         
                         results.push({
                             id: cleanedCols[0],
                             name: cleanedCols[1] || 'Bespoke Footwear',
-                            price: isNaN(parsedPrice) ? 0 : parsedPrice,
-                            category: cleanedCols[3] || 'Exclusive',
-                            images: imageArray.length > 0 ? imageArray : ['https://placehold.co/800x800/121212/D4AF37?text=Image+Pending']
+                            originalPrice: isNaN(parsedOrigPrice) ? 0 : parsedOrigPrice,
+                            price: parsedSalePrice, 
+                            category: cleanedCols[4] || 'Exclusive',
+                            stock: stockStatus,
+                            sizes: sizesArray,
+                            images: imagesArray
                         });
                     }
                 }
@@ -726,13 +779,14 @@
                 
                 if (!googleSheetUrl || googleSheetUrl === "") {
                     grid.innerHTML = `
-                        <div class="col-span-full bg-brand-card border border-brand-border p-12 text-center rounded-xl max-w-xl mx-auto shadow-2xl animate-fade-in">
-                            <div class="w-16 h-16 bg-brand-gold/10 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-6 text-2xl border border-brand-gold/20">
+                        <div class="col-span-full bg-brand-card border border-brand-border p-12 text-center rounded-xl max-w-xl mx-auto shadow-2xl animate-fade-in relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-gold to-transparent"></div>
+                            <div class="w-16 h-16 bg-brand-gold/10 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-6 text-2xl border border-brand-gold/20 shadow-[0_0_15px_rgba(212,175,55,0.15)]">
                                 <i class="fa-solid fa-link"></i>
                             </div>
                             <h3 class="text-white font-serif font-medium mb-3 tracking-wide text-xl">System Disconnected</h3>
                             <p class="text-brand-gray text-xs leading-relaxed font-light">
-                                Please paste your Google Sheet CSV link into the code to synchronize the atelier inventory.
+                                Please paste your Google Sheet CSV link into the <code class="bg-brand-black px-1.5 py-0.5 rounded text-brand-gold">googleSheetUrl</code> variable in the code to synchronize the atelier inventory.
                             </p>
                         </div>`;
                     return;
@@ -740,18 +794,18 @@
 
                 try {
                     const response = await fetch(googleSheetUrl);
+                    if (!response.ok) throw new Error("Network response was not ok");
                     const data = await response.text();
                     this.products = this.parseCSV(data);
                     this.renderCategories();
                     this.renderStorefront();
                     
-                    // If user was already loaded before products, try loading cloud cart now
                     if(this.user && !this.user.isAnonymous) {
                         this.loadCartFromCloud();
                     }
                 } catch (error) {
                     console.error("Error loading CSV:", error);
-                    grid.innerHTML = `<div class="col-span-full py-16 text-center text-red-400 text-[10px] tracking-[0.2em] uppercase border border-brand-border bg-brand-card rounded-xl">Connection Failed. Verify CSV format.</div>`;
+                    grid.innerHTML = `<div class="col-span-full py-16 text-center text-red-400 text-[10px] tracking-[0.2em] uppercase border border-brand-border bg-brand-card rounded-xl">Database Connection Failed. Verify CSV Link format.</div>`;
                 }
             },
 
@@ -763,7 +817,7 @@
                 categories.forEach(cat => {
                     const isActive = this.currentCategory === cat;
                     container.innerHTML += `
-                        <button onclick="app.setCategory('${cat}')" class="px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300 ${isActive ? 'bg-brand-gold text-black shadow-lg shadow-brand-gold/20' : 'bg-transparent text-brand-gray hover:text-white border border-brand-border hover:border-brand-gray'}">${cat}</button>
+                        <button onclick="app.setCategory('${cat}')" class="px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300 ${isActive ? 'bg-brand-gold text-black shadow-[0_0_15px_rgba(212,175,55,0.4)]' : 'bg-transparent text-brand-gray hover:text-white border border-brand-border hover:border-brand-gray'}">${cat}</button>
                     `;
                 });
             },
@@ -783,33 +837,41 @@
                     : this.products.filter(p => p.category === this.currentCategory);
 
                 if (filtered.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-brand-gray text-[10px] tracking-[0.2em] uppercase border border-brand-border bg-brand-card rounded-xl">No items found in this collection.</div>`;
+                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-brand-gray text-[10px] tracking-[0.2em] uppercase border border-brand-border bg-brand-card rounded-xl">No items currently available in this collection.</div>`;
                     return;
                 }
 
                 filtered.forEach((p, index) => {
                     const mainImg = p.images[0];
                     const delay = index * 100; 
+                    const isOut = p.stock === 'Out of Stock';
                     
-                    // UNIQUE FEATURE: Added Shimmer loading state and sophisticated luxury card design
+                    let priceHTML = `<div class="text-brand-gray font-light text-sm tracking-wide">PKR ${Number(p.price).toLocaleString()}</div>`;
+                    if(p.originalPrice > p.price) {
+                        priceHTML = `<div class="text-brand-gray font-light text-sm tracking-wide"><span class="line-through opacity-50 mr-2">PKR ${Number(p.originalPrice).toLocaleString()}</span><span class="text-brand-gold font-medium">PKR ${Number(p.price).toLocaleString()}</span></div>`;
+                    }
+                    
                     grid.innerHTML += `
-                        <div class="group flex flex-col opacity-0 animate-slide-up bg-brand-card rounded-xl border border-brand-border hover:border-brand-gold/40 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]" style="animation-delay: ${delay}ms; animation-fill-mode: forwards;">
-                            <div class="relative h-72 sm:h-96 overflow-hidden cursor-pointer rounded-t-xl shimmer" onclick="app.openDetail('${p.id}')">
-                                <img src="${mainImg}" alt="${p.name}" onload="this.parentElement.classList.remove('shimmer'); this.classList.add('img-loaded');" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-0" onerror="this.src='https://placehold.co/800x800/121212/D4AF37?text=Image+Pending'; this.style.opacity='1'; this.parentElement.classList.remove('shimmer');">
+                        <div class="group flex flex-col opacity-0 animate-slide-up bg-brand-card rounded-2xl border border-brand-border hover:border-brand-gold/40 transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.6)] overflow-hidden relative" style="animation-delay: ${delay}ms; animation-fill-mode: forwards;">
+                            ${isOut ? `<div class="absolute top-1/3 left-0 w-full z-20 text-center transform -rotate-12 bg-red-600/90 text-white font-bold tracking-[0.3em] uppercase py-2 shadow-2xl backdrop-blur-sm pointer-events-none">Sold Out</div>` : ''}
+                            
+                            <div class="relative h-72 sm:h-96 overflow-hidden cursor-pointer shimmer ${isOut ? 'opacity-50' : ''}" onclick="app.openDetail('${p.id}')">
+                                <img src="${mainImg}" alt="${p.name}" onload="this.parentElement.classList.remove('shimmer'); this.classList.add('img-loaded');" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out opacity-0" onerror="this.src='https://placehold.co/800x800/121212/D4AF37?text=Image+Pending'; this.style.opacity='1'; this.parentElement.classList.remove('shimmer');">
                                 
-                                <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                 
-                                <div class="absolute top-4 left-4 glass-panel text-white text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-lg">${p.category}</div>
-                                ${p.images.length > 1 ? `<div class="absolute bottom-4 right-4 glass-panel text-brand-gold text-[9px] font-bold px-2.5 py-1.5 rounded-sm shadow-lg"><i class="fa-regular fa-images mr-1.5"></i>${p.images.length}</div>` : ''}
+                                <div class="absolute top-4 left-4 glass-panel text-white text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded shadow-lg">${p.category}</div>
+                                ${p.originalPrice > p.price && !isOut ? `<div class="absolute top-4 right-4 bg-red-600 text-white text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded shadow-lg">SALE</div>` : ''}
+                                ${p.images.length > 1 ? `<div class="absolute bottom-4 right-4 glass-panel text-brand-gold text-[9px] font-bold px-2.5 py-1.5 rounded shadow-lg flex items-center"><i class="fa-regular fa-images mr-1.5"></i>${p.images.length}</div>` : ''}
                             </div>
-                            <div class="p-6 flex flex-col flex-1 justify-between">
+                            <div class="p-6 flex flex-col flex-1 justify-between bg-gradient-to-b from-brand-card to-brand-black ${isOut ? 'opacity-50 grayscale' : ''}">
                                 <div class="mb-6">
                                     <h3 onclick="app.openDetail('${p.id}')" class="font-serif font-medium text-xl text-white mb-2 group-hover:text-brand-gold transition-colors cursor-pointer truncate">${p.name}</h3>
-                                    <div class="text-brand-gray font-light text-sm tracking-wide">PKR ${Number(p.price).toLocaleString()}</div>
+                                    ${priceHTML}
                                 </div>
-                                <button onclick="app.openDetail('${p.id}')" class="w-full bg-brand-black hover:bg-brand-gold hover:text-black text-white border border-brand-border hover:border-brand-gold py-4 rounded-sm text-[9px] font-bold uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2">
-                                    <span>Discover Details</span>
-                                    <i class="fa-solid fa-arrow-right-long opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300"></i>
+                                <button onclick="app.openDetail('${p.id}')" class="w-full bg-brand-black hover:bg-brand-gold hover:text-black text-white border border-brand-border hover:border-brand-gold py-4 rounded-sm text-[9px] font-bold uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden relative group/btn">
+                                    <span class="relative z-10 transition-transform duration-300 group-hover/btn:-translate-x-2">${isOut ? 'View Details' : 'Discover Details'}</span>
+                                    <i class="fa-solid fa-arrow-right-long absolute right-1/4 opacity-0 group-hover/btn:opacity-100 group-hover/btn:right-6 transition-all duration-300 z-10"></i>
                                 </button>
                             </div>
                         </div>
@@ -822,63 +884,74 @@
                 if(!p) return;
 
                 this.selectedSizeForDetail = null; 
-
                 const modal = document.getElementById('detailModal');
                 const content = document.getElementById('detailContent');
 
                 let thumbnailsHTML = '';
                 p.images.forEach((img, idx) => {
                     thumbnailsHTML += `
-                        <img src="${img}" onclick="app.switchMainImage('${img}', this)" class="w-16 h-16 sm:w-24 sm:h-24 object-cover rounded-md border ${idx === 0 ? 'border-brand-gold' : 'border-brand-border'} cursor-pointer opacity-60 hover:opacity-100 transition-all bg-brand-card flex-shrink-0" onerror="this.src='https://placehold.co/100x100/121212/D4AF37?text=Pending'">
+                        <img src="${img}" onclick="app.switchMainImage('${img}', this)" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md border ${idx === 0 ? 'border-brand-gold shadow-[0_0_10px_rgba(212,175,55,0.3)]' : 'border-brand-border opacity-50'} cursor-pointer hover:opacity-100 transition-all bg-brand-card flex-shrink-0" onerror="this.src='https://placehold.co/100x100/121212/D4AF37?text=Pending'">
                     `;
                 });
 
                 let sizesHTML = '';
-                availableSizes.forEach(size => {
+                p.sizes.forEach(size => {
                     sizesHTML += `
                         <div class="relative">
-                            <input type="radio" name="sizeSelection" id="size-${size}" value="${size}" class="sr-only size-radio" onchange="app.selectSize(${size})">
-                            <label for="size-${size}" class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-md border border-brand-border text-brand-gray cursor-pointer hover:border-brand-gold hover:text-white transition-all font-medium text-sm bg-brand-black">
+                            <input type="radio" name="sizeSelection" id="size-${size}" value="${size}" class="sr-only size-radio" onchange="app.selectSize('${size}')">
+                            <label for="size-${size}" class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-md border border-brand-border text-brand-gray cursor-pointer hover:border-brand-gold hover:text-white transition-all font-medium text-sm bg-brand-black shadow-sm">
                                 ${size}
                             </label>
                         </div>
                     `;
                 });
 
+                const isOut = p.stock === 'Out of Stock';
+                let priceHTML = `<div class="text-brand-gold font-serif text-2xl mb-6">PKR ${Number(p.price).toLocaleString()}</div>`;
+                if(p.originalPrice > p.price) {
+                    priceHTML = `
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="text-brand-gray font-serif text-xl line-through opacity-50">PKR ${Number(p.originalPrice).toLocaleString()}</div>
+                            <div class="text-red-500 font-serif text-2xl font-bold">PKR ${Number(p.price).toLocaleString()}</div>
+                            <div class="bg-red-600/20 text-red-500 border border-red-500/30 text-[9px] font-bold px-2 py-1 rounded uppercase tracking-widest">Sale</div>
+                        </div>`;
+                }
+
                 content.innerHTML = `
                     <div class="grid grid-cols-1 lg:grid-cols-2 h-full bg-brand-card rounded-xl overflow-hidden">
-                        <!-- Image Gallery (Left) -->
-                        <div class="flex flex-col bg-brand-black border-r border-brand-border">
-                            <div class="h-[45vh] lg:h-[65vh] w-full overflow-hidden relative">
+                        <!-- Image Gallery -->
+                        <div class="flex flex-col bg-brand-black border-r border-brand-border relative">
+                            ${isOut ? `<div class="absolute top-1/2 left-0 w-full z-20 text-center transform -translate-y-1/2 -rotate-12 bg-red-600/90 text-white font-bold tracking-[0.3em] uppercase py-3 shadow-2xl backdrop-blur-sm pointer-events-none text-xl border-y border-red-400">Sold Out</div>` : ''}
+                            <div class="h-[45vh] lg:h-[70vh] w-full overflow-hidden relative ${isOut ? 'opacity-50' : ''}">
                                 <img id="activeMainImage" src="${p.images[0]}" class="w-full h-full object-cover transition-opacity duration-300" onerror="this.src='https://placehold.co/800x800/121212/D4AF37?text=Pending'">
                             </div>
-                            <div class="flex gap-3 overflow-x-auto p-4 sm:p-6 bg-brand-black border-t border-brand-border">
+                            <div class="flex gap-3 overflow-x-auto p-4 sm:p-6 bg-brand-black border-t border-brand-border custom-scrollbar">
                                 ${thumbnailsHTML}
                             </div>
                         </div>
                         
-                        <!-- Details (Right) -->
-                        <div class="p-6 sm:p-10 flex flex-col justify-between overflow-y-auto">
+                        <!-- Details -->
+                        <div class="p-6 sm:p-10 flex flex-col justify-between overflow-y-auto bg-gradient-to-b from-brand-card to-brand-black">
                             <div>
-                                <span class="inline-block py-1 px-3 rounded-sm bg-brand-gold/10 text-brand-gold text-[9px] font-bold uppercase tracking-[0.2em] mb-5 border border-brand-gold/20">${p.category}</span>
-                                <h2 class="font-serif font-medium text-3xl sm:text-4xl text-white mb-3 leading-tight">${p.name}</h2>
-                                <div class="text-brand-gold font-serif text-2xl mb-6">PKR ${Number(p.price).toLocaleString()}</div>
-                                <div class="w-10 h-0.5 bg-brand-border mb-6"></div>
-                                <p class="text-brand-gray text-sm leading-relaxed mb-8 font-light">Handcrafted with precision full-grain leather finishes. Designed for superior durability, tailored comfort, and unmatched executive style.</p>
+                                <span class="inline-block py-1 px-3 rounded bg-brand-gold/10 text-brand-gold text-[9px] font-bold uppercase tracking-[0.2em] mb-5 border border-brand-gold/20 shadow-sm">${p.category}</span>
+                                <h2 class="font-serif font-medium text-3xl sm:text-5xl text-white mb-3 leading-tight">${p.name}</h2>
+                                ${priceHTML}
+                                <div class="w-12 h-0.5 bg-brand-border mb-6"></div>
+                                <p class="text-brand-gray text-sm leading-relaxed mb-8 font-light">Handcrafted with precision using full-grain leather finishes. Designed for superior durability, tailored comfort, and unmatched executive style for the modern gentleman.</p>
                                 
-                                <div class="mb-10">
+                                <div class="mb-10 bg-brand-black p-5 rounded-lg border border-brand-border/50">
                                     <div class="flex justify-between items-center mb-4">
-                                        <span class="text-white text-xs font-bold tracking-[0.1em] uppercase">Select Size (EU)</span>
-                                        <button onclick="app.openSizeGuide()" class="text-brand-gray hover:text-brand-gold text-[10px] font-bold uppercase tracking-widest transition-colors border-b border-brand-gray hover:border-brand-gold pb-0.5">Size Guide</button>
+                                        <span class="text-white text-xs font-bold tracking-[0.1em] uppercase"><i class="fa-solid fa-shoe-prints text-brand-gold mr-2"></i> Select Size (EU)</span>
+                                        <button onclick="app.openSizeGuide()" class="text-brand-gray hover:text-brand-gold text-[9px] font-bold uppercase tracking-widest transition-colors border-b border-brand-gray hover:border-brand-gold pb-0.5">Size Guide</button>
                                     </div>
-                                    <div class="flex gap-3 flex-wrap">
+                                    <div class="flex gap-3 flex-wrap ${isOut ? 'opacity-50 pointer-events-none' : ''}">
                                         ${sizesHTML}
                                     </div>
                                 </div>
                             </div>
                             
-                            <button onclick="app.processAddToCart('${p.id}')" class="w-full btn-gold py-4.5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] shadow-xl flex items-center justify-center gap-3">
-                                <i class="fa-solid fa-plus"></i> Add to Bag
+                            <button ${isOut ? 'disabled' : ''} onclick="app.processAddToCart('${p.id}')" class="w-full ${isOut ? 'bg-brand-border text-brand-gray cursor-not-allowed' : 'btn-gold'} py-5 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] shadow-[0_10px_20px_rgba(212,175,55,0.2)] flex items-center justify-center gap-3">
+                                ${isOut ? '<i class="fa-solid fa-ban"></i> Out of Stock' : '<i class="fa-solid fa-plus"></i> Add to Bag'}
                             </button>
                         </div>
                     </div>
@@ -898,12 +971,11 @@
                 
                 const thumbs = thumbEl.parentElement.querySelectorAll('img');
                 thumbs.forEach(t => {
-                    t.classList.remove('border-brand-gold');
-                    t.classList.add('border-brand-border');
-                    t.classList.add('opacity-60');
+                    t.classList.remove('border-brand-gold', 'shadow-[0_0_10px_rgba(212,175,55,0.3)]');
+                    t.classList.add('border-brand-border', 'opacity-50');
                 });
-                thumbEl.classList.remove('border-brand-border', 'opacity-60');
-                thumbEl.classList.add('border-brand-gold');
+                thumbEl.classList.remove('border-brand-border', 'opacity-50');
+                thumbEl.classList.add('border-brand-gold', 'shadow-[0_0_10px_rgba(212,175,55,0.3)]');
             },
 
             closeDetail() {
@@ -912,7 +984,7 @@
                 setTimeout(() => modal.classList.add('hidden'), 400);
             },
 
-            // Size Guide & Tracking Modals
+            // --- Cart & Checkout Flow ---
             openSizeGuide() {
                 const modal = document.getElementById('sizeGuideModal');
                 modal.classList.remove('hidden');
@@ -940,7 +1012,7 @@
             submitTrackOrder() {
                 const id = document.getElementById('trackOrderId').value.trim();
                 if(!id) {
-                    this.showToast("Please enter an Order ID.", "error");
+                    this.showToast("Please enter your Order ID.", "error");
                     return;
                 }
                 const msg = `Hello Zak Studio,%0A%0AI would like to track the status of my order.%0A*Order ID:* ${id}%0A%0APlease let me know the current delivery status.`;
@@ -954,7 +1026,7 @@
 
             processAddToCart(productId) {
                 if (!this.selectedSizeForDetail) {
-                    this.showToast("Please select a size first.", "error");
+                    this.showToast("Please select a shoe size first.", "error");
                     return;
                 }
                 
@@ -965,8 +1037,8 @@
                         size: this.selectedSizeForDetail
                     });
                     this.updateCartBadge();
-                    this.syncCartToCloud(); // Save to Firebase if logged in
-                    this.showToast("Added to your bag.", "success");
+                    this.syncCartToCloud(); 
+                    this.showToast("Item added to your bag.", "success");
                     
                     const badge = document.getElementById('cartBadge');
                     badge.classList.add('scale-125');
@@ -1021,8 +1093,8 @@
                 if (this.cart.length === 0) {
                     container.innerHTML = `
                         <div class="flex flex-col items-center justify-center h-full text-brand-gray opacity-50 pt-10">
-                            <i class="fa-solid fa-bag-shopping text-3xl mb-4"></i>
-                            <p class="text-[10px] tracking-[0.2em] uppercase">Your bag is empty</p>
+                            <i class="fa-solid fa-bag-shopping text-4xl mb-4 text-brand-gold/50"></i>
+                            <p class="text-[10px] tracking-[0.2em] uppercase">Your studio bag is empty</p>
                         </div>`;
                     totalEl.innerText = "PKR 0";
                     return;
@@ -1035,7 +1107,7 @@
                     total += Number(item.price);
                     
                     container.innerHTML += `
-                        <div class="flex gap-4 items-center bg-brand-black p-3 rounded-lg border border-brand-border/50 shadow-sm group">
+                        <div class="flex gap-4 items-center bg-brand-black p-3 rounded-lg border border-brand-border/50 shadow-sm group hover:border-brand-gold/30 transition-colors">
                             <div class="w-20 h-20 flex-shrink-0 bg-brand-card rounded-md overflow-hidden border border-brand-border">
                                 <img src="${item.images[0]}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/121212/D4AF37?text=Pending'">
                             </div>
@@ -1063,23 +1135,25 @@
                 }
             },
 
+            // --- WhatsApp & QR Order Engine ---
             generateReceipt() {
                 if (this.cart.length === 0) {
-                    this.showToast("Your cart is empty.", "error");
+                    this.showToast("Your bag is empty.", "error");
                     return;
                 }
 
                 const name = document.getElementById('customerName').value.trim();
+                const email = document.getElementById('customerEmail').value.trim();
                 const address = document.getElementById('customerAddress').value.trim();
                 
-                if (!name || !address) {
-                    this.showToast("Name and Address are required.", "error");
+                if (!name || !address || !email) {
+                    this.showToast("Name, Email, and Complete Address are required.", "error");
                     return;
                 }
 
                 this.toggleCart();
 
-                // 1. Generate ID
+                // 1. Generate Luxury Order ID
                 const randomNum = Math.floor(10000 + Math.random() * 90000);
                 const orderId = `FBZ-${randomNum}`;
 
@@ -1087,15 +1161,15 @@
                 let total = 0;
                 this.cart.forEach(c => total += Number(c.product.price));
 
-                // 3. UI Updates
+                // 3. UI Updates on Receipt
                 document.getElementById('receiptOrderId').innerText = orderId;
                 document.getElementById('receiptName').innerText = name;
                 document.getElementById('receiptTotal').innerText = total.toLocaleString();
 
-                // 4. QR Code
+                // 4. Generate QR Code functionality
                 const qrContainer = document.getElementById('qrcodeDisplay');
                 qrContainer.innerHTML = ''; 
-                const qrData = `ORDER: ${orderId}\nNAME: ${name}\nTOTAL: PKR ${total}\nSTATUS: Verified Request`;
+                const qrData = `ZAK STUDIO ORDER\nID: ${orderId}\nCLIENT: ${name}\nTOTAL: PKR ${total}\nSTATUS: Pending Verification`;
                 
                 if(this.qrCodeObj) {
                     this.qrCodeObj.clear();
@@ -1103,41 +1177,40 @@
                 } else {
                     this.qrCodeObj = new QRCode(qrContainer, {
                         text: qrData,
-                        width: 130,
-                        height: 130,
-                        colorDark : "#050505",
+                        width: 140,
+                        height: 140,
+                        colorDark : "#030303",
                         colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.L
+                        correctLevel : QRCode.CorrectLevel.M
                     });
                 }
 
-                // 5. WhatsApp Payload
-                const email = document.getElementById('customerEmail').value.trim();
+                // 5. WhatsApp Intelligent Payload Formatting
                 const paymentMethodRaw = document.getElementById('paymentMethod').value;
                 let paymentString = paymentMethodRaw === 'cod' ? "Cash on Delivery" : "Direct Bank Transfer";
 
                 let orderDetails = `*FOOTWEAR BY ZAK - LUXURY ATELIER*%0A`;
                 orderDetails += `-----------------------------------%0A%0A`;
                 orderDetails += `*ORDER ID:* ${orderId}%0A`;
-                orderDetails += `*Name:* ${name}%0A`;
-                if(email) orderDetails += `*Email:* ${email}%0A`;
+                orderDetails += `*Client Name:* ${name}%0A`;
+                orderDetails += `*Email:* ${email}%0A`;
                 orderDetails += `*Address:* ${address}%0A`;
-                orderDetails += `*Payment:* ${paymentString}%0A%0A`;
+                orderDetails += `*Payment Mode:* ${paymentString}%0A%0A`;
                 
                 orderDetails += `*PURCHASE SUMMARY*%0A`;
                 this.cart.forEach((cartItem, i) => {
-                    orderDetails += `${i+1}. ${cartItem.product.name}%0A`;
-                    orderDetails += `   Size: EU ${cartItem.size} | PKR ${Number(cartItem.product.price).toLocaleString()}%0A`;
+                    orderDetails += `▪ ${cartItem.product.name}%0A`;
+                    orderDetails += `  Size: EU ${cartItem.size} | PKR ${Number(cartItem.product.price).toLocaleString()}%0A`;
                 });
                 
                 orderDetails += `%0A-----------------------------------%0A`;
                 orderDetails += `*TOTAL AMOUNT:* PKR ${total.toLocaleString()}%0A`;
                 orderDetails += `-----------------------------------%0A%0A`;
-                orderDetails += `_Please finalize my order verification._`;
+                orderDetails += `_Please finalize and verify my order._`;
 
                 this.currentOrderDetails = orderDetails;
 
-                // 6. Show Receipt
+                // 6. Show the Receipt Modal
                 const modal = document.getElementById('receiptModal');
                 modal.classList.remove('hidden');
                 setTimeout(() => modal.classList.remove('opacity-0'), 10);
@@ -1147,7 +1220,7 @@
                 const waUrl = `https://wa.me/${whatsappNumber}?text=${this.currentOrderDetails}`;
                 window.open(waUrl, '_blank');
                 
-                // Reset
+                // Reset flow
                 this.cart = [];
                 this.updateCartBadge();
                 this.syncCartToCloud();
@@ -1168,7 +1241,7 @@
             }
         };
 
-        // Make app global for inline HTML onclick handlers
+        // Bind to Window for inline HTML onclick handlers
         window.app = app;
 
         window.addEventListener('DOMContentLoaded', () => {
