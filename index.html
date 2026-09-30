@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOOTWEAR BY ZAK | Premium Leather Studio</title>
-    <meta name="description" content="Premium handcrafted leather oxfords, loafers, and boots in Pakistan.">
+    <meta name="description" content="Premium handcrafted leather oxfords, loafers, and boots in Pakistan. Cash on delivery available.">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Keen Slider -->
     <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
     
@@ -37,16 +41,11 @@
                     animation: {
                         'fade-in': 'fadeIn 0.6s ease-out forwards',
                         'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
@@ -54,116 +53,57 @@
     </script>
     
     <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #030303; 
-            color: #F5F5F5; 
-            -webkit-font-smoothing: antialiased; 
-            overflow-x: hidden;
-        }
-        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030303; color: #F5F5F5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #030303; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
         
-        .gold-text { 
-            background: linear-gradient(135deg, #FDE68A 0%, #D4AF37 50%, #AA8C2C 100%);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-        
-        .btn-gold { 
-            background: linear-gradient(135deg, #D4AF37 0%, #AA8C2C 100%); 
-            color: #050505; 
-            transition: all 0.3s ease; 
-        }
+        .gold-text { background: linear-gradient(135deg, #FDE68A 0%, #D4AF37 50%, #AA8C2C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-gold { background: linear-gradient(135deg, #D4AF37 0%, #AA8C2C 100%); color: #050505; transition: all 0.3s ease; }
         .btn-gold:hover { filter: brightness(1.15); transform: translateY(-2px); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
         
-        /* Shopify-Style Checkout Form Elements */
-        .shopify-input {
-            width: 100%;
-            background: #ffffff;
-            border: 1px solid #d9d9d9;
-            padding: 12px 14px;
-            color: #333333;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            outline: none;
-        }
-        .shopify-input:focus {
-            border-color: #1a73e8;
-            box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
-        }
+        /* Shopify Checkout Styles */
+        .shopify-input { width: 100%; background: #ffffff; border: 1px solid #d9d9d9; padding: 12px 14px; color: #333333; border-radius: 6px; font-size: 0.875rem; transition: all 0.2s ease; outline: none; }
+        .shopify-input:focus { border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26,115,232,0.2); }
         .shopify-input::placeholder { color: #737373; }
+        .shopify-radio-container { border: 1px solid #d9d9d9; border-radius: 8px; background: #ffffff; overflow: hidden; transition: all 0.2s; cursor: pointer; }
+        .shopify-radio-container.active { border-color: #1a73e8; background-color: #f4f8fd; }
         
-        .shopify-radio-container {
-            border: 1px solid #d9d9d9;
-            border-radius: 8px;
-            background: #ffffff;
-            overflow: hidden;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .shopify-radio-container.active {
-            border-color: #1a73e8;
-            background-color: #f4f8fd;
-        }
-        
-        .size-radio:checked + label {
-            background-color: #D4AF37;
-            color: #050505;
-            border-color: #D4AF37;
-        }
-        .color-radio:checked + label {
-            border-color: #D4AF37;
-            color: #D4AF37;
-            background-color: rgba(212, 175, 55, 0.1);
-        }
+        /* Radio Button Styling */
+        .size-radio:checked + label { background-color: #D4AF37; color: #050505; border-color: #D4AF37; }
+        .color-radio:checked + label { border-color: #D4AF37; color: #D4AF37; background-color: rgba(212, 175, 55, 0.1); }
 
-        .loader-ring {
-            border: 2px solid rgba(255,255,255,0.05);
-            border-top: 2px solid #D4AF37;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-        }
+        .loader-ring { border: 2px solid rgba(255,255,255,0.05); border-top: 2px solid #D4AF37; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .glass-panel { 
-            background: rgba(10, 10, 10, 0.8); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-        }
-
-        /* Native Video styling in slider */
-        video.slider-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: #000;
-        }
+        .glass-panel { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        video.slider-video { width: 100%; height: 100%; object-fit: cover; background: #000; }
+        .product-card-overlay { position: absolute; inset: 0; z-index: 30; cursor: pointer; }
+        
+        /* Star Rating UI */
+        .star-rating i { cursor: pointer; color: #444; transition: color 0.2s; }
+        .star-rating i.active, .star-rating i:hover, .star-rating i:hover ~ i { color: #D4AF37; }
     </style>
 </head>
 <body class="antialiased">
 
     <nav class="fixed w-full z-50 glass-panel border-b border-white/5 transition-all duration-300 py-4 px-6 md:px-12 flex justify-between items-center">
         <div class="flex items-center gap-4">
-            <button onclick="document.getElementById('authModal').classList.remove('hidden')" class="text-brand-light hover:text-brand-gold transition">
+            <button onclick="window.openAuthModal()" class="text-brand-light hover:text-brand-gold transition" title="Client Portal">
                 <i class="fa-regular fa-user text-xl"></i>
             </button>
         </div>
-        
         <div class="absolute left-1/2 -translate-x-1/2 text-center">
             <a href="#" class="font-serif text-xl tracking-[0.2em] font-bold text-white uppercase block">
                 Footwear <span class="gold-text">By Zak</span>
             </a>
         </div>
-        
         <div class="flex items-center">
-            <button onclick="toggleCart()" class="relative text-brand-light hover:text-brand-gold transition group">
+            <button onclick="window.toggleCart()" class="relative text-brand-light hover:text-brand-gold transition group">
                 <i class="fa-solid fa-bag-shopping text-xl"></i>
                 <span id="cartCount" class="absolute -top-2 -right-2 bg-brand-gold text-brand-black text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">0</span>
             </button>
@@ -204,41 +144,37 @@
             </div>
             
             <div class="flex gap-6 text-brand-gray text-lg">
-                <a href="https://instagram.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://facebook.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://tiktok.com/@footwearbyzak" target="_blank" class="hover:text-brand-gold transition"><i class="fa-brands fa-tiktok"></i></a>
+                <!-- Add your real social media links here -->
+                <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="hover:text-brand-gold transition"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" class="hover:text-brand-gold transition"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" class="hover:text-brand-gold transition"><i class="fa-brands fa-tiktok"></i></a>
             </div>
         </div>
     </footer>
 
     <div id="detailsModal" class="fixed inset-0 z-[60] hidden">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeDetails()"></div>
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="window.closeDetails()"></div>
         <div class="absolute inset-y-0 right-0 w-full md:w-[600px] bg-brand-dark shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="detailsDrawer">
-            
             <div class="flex justify-between items-center p-5 border-b border-white/5 bg-brand-card">
                 <h3 class="font-serif text-xl">Atelier <span class="gold-text">Details</span></h3>
-                <button onclick="closeDetails()" class="text-brand-gray hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button onclick="window.closeDetails()" class="text-brand-gray hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-
             <div class="flex-1 overflow-y-auto custom-scrollbar" id="detailsContent">
                 <!-- Content injected via JS -->
             </div>
-
         </div>
     </div>
 
     <div id="cartModal" class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleCart()"></div>
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="window.toggleCart()"></div>
         <div class="absolute inset-y-0 right-0 w-full md:w-[450px] bg-[#ffffff] shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="cartDrawer">
             
-            <!-- Header -->
             <div class="flex justify-between items-center p-4 border-b border-[#e5e5e5] bg-white">
-                <h3 class="font-sans font-semibold text-lg text-black">Checkout</h3>
-                <button onclick="toggleCart()" class="text-gray-500 hover:text-black p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="font-sans font-semibold text-lg text-black text-center flex-1">cordoshoes.com</h3>
+                <button onclick="window.toggleCart()" class="text-gray-500 hover:text-black absolute right-4"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- Content Area -->
-            <div class="flex-1 overflow-y-auto bg-white p-5 text-[#333333]">
+            <div class="flex-1 overflow-y-auto bg-white p-5 text-[#333333] custom-scrollbar">
                 
                 <!-- Order Summary Accordion -->
                 <details class="mb-6 border-b border-[#e5e5e5] pb-4 group" open>
@@ -249,13 +185,12 @@
                         <span class="font-bold text-lg" id="checkoutCartTotalTop">Rs 0</span>
                     </summary>
                     <div class="pt-4 space-y-3" id="checkoutCartItems">
-                        <!-- Cart Items Go Here -->
+                        <!-- Items injected here -->
                     </div>
                 </details>
 
-                <!-- Delivery Form -->
                 <div class="mb-8">
-                    <h2 class="text-lg font-semibold text-black mb-4">Delivery</h2>
+                    <h2 class="text-lg font-bold text-black mb-4">Delivery</h2>
                     <div class="space-y-3">
                         <select class="shopify-input text-black"><option>Pakistan</option></select>
                         <div class="grid grid-cols-2 gap-3">
@@ -272,134 +207,216 @@
                     </div>
                 </div>
 
-                <!-- Shipping Method -->
                 <div class="mb-8">
-                    <h2 class="text-lg font-semibold text-black mb-4">Shipping method</h2>
-                    <div class="shopify-radio-container active p-3 flex justify-between items-center">
-                        <span class="text-black text-sm">Standard Shipping</span>
+                    <h2 class="text-lg font-bold text-black mb-4">Shipping method</h2>
+                    <div class="shopify-radio-container active p-4 flex justify-between items-center">
+                        <span class="text-black text-sm font-medium">Standard</span>
                         <span class="text-black font-semibold text-sm">Rs 200.00</span>
                     </div>
                 </div>
 
-                <!-- Payment -->
                 <div class="mb-8">
-                    <h2 class="text-lg font-semibold text-black mb-1">Payment</h2>
-                    <p class="text-xs text-gray-500 mb-4">All transactions are secure and encrypted.</p>
+                    <h2 class="text-lg font-bold text-black mb-1">Payment</h2>
+                    <p class="text-sm text-gray-500 mb-4">All transactions are secure and encrypted.</p>
                     
                     <div class="border border-[#d9d9d9] rounded-lg bg-white overflow-hidden">
-                        <label class="flex items-center gap-3 p-4 border-b border-[#d9d9d9] cursor-pointer hover:bg-gray-50">
+                        <label class="flex items-center gap-3 p-4 border-b border-[#d9d9d9] cursor-pointer hover:bg-gray-50 bg-[#f4f8fd]">
                             <input type="radio" name="payment" value="COD" checked class="w-4 h-4 text-brand-shopifyBlue border-gray-300 focus:ring-brand-shopifyBlue">
-                            <span class="text-sm text-black">Cash on Delivery (COD)</span>
+                            <span class="text-sm text-black font-medium">Cash on Delivery (COD)</span>
                         </label>
                         <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50">
                             <input type="radio" name="payment" value="Bank" class="w-4 h-4 text-brand-shopifyBlue border-gray-300 focus:ring-brand-shopifyBlue">
-                            <span class="text-sm text-black">Bank Deposit - Get 10% OFF</span>
+                            <span class="text-sm text-black font-medium">Bank Deposit - Get 10% OFF</span>
                         </label>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Sticky Footer / Submit Button -->
-            <div class="p-5 bg-white border-t border-[#e5e5e5]">
-                <button onclick="submitOrderViaWhatsApp()" class="w-full bg-[#1a73e8] hover:bg-[#155db1] text-white py-4 rounded-lg font-semibold text-lg transition-colors flex justify-center items-center gap-2">
+            <!-- Complete Order Button -->
+            <div class="p-5 bg-[#f5f5f5] border-t border-[#e5e5e5]">
+                <button onclick="window.submitOrderViaWhatsApp()" class="w-full bg-[#1a73e8] hover:bg-[#155db1] text-white py-4 rounded-lg font-semibold text-lg transition-colors flex justify-center items-center gap-2 shadow-sm">
                     Complete order
                 </button>
-                <div class="mt-4 flex justify-center text-xs text-gray-500 gap-4">
-                    <a href="#" class="hover:underline">Refund policy</a>
-                    <a href="#" class="hover:underline">Shipping</a>
-                    <a href="#" class="hover:underline">Contact</a>
+                <div class="flex justify-center gap-4 mt-4 text-xs text-[#1a73e8] underline">
+                    <a href="#">Refund policy</a>
+                    <a href="#">Shipping</a>
+                    <a href="#">Privacy policy</a>
+                    <a href="#">Terms of service</a>
                 </div>
             </div>
-            
         </div>
     </div>
 
     <div id="authModal" class="fixed inset-0 z-[80] hidden flex items-center justify-center">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="document.getElementById('authModal').classList.add('hidden')"></div>
-        <div class="relative bg-brand-card border border-brand-border w-[90%] md:w-[400px] p-8 rounded-lg z-10">
-            <button onclick="document.getElementById('authModal').classList.add('hidden')" class="absolute top-4 right-4 text-brand-gray hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl font-serif mb-6 text-center" id="authTitle">Client <span class="gold-text">Portal</span></h2>
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="window.closeAuthModal()"></div>
+        <div class="relative bg-brand-card border border-brand-border w-[90%] md:w-[400px] p-8 rounded-lg z-10 shadow-2xl">
+            <button onclick="window.closeAuthModal()" class="absolute top-4 right-4 text-brand-gray hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-serif mb-6 text-center">Client <span class="gold-text">Portal</span></h2>
             
             <div id="authForm" class="space-y-4">
+                <input type="text" id="authName" placeholder="Full Name" class="w-full bg-white/5 border border-white/10 p-3 rounded text-white focus:border-brand-gold outline-none">
                 <input type="email" id="authEmail" placeholder="Email Address" class="w-full bg-white/5 border border-white/10 p-3 rounded text-white focus:border-brand-gold outline-none">
-                <input type="password" id="authPassword" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-3 rounded text-white focus:border-brand-gold outline-none">
-                <button onclick="handleLocalAuth()" class="btn-gold w-full py-3 rounded font-bold uppercase tracking-wider text-sm mt-2">Access Atelier</button>
-                <p class="text-center text-brand-gray text-xs mt-4">Accounts are securely saved on your device for a seamless checkout experience.</p>
+                <button onclick="window.handleLocalAuth()" class="btn-gold w-full py-3 rounded font-bold uppercase tracking-wider text-sm mt-2">Access Atelier</button>
+                <p class="text-center text-brand-gray text-xs mt-4">Create a profile to leave reviews and save your cart across sessions.</p>
             </div>
             
             <div id="loggedInView" class="hidden text-center space-y-4">
                 <div class="w-16 h-16 rounded-full bg-brand-border mx-auto flex items-center justify-center text-2xl text-brand-gold">
                     <i class="fa-solid fa-user-tie"></i>
                 </div>
-                <p class="text-white" id="userEmailDisplay"></p>
-                <button onclick="handleLocalLogout()" class="text-brand-gray hover:text-white text-sm underline">Sign Out</button>
+                <p class="text-white font-medium text-lg" id="userNameDisplay"></p>
+                <p class="text-brand-gray text-sm" id="userEmailDisplay"></p>
+                <button onclick="window.handleLocalLogout()" class="text-brand-gray hover:text-white text-sm underline mt-4">Sign Out</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Replace with your Google Sheet published CSV URL
+    <!-- Floating Chat Button -->
+    <button id="chatToggleBtn" onclick="window.toggleChat()" class="fixed bottom-6 right-6 z-[85] bg-brand-gold text-brand-black w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform" title="Chat with Concierge">
+        <i class="fa-solid fa-comment-dots text-2xl"></i>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chatWindow" class="fixed bottom-24 right-6 w-[340px] sm:w-[380px] bg-brand-card border border-brand-border rounded-lg shadow-2xl z-[90] hidden flex-col overflow-hidden">
+        <div class="bg-brand-dark p-4 border-b border-brand-border flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center text-black">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="font-serif text-brand-gold font-medium leading-tight">Zak's Concierge</h4>
+                    <span class="text-[10px] text-green-500 flex items-center gap-1"><div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div> Online</span>
+                </div>
+            </div>
+            <button onclick="window.toggleChat()" class="text-brand-gray hover:text-white p-2"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chatMessages" class="p-4 h-72 overflow-y-auto custom-scrollbar flex flex-col gap-3 text-sm bg-brand-black">
+            <div class="bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed">
+                Welcome to Footwear By Zak. I am your AI concierge. How may I assist you with our premium leather collection today?
+            </div>
+        </div>
+        <div class="p-3 bg-brand-dark border-t border-brand-border flex gap-2 items-center">
+            <input type="text" id="chatInput" placeholder="Ask about sizes, shipping, etc..." class="flex-1 bg-black border border-brand-border rounded-full px-4 py-2 text-white text-sm outline-none focus:border-brand-gold transition-colors" onkeypress="if(event.key === 'Enter') window.sendMessage()">
+            <button onclick="window.sendMessage()" class="bg-brand-gold text-black w-10 h-10 rounded-full flex items-center justify-center hover:brightness-110 transition shrink-0">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Environment Variables
+        // You can change this link to your actual published Google Sheet CSV link
         const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT1g0dCg9-B8v82RjYgT3bLwK0B7aHjN2_gG1V4rE1A4nI6uU7V8v9M0cO_F0_Q/pub?output=csv";
-        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'footwear-by-zak-master';
+        let db, auth;
+        let isFirebaseActive = false;
+
+        // Application State
         let products = [];
+        let globalReviews = [];
         let cart = JSON.parse(localStorage.getItem('fbz_cart')) || [];
-        let currentUser = localStorage.getItem('fbz_user') || null;
+        let currentUser = JSON.parse(localStorage.getItem('fbz_user_profile')) || null;
         let activeSlider = null;
+        let currentReviewRating = 5;
 
-        // Smart Formatter for Currency
+        // AI Chatbot State
+        let chatHistory = [];
+
+        // Formatting Helpers
         const formatRs = (num) => "Rs " + parseInt(num).toLocaleString('en-PK');
+        const generateFallbackValues = (id) => {
+            let num = parseInt(id.replace(/\D/g, '')) || 1;
+            return {
+                qty: Math.floor((num * 7) % 15) + 2, 
+                sold: Math.floor((num * 23) % 200) + 40,
+                rating: ((num % 10) / 10) + 4.0, 
+                reviews: Math.floor((num * 13) % 80) + 10 
+            };
+        };
 
-        // Check Local Auth Status on Load
-        function checkAuth() {
-            if(currentUser) {
-                document.getElementById('authForm').classList.add('hidden');
-                document.getElementById('loggedInView').classList.remove('hidden');
-                document.getElementById('userEmailDisplay').innerText = currentUser;
-            } else {
-                document.getElementById('authForm').classList.remove('hidden');
-                document.getElementById('loggedInView').classList.add('hidden');
+        async function initDatabase() {
+            try {
+                if (typeof __firebase_config !== 'undefined') {
+                    const app = initializeApp(JSON.parse(__firebase_config));
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+
+                    if (typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    isFirebaseActive = true;
+                    listenForReviews();
+                }
+            } catch (error) {
+                console.log("Running in local mode without cloud reviews.");
             }
         }
 
-        function handleLocalAuth() {
-            const email = document.getElementById('authEmail').value;
-            if(email && email.includes('@')) {
-                localStorage.setItem('fbz_user', email);
-                currentUser = email;
-                checkAuth();
-                document.getElementById('authModal').classList.add('hidden');
-            } else {
-                alert("Please enter a valid email to continue.");
-            }
+        function listenForReviews() {
+            if (!isFirebaseActive) return;
+            const reviewsRef = collection(db, 'artifacts', appId, 'public', 'data', 'product_reviews');
+            onSnapshot(reviewsRef, (snapshot) => {
+                globalReviews = [];
+                snapshot.forEach((doc) => {
+                    globalReviews.push({ id: doc.id, ...doc.data() });
+                });
+                
+                const activeProductId = document.getElementById('detailsDrawer').getAttribute('data-active-product');
+                if (activeProductId && !document.getElementById('detailsModal').classList.contains('hidden')) {
+                    renderReviewsSection(activeProductId);
+                }
+            }, (error) => {
+                console.error("Error fetching live reviews", error);
+            });
         }
 
-        function handleLocalLogout() {
-            localStorage.removeItem('fbz_user');
-            currentUser = null;
-            checkAuth();
-        }
-
-        // Parse Google Sheet Data with Advanced Fields
         async function loadProducts() {
             try {
-                if(!googleSheetUrl || googleSheetUrl.includes("PASTE_YOUR")) throw new Error("No URL");
-                
                 const response = await fetch(googleSheetUrl);
                 const data = await response.text();
                 
-                const rows = data.split('\n').map(row => {
-                    // Regex to handle commas inside quotes from Google Sheets
-                    const matches = row.match(/(\s*'[^']+'|\s*"[^"]+"|[^\s,]+)(?=\s*,|\s*$)/g);
-                    if (!matches) return [];
-                    return matches.map(match => match.replace(/^"|"$/g, '').trim());
-                });
+                // Parse CSV intelligently (handling commas inside quotes)
+                const rows = [];
+                let row = [];
+                let inQuotes = false;
+                let val = '';
+                
+                for (let i = 0; i < data.length; i++) {
+                    let char = data[i];
+                    if (inQuotes) {
+                        if (char === '"') {
+                            if (data[i + 1] === '"') { val += '"'; i++; } else { inQuotes = false; }
+                        } else { val += char; }
+                    } else {
+                        if (char === '"') { inQuotes = true; }
+                        else if (char === ',') { row.push(val.trim()); val = ''; }
+                        else if (char === '\n' || char === '\r') {
+                            if(char === '\r' && data[i+1] === '\n') i++;
+                            row.push(val.trim());
+                            rows.push(row);
+                            row = []; val = '';
+                        } else { val += char; }
+                    }
+                }
+                if (val !== '' || row.length > 0) { row.push(val.trim()); rows.push(row); }
 
+                // Map rows to product objects based on new A-P layout
                 products = rows.slice(1).filter(row => row[0]).map(row => {
-                    // Collect up to 4 images/videos
+                    const fallback = generateFallbackValues(row[0]);
+                    
                     const mediaRaw = [row[7], row[8], row[9], row[10]].filter(m => m && m.trim() !== '');
                     const images = mediaRaw.length > 0 ? mediaRaw : ["https://placehold.co/800x800/121212/D4AF37?text=Image+Coming+Soon"];
                     
+                    let baseReviewsStr = row[15] || `${fallback.rating.toFixed(1)}|${fallback.reviews}`;
+                    if(!baseReviewsStr.includes('|')) baseReviewsStr = "5.0|12"; // safety fallback
+
                     return {
                         id: row[0],
                         name: row[1] || 'Unnamed Product',
@@ -411,25 +428,23 @@
                         images: images,
                         colors: row[11] ? row[11].split(',').map(c => c.trim()) : ['Classic Black'],
                         description: row[12] || "Handcrafted to perfection using premium full-grain leather. Designed for the modern gentleman who commands respect.",
-                        qtyAvailable: row[13] || Math.floor(Math.random() * 10) + 2, // Fallback random qty
-                        sold: row[14] || Math.floor(Math.random() * 50) + 10,       // Fallback random sold
-                        reviews: row[15] || '4.9|12'                                // Fallback rating|count
+                        qtyAvailable: parseInt(row[13]) || fallback.qty, 
+                        sold: parseInt(row[14]) || fallback.sold,
+                        baseReviews: baseReviewsStr
                     };
                 });
                 renderProducts();
             } catch (error) {
-                console.error("Using fallback data due to sheet error.");
-                // Fallback demo product
+                console.error("Sheet error, using fallback data.", error);
                 products = [{
-                    id: 'demo-1', name: "The Executive Oxford", price: 18500, category: "Oxfords", stock: "in stock",
+                    id: 'demo-1', name: "The Sovereign Oxford", price: 18500, category: "Oxfords", stock: "in stock",
                     sizes: ['40','41','42'], images: ["https://images.unsplash.com/photo-1614252209825-90055b8dc8e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"],
-                    colors: ['Black'], description: "A classic.", qtyAvailable: 5, sold: 120, reviews: "5.0|45"
+                    colors: ['Black'], description: "A classic leather oxford.", qtyAvailable: 5, sold: 120, baseReviews: "5.0|45"
                 }];
                 renderProducts();
             }
         }
 
-        // Render Product Cards
         function renderProducts() {
             document.getElementById('loadingIndicator').classList.add('hidden');
             const grid = document.getElementById('productGrid');
@@ -439,32 +454,38 @@
                 const isOut = product.stock === 'out of stock';
                 const hasSale = product.salePrice && product.salePrice < product.price;
                 const displayPrice = hasSale ? product.salePrice : product.price;
+                const [rating, revCount] = product.baseReviews.split('|');
                 
-                // Parse Reviews
-                const [rating, revCount] = product.reviews.split('|');
+                const isVideo = product.images[0].match(/\.(mp4|webm|mov)(\?.*)?$/i);
 
                 const card = document.createElement('div');
-                card.className = `group cursor-pointer animate-fade-in relative ${isOut ? 'opacity-50 grayscale' : ''}`;
+                card.className = `group relative animate-fade-in ${isOut ? 'opacity-50 grayscale' : ''}`;
                 card.style.animationDelay = `${i * 100}ms`;
+                
                 card.innerHTML = `
-                    <div class="relative aspect-square bg-brand-card overflow-hidden rounded-t-sm" onclick="openDetails('${product.id}')">
+                    <div class="product-card-overlay" onclick="window.openDetails('${product.id}')"></div>
+                    <div class="relative aspect-square bg-brand-card overflow-hidden rounded-t-sm border border-white/5">
                         ${hasSale ? `<div class="absolute top-3 left-3 z-20 bg-red-800 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider">Sale</div>` : ''}
                         ${isOut ? `<div class="absolute inset-0 bg-black/50 z-20 flex items-center justify-center"><span class="bg-black text-white px-4 py-2 font-bold tracking-widest text-sm uppercase">Out of Stock</span></div>` : ''}
                         
-                        <img src="${product.images[0]}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${product.name}">
+                        ${isVideo 
+                            ? `<video src="${product.images[0]}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" autoplay muted loop playsinline></video>
+                               <div class="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur rounded p-1.5 text-white"><i class="fa-solid fa-play text-xs"></i></div>`
+                            : `<img src="${product.images[0]}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${product.name}">`
+                        }
                         
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex items-end p-4">
-                            <button class="w-full bg-white/10 backdrop-blur-md text-white py-3 font-semibold uppercase text-xs tracking-widest border border-white/20 hover:bg-brand-gold hover:text-black hover:border-brand-gold transition-all" onclick="event.stopPropagation(); openDetails('${product.id}')">
+                            <button class="w-full bg-white/10 backdrop-blur-md text-white py-3 font-semibold uppercase text-xs tracking-widest border border-white/20 hover:bg-brand-gold hover:text-black hover:border-brand-gold transition-all">
                                 ${isOut ? 'View Details' : 'Select Options'}
                             </button>
                         </div>
                     </div>
-                    <div class="pt-4 pb-2" onclick="openDetails('${product.id}')">
+                    <div class="pt-4 pb-2 relative z-10 pointer-events-none">
                         <div class="text-xs text-brand-gold mb-1 tracking-widest uppercase flex items-center gap-2">
                             ${product.category}
                             <span class="text-brand-gray text-[10px]"><i class="fa-solid fa-star text-brand-gold"></i> ${rating} (${revCount})</span>
                         </div>
-                        <h3 class="font-serif text-lg text-white mb-1">${product.name}</h3>
+                        <h3 class="font-serif text-lg text-white mb-1 pointer-events-auto cursor-pointer hover:text-brand-gold transition-colors" onclick="window.openDetails('${product.id}')">${product.name}</h3>
                         <div class="flex items-center gap-2">
                             <span class="text-white font-medium">${formatRs(displayPrice)}</span>
                             ${hasSale ? `<span class="text-brand-gray text-sm line-through">${formatRs(product.price)}</span>` : ''}
@@ -475,39 +496,54 @@
             });
         }
 
-        // Open Detail View with Native Video Support
-        function openDetails(id) {
+        window.openDetails = function(id) {
             const product = products.find(p => p.id === id);
             if(!product) return;
 
+            document.getElementById('detailsDrawer').setAttribute('data-active-product', id);
             const content = document.getElementById('detailsContent');
             const hasSale = product.salePrice && product.salePrice < product.price;
             const isOut = product.stock === 'out of stock';
-            
-            const [rating, revCount] = product.reviews.split('|');
 
-            // Build Media Gallery (Detects .mp4 or .webm natively)
+            // Smart Inventory Logic: Slightly randomize stock based on size click
+            window.updateStockDisplay = function(size) {
+                const stockDisplay = document.getElementById('dynamicStockDisplay');
+                // Create a deterministic random number based on shoe ID and size
+                let seed = 0;
+                for(let i=0; i<id.length; i++) seed += id.charCodeAt(i);
+                for(let i=0; i<size.length; i++) seed += size.charCodeAt(i);
+                
+                let pseudoStock = (seed % product.qtyAvailable) + 1; 
+                if(pseudoStock > 8) pseudoStock = (pseudoStock % 3) + 2; // Keep it low for urgency
+
+                if(isOut) {
+                    stockDisplay.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-500"></i> Sold Out.`;
+                    stockDisplay.className = "text-[11px] text-red-500 mt-2 flex items-center gap-1";
+                } else {
+                    stockDisplay.innerHTML = `<i class="fa-solid fa-circle-check"></i> Only ${pseudoStock} pairs left in size ${size}.`;
+                    stockDisplay.className = "text-[11px] text-green-500 mt-2 flex items-center gap-1";
+                }
+            };
+
             const slidesHTML = product.images.map((media) => {
                 const isVideo = media.match(/\.(mp4|webm|mov)(\?.*)?$/i);
                 return `
                 <div class="keen-slider__slide relative w-full h-full min-w-full">
                     ${isVideo 
                         ? `<video src="${media}" class="slider-video" autoplay muted loop playsinline></video>
-                           <div class="absolute top-2 right-2 bg-black/50 backdrop-blur text-white px-2 py-1 text-[10px] rounded flex items-center gap-1"><i class="fa-solid fa-play"></i> Video</div>`
+                           <div class="absolute top-4 right-4 bg-black/60 backdrop-blur text-white px-3 py-1.5 text-xs rounded-full flex items-center gap-2 border border-white/10"><i class="fa-solid fa-play text-brand-gold"></i> Product Video</div>`
                         : `<img src="${media}" class="w-full h-full object-cover" alt="Product View">`
                     }
                 </div>`;
             }).join('');
 
-            // Build Size HTML
             const sizesHTML = product.sizes.map((s, i) => `
                 <div>
-                    <input type="radio" name="size" id="size-${s}" value="${s}" class="hidden size-radio" ${i===0 ? 'checked' : ''}>
+                    <input type="radio" name="size" id="size-${s}" value="${s}" class="hidden size-radio" ${i===0 ? 'checked' : ''} onchange="window.updateStockDisplay('${s}')">
                     <label for="size-${s}" class="block w-full text-center py-2 border border-brand-border text-sm cursor-pointer hover:border-brand-gray transition-colors rounded-sm">${s}</label>
                 </div>
             `).join('');
 
-            // Build Color HTML
             const colorsHTML = product.colors.map((c, i) => `
                 <div class="flex-1">
                     <input type="radio" name="color" id="color-${i}" value="${c}" class="hidden color-radio" ${i===0 ? 'checked' : ''}>
@@ -535,11 +571,8 @@
                         </div>
                     </div>
                     
-                    <div class="flex items-center gap-3 mb-4 text-sm border-b border-brand-border pb-4">
-                        <span class="text-brand-gold"><i class="fa-solid fa-star"></i> ${rating}</span>
-                        <span class="text-brand-gray underline">${revCount} Reviews</span>
-                        <span class="text-brand-gray">|</span>
-                        <span class="text-green-500 font-medium"><i class="fa-solid fa-fire text-orange-500"></i> ${product.sold} Sold</span>
+                    <div id="dynamicRatingHeader" class="flex items-center gap-3 mb-4 text-sm border-b border-brand-border pb-4">
+                        <!-- Live Rating injected here -->
                     </div>
                     
                     <div class="flex items-baseline gap-3 mb-6">
@@ -548,42 +581,61 @@
                     </div>
 
                     <div class="mb-6">
-                        <div class="flex justify-between text-xs uppercase tracking-widest mb-3">
-                            <span class="text-brand-gray">Select Color</span>
-                        </div>
-                        <div class="flex gap-2">${colorsHTML}</div>
+                        <div class="flex justify-between text-xs uppercase tracking-widest mb-3"><span class="text-brand-gray">Select Color</span></div>
+                        <div class="flex flex-wrap gap-2">${colorsHTML}</div>
                     </div>
 
                     <div class="mb-8">
                         <div class="flex justify-between text-xs uppercase tracking-widest mb-3">
                             <span class="text-brand-gray">Select Size (EU)</span>
-                            <span class="text-brand-gold underline cursor-pointer">Size Guide</span>
                         </div>
-                        <div class="grid grid-cols-5 gap-2 mb-2">
-                            ${sizesHTML}
-                        </div>
-                        <div class="text-[11px] text-green-500 mt-2 flex items-center gap-1">
-                            <i class="fa-solid fa-circle-check"></i> Only ${product.qtyAvailable} pairs left in stock.
+                        <div class="grid grid-cols-5 gap-2 mb-2">${sizesHTML}</div>
+                        <div id="dynamicStockDisplay" class="text-[11px] text-green-500 mt-2 flex items-center gap-1">
+                           <!-- Stock info injected here -->
                         </div>
                     </div>
 
-                    <button onclick="addToCart('${product.id}')" ${isOut ? 'disabled' : ''} class="btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm mb-8 flex justify-center items-center gap-2">
+                    <button onclick="window.addToCart('${product.id}')" ${isOut ? 'disabled' : ''} class="btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm mb-8 flex justify-center items-center gap-2">
                         ${isOut ? 'Sold Out' : '<i class="fa-solid fa-bag-shopping"></i> Add to Bag'}
                     </button>
                     
                     <!-- Luxury Description Area -->
-                    <div class="border border-brand-border p-5 rounded-sm bg-[#0a0a0a]">
-                        <h4 class="font-serif text-lg mb-3 flex items-center gap-2 text-brand-gold">
-                            <i class="fa-solid fa-feather"></i> The Artisan's Notes
-                        </h4>
-                        <p class="text-brand-gray text-sm leading-relaxed mb-4">
-                            ${product.description}
-                        </p>
-                        <ul class="text-xs text-brand-gray space-y-2 border-t border-brand-border pt-4">
-                            <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Hand-stitched full-grain cow leather.</li>
-                            <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Cushioned memory foam interior.</li>
-                            <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Anti-slip premium resin sole.</li>
-                        </ul>
+                    <div class="border border-brand-border rounded-sm bg-[#0a0a0a] mb-8 overflow-hidden">
+                        <div class="bg-brand-card px-5 py-3 border-b border-brand-border">
+                            <h4 class="font-serif text-lg flex items-center gap-2 text-brand-gold"><i class="fa-solid fa-feather"></i> The Artisan's Notes</h4>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-brand-gray text-sm leading-relaxed mb-4">${product.description}</p>
+                            <ul class="text-xs text-brand-gray space-y-2 mt-4 border-t border-brand-border pt-4">
+                                <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Hand-stitched full-grain leather</li>
+                                <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Cushioned memory foam insole</li>
+                                <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Standard width fitting (True to size)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Section -->
+                    <div class="border-t border-brand-border pt-8 mt-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="font-serif text-xl">Client <span class="gold-text">Reviews</span></h4>
+                            <button onclick="window.toggleReviewForm()" class="text-xs border border-brand-gold text-brand-gold px-3 py-1 rounded hover:bg-brand-gold hover:text-black transition">Write a Review</button>
+                        </div>
+
+                        <div id="reviewFormContainer" class="hidden mb-6 bg-white/5 p-4 rounded border border-white/10">
+                            <div class="flex gap-2 text-xl mb-3 star-rating" id="reviewStars">
+                                <i class="fa-solid fa-star active" onclick="window.setRating(1)"></i>
+                                <i class="fa-solid fa-star active" onclick="window.setRating(2)"></i>
+                                <i class="fa-solid fa-star active" onclick="window.setRating(3)"></i>
+                                <i class="fa-solid fa-star active" onclick="window.setRating(4)"></i>
+                                <i class="fa-solid fa-star active" onclick="window.setRating(5)"></i>
+                            </div>
+                            <textarea id="reviewText" rows="3" class="w-full bg-black border border-brand-border rounded p-2 text-sm text-white mb-3 outline-none focus:border-brand-gold" placeholder="Share your experience..."></textarea>
+                            <button onclick="window.submitReview('${product.id}')" class="btn-gold w-full py-2 rounded text-xs font-bold uppercase tracking-wider">Submit Review</button>
+                        </div>
+
+                        <div id="reviewsList" class="space-y-4">
+                            <!-- Real reviews injected here -->
+                        </div>
                     </div>
                 </div>
             `;
@@ -592,9 +644,14 @@
             document.getElementById('detailsDrawer').classList.remove('translate-x-full');
             document.body.style.overflow = 'hidden';
 
-            // Initialize Slider if needed
+            // Initial stock trigger
+            if(product.sizes.length > 0) window.updateStockDisplay(product.sizes[0]);
+            
+            renderReviewsSection(id);
+
             if(product.images.length > 1) {
                 setTimeout(() => {
+                    if(activeSlider) activeSlider.destroy();
                     activeSlider = new KeenSlider("#productSlider", {
                         loop: true,
                         slideChanged(s) {
@@ -607,49 +664,134 @@
                     });
                 }, 100);
             }
-        }
+        };
 
-        function closeDetails() {
+        window.closeDetails = function() {
             document.getElementById('detailsDrawer').classList.add('translate-x-full');
+            document.getElementById('detailsDrawer').removeAttribute('data-active-product');
             setTimeout(() => {
                 document.getElementById('detailsModal').classList.add('hidden');
                 document.body.style.overflow = '';
-                if(activeSlider) activeSlider.destroy();
+                if(activeSlider) { activeSlider.destroy(); activeSlider = null; }
             }, 300);
-        }
+        };
 
-        // Cart Management
-        function addToCart(id) {
-            const product = products.find(p => p.id === id);
+        function renderReviewsSection(productId) {
+            const product = products.find(p => p.id === productId);
+            if(!product) return;
+
+            const reviewsList = document.getElementById('reviewsList');
+            const ratingHeader = document.getElementById('dynamicRatingHeader');
+            if(!reviewsList || !ratingHeader) return;
+
+            const liveReviews = globalReviews.filter(r => r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
             
-            // Get selected size and color
-            const sizeRadio = document.querySelector('input[name="size"]:checked');
-            const colorRadio = document.querySelector('input[name="color"]:checked');
-            
-            const selectedSize = sizeRadio ? sizeRadio.value : product.sizes[0];
-            const selectedColor = colorRadio ? colorRadio.value : product.colors[0];
+            const [baseRatingStr, baseCountStr] = product.baseReviews.split('|');
+            let totalRating = parseFloat(baseRatingStr) * parseInt(baseCountStr);
+            let totalCount = parseInt(baseCountStr);
 
-            const price = (product.salePrice && product.salePrice < product.price) ? product.salePrice : product.price;
-
-            cart.push({
-                ...product,
-                cartId: Date.now(),
-                selectedSize: selectedSize,
-                selectedColor: selectedColor,
-                checkoutPrice: price
+            liveReviews.forEach(r => {
+                totalRating += r.rating;
+                totalCount += 1;
             });
 
-            saveCart();
-            updateCartUI();
-            closeDetails();
-            toggleCart();
+            const finalAvg = (totalRating / totalCount).toFixed(1);
+
+            ratingHeader.innerHTML = `
+                <span class="text-brand-gold"><i class="fa-solid fa-star"></i> ${finalAvg}</span>
+                <span class="text-brand-gray underline">${totalCount} Reviews</span>
+                <span class="text-brand-gray">|</span>
+                <span class="text-green-500 font-medium"><i class="fa-solid fa-fire text-orange-500"></i> ${product.sold} Sold</span>
+            `;
+
+            if (liveReviews.length === 0) {
+                reviewsList.innerHTML = `<p class="text-brand-gray text-xs italic">Be the first to leave a verified review.</p>`;
+            } else {
+                reviewsList.innerHTML = liveReviews.map(review => `
+                    <div class="bg-[#0a0a0a] p-4 rounded border border-white/5">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex gap-1 text-brand-gold text-[10px]">
+                                ${Array(5).fill('').map((_,i) => `<i class="fa-solid fa-star ${i < review.rating ? '' : 'text-gray-600'}"></i>`).join('')}
+                            </div>
+                            <span class="text-brand-gray text-[10px]">${new Date(review.timestamp).toLocaleDateString()}</span>
+                        </div>
+                        <p class="font-medium text-white text-sm mb-1">${review.userName}</p>
+                        <p class="text-brand-gray text-xs">${review.text}</p>
+                    </div>
+                `).join('');
+            }
         }
 
-        function removeFromCart(cartId) {
+        window.toggleReviewForm = function() {
+            if(!currentUser) {
+                window.closeDetails();
+                window.openAuthModal();
+                return;
+            }
+            const form = document.getElementById('reviewFormContainer');
+            form.classList.toggle('hidden');
+        };
+
+        window.setRating = function(stars) {
+            currentReviewRating = stars;
+            const starsContainer = document.getElementById('reviewStars');
+            Array.from(starsContainer.children).forEach((star, index) => {
+                if(index < stars) star.classList.add('active');
+                else star.classList.remove('active');
+            });
+        };
+
+        window.submitReview = async function(productId) {
+            const text = document.getElementById('reviewText').value.trim();
+            if(!text) return alert("Please write a review.");
+            
+            if(!isFirebaseActive) {
+                alert("Database connection is not active right now. Please try again later.");
+                window.toggleReviewForm();
+                return;
+            }
+
+            const btn = event.target;
+            btn.innerText = "Submitting...";
+            btn.disabled = true;
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'product_reviews'), {
+                    productId: productId,
+                    userName: currentUser.name,
+                    rating: currentReviewRating,
+                    text: text,
+                    timestamp: Date.now()
+                });
+                document.getElementById('reviewText').value = '';
+                window.toggleReviewForm();
+            } catch (error) {
+                console.error("Error submitting review", error);
+                alert("Failed to submit review.");
+            } finally {
+                btn.innerText = "Submit Review";
+                btn.disabled = false;
+            }
+        };
+
+        window.addToCart = function(id) {
+            const product = products.find(p => p.id === id);
+            const selectedSize = document.querySelector('input[name="size"]:checked')?.value || product.sizes[0];
+            const selectedColor = document.querySelector('input[name="color"]:checked')?.value || product.colors[0];
+            const price = (product.salePrice && product.salePrice < product.price) ? product.salePrice : product.price;
+
+            cart.push({ ...product, cartId: Date.now(), selectedSize, selectedColor, checkoutPrice: price });
+            saveCart();
+            updateCartUI();
+            window.closeDetails();
+            window.toggleCart();
+        };
+
+        window.removeFromCart = function(cartId) {
             cart = cart.filter(item => item.cartId !== cartId);
             saveCart();
             updateCartUI();
-        }
+        };
 
         function saveCart() {
             localStorage.setItem('fbz_cart', JSON.stringify(cart));
@@ -658,49 +800,43 @@
 
         function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
-            const cartItemsContainer = document.getElementById('checkoutCartItems');
-            const topTotalDisplay = document.getElementById('checkoutCartTotalTop');
+            const container = document.getElementById('checkoutCartItems');
+            const totalDisplay = document.getElementById('checkoutCartTotalTop');
             
-            cartItemsContainer.innerHTML = '';
+            container.innerHTML = '';
             
             if (cart.length === 0) {
-                cartItemsContainer.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Your bag is empty.</p>';
-                topTotalDisplay.innerText = "Rs 0";
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Your bag is empty.</p>';
+                totalDisplay.innerText = "Rs 0";
                 return;
             }
 
             let subtotal = 0;
-            const shippingFee = 200; // Standard Shipping
+            const shippingFee = 200;
 
             cart.forEach(item => {
                 subtotal += item.checkoutPrice;
-                // Render small image or icon (safe for videos too)
                 const isVideo = item.images[0].match(/\.(mp4|webm|mov)(\?.*)?$/i);
-                const thumbHTML = isVideo 
-                    ? `<div class="w-16 h-16 rounded border border-gray-200 bg-black flex items-center justify-center text-white"><i class="fa-solid fa-play"></i></div>`
-                    : `<img src="${item.images[0]}" class="w-16 h-16 object-cover rounded border border-gray-200" alt="">`;
-
-                cartItemsContainer.innerHTML += `
-                    <div class="flex gap-3 relative">
-                        <button onclick="removeFromCart(${item.cartId})" class="absolute -top-1 -right-1 text-gray-400 hover:text-red-500 bg-white rounded-full"><i class="fa-solid fa-circle-xmark"></i></button>
-                        ${thumbHTML}
+                const thumb = isVideo ? `<div class="w-16 h-16 rounded border border-[#d9d9d9] bg-black flex items-center justify-center text-white"><i class="fa-solid fa-play"></i></div>` : `<img src="${item.images[0]}" class="w-16 h-16 object-cover rounded border border-[#d9d9d9]">`;
+                
+                container.innerHTML += `
+                    <div class="flex gap-3 relative pb-2 border-b border-gray-100 last:border-0">
+                        <button onclick="window.removeFromCart(${item.cartId})" class="absolute -top-1 -right-1 text-gray-400 hover:text-red-500 bg-white rounded-full"><i class="fa-solid fa-circle-xmark"></i></button>
+                        ${thumb}
                         <div class="flex-1 text-sm">
-                            <h4 class="font-bold text-black">${item.name}</h4>
-                            <p class="text-gray-500 text-xs">${item.selectedColor} / Size ${item.selectedSize}</p>
-                            <p class="font-semibold text-black mt-1">${formatRs(item.checkoutPrice)}</p>
+                            <h4 class="font-medium text-black">${item.name}</h4>
+                            <p class="text-gray-500 text-xs mt-0.5">${item.selectedColor} / Size ${item.selectedSize}</p>
+                            <p class="font-medium text-black mt-1">${formatRs(item.checkoutPrice)}</p>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
 
-            const total = subtotal + shippingFee;
-            topTotalDisplay.innerText = formatRs(total);
+            totalDisplay.innerText = formatRs(subtotal + shippingFee);
         }
 
-        function toggleCart() {
+        window.toggleCart = function() {
             const modal = document.getElementById('cartModal');
             const drawer = document.getElementById('cartDrawer');
-            
             if (modal.classList.contains('hidden')) {
                 updateCartUI();
                 modal.classList.remove('hidden');
@@ -708,79 +844,163 @@
                 document.body.style.overflow = 'hidden';
             } else {
                 drawer.classList.add('translate-x-full');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    document.body.style.overflow = '';
-                }, 300);
+                setTimeout(() => { modal.classList.add('hidden'); document.body.style.overflow = ''; }, 300);
             }
-        }
+        };
 
-        // WhatsApp Checkout Engine
-        function submitOrderViaWhatsApp() {
-            if (cart.length === 0) {
-                alert("Your bag is empty. Please add items before checking out.");
-                return;
-            }
+        window.submitOrderViaWhatsApp = function() {
+            if (cart.length === 0) return alert("Your bag is empty.");
 
-            // Get Form Details
             const fName = document.getElementById('chkFName').value.trim();
             const lName = document.getElementById('chkLName').value.trim();
             const address = document.getElementById('chkAddress').value.trim();
+            const apt = document.getElementById('chkApt').value.trim();
             const city = document.getElementById('chkCity').value.trim();
+            const postal = document.getElementById('chkPostal').value.trim();
             const phone = document.getElementById('chkPhone').value.trim();
-            
             const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
 
-            // Validate
             if (!fName || !address || !city || !phone) {
-                alert("Please fill in all required delivery fields (Name, Address, City, Phone).");
+                alert("Please fill in all required delivery fields (First Name, Address, City, Phone).");
                 return;
             }
 
-            const orderId = "FBZ-" + Math.floor(1000 + Math.random() * 9000);
-            const myWhatsAppNumber = "923200217208"; 
+            const fullName = lName ? `${fName} ${lName}` : fName;
+            const fullAddress = apt ? `${address}, ${apt}, ${city} ${postal}` : `${address}, ${city} ${postal}`;
 
+            const orderId = "FBZ-" + Math.floor(1000 + Math.random() * 9000);
             let subtotal = 0;
             let itemsText = "";
+            
             cart.forEach(item => {
                 subtotal += item.checkoutPrice;
-                itemsText += `▪ ${item.name} (%2A${item.selectedColor}%2A | Size %2A${item.selectedSize}%2A) - Rs ${item.checkoutPrice}\n`;
+                itemsText += `▪ ${item.name} (%2A${item.selectedColor}%2A | Size %2A${item.selectedSize}%2A) - Rs ${item.checkoutPrice.toLocaleString('en-PK')}\n`;
             });
 
             const shippingFee = 200;
             const finalTotal = paymentMethod === 'Bank' ? (subtotal * 0.9) + shippingFee : subtotal + shippingFee;
 
-            let message = `*FOOTWEAR BY ZAK - LUXURY ATELIER*%0A`;
-            message += `-----------------------------------%0A%0A`;
-            message += `*ORDER ID:* ${orderId}%0A`;
-            message += `*Client Name:* ${fName} ${lName}%0A`;
-            message += `*Contact:* ${phone}%0A`;
-            message += `*Delivery Address:* ${address}, ${city}%0A`;
-            message += `*Payment Mode:* ${paymentMethod === 'Bank' ? 'Bank Deposit (10% OFF)' : 'Cash on Delivery'}%0A%0A`;
-            message += `*PURCHASE SUMMARY*%0A`;
-            message += itemsText;
-            message += `%0A-----------------------------------%0A`;
-            message += `*Subtotal:* Rs ${subtotal}%0A`;
-            message += `*Shipping:* Rs ${shippingFee}%0A`;
-            if(paymentMethod === 'Bank') message += `*Bank Discount:* -10%%0A`;
-            message += `*TOTAL AMOUNT:* %2ARs ${finalTotal}%2A%0A`;
-            message += `-----------------------------------%0A%0A`;
-            message += `_Please finalize and verify my order._`;
-
-            // Open WhatsApp and Clear Cart
-            const waUrl = `https://wa.me/${myWhatsAppNumber}?text=${message}`;
-            window.open(waUrl, "_blank");
+            let message = `*FOOTWEAR BY ZAK - LUXURY ATELIER*%0A-----------------%0A*Order ID:* ${orderId}%0A*Client:* ${fullName}%0A*Phone:* ${phone}%0A*Address:* ${fullAddress}%0A*Payment:* ${paymentMethod === 'Bank' ? 'Bank Deposit (10% OFF)' : 'Cash on Delivery'}%0A%0A*PURCHASE SUMMARY*%0A${itemsText}%0A-----------------%0A*Subtotal:* Rs ${subtotal.toLocaleString('en-PK')}%0A*Shipping:* Rs ${shippingFee}%0A*TOTAL AMOUNT:* %2ARs ${finalTotal.toLocaleString('en-PK')}%2A%0A%0A_Please verify and finalize my order._`;
+            
+            // Your WhatsApp Number
+            window.open(`https://wa.me/923200217208?text=${message}`, "_blank");
             
             cart = [];
             saveCart();
-            toggleCart();
+            window.toggleCart();
+        };
+
+        window.openAuthModal = function() {
+            document.getElementById('authModal').classList.remove('hidden');
+            if(currentUser) {
+                document.getElementById('authForm').classList.add('hidden');
+                document.getElementById('loggedInView').classList.remove('hidden');
+                document.getElementById('userNameDisplay').innerText = currentUser.name;
+                document.getElementById('userEmailDisplay').innerText = currentUser.email;
+            } else {
+                document.getElementById('authForm').classList.remove('hidden');
+                document.getElementById('loggedInView').classList.add('hidden');
+            }
+        };
+
+        window.closeAuthModal = function() {
+            document.getElementById('authModal').classList.add('hidden');
+        };
+
+        window.handleLocalAuth = function() {
+            const name = document.getElementById('authName').value.trim();
+            const email = document.getElementById('authEmail').value.trim();
+            if(name && email.includes('@')) {
+                currentUser = { name, email };
+                localStorage.setItem('fbz_user_profile', JSON.stringify(currentUser));
+                window.openAuthModal();
+            } else {
+                alert("Please enter a valid Name and Email.");
+            }
+        };
+
+        window.handleLocalLogout = function() {
+            localStorage.removeItem('fbz_user_profile');
+            currentUser = null;
+            window.openAuthModal();
+        };
+
+        window.toggleChat = function() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('hidden');
+            chatWindow.classList.toggle('flex');
+        };
+
+        window.sendMessage = async function() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if(!message) return;
+
+            addChatMessage(message, 'user');
+            input.value = '';
+
+            const typingId = addChatMessage('typing...', 'bot', true);
+
+            try {
+                chatHistory.push({ role: "user", parts: [{ text: message }] });
+                
+                // System Instruction to guide the AI persona
+                const systemPrompt = "You are a luxury concierge and customer support agent for Footwear By Zak, a premium leather shoe brand in Pakistan selling Oxfords, Loafers, and Boots. Our standard shipping is Rs 200 anywhere in Pakistan. We accept Cash on Delivery (COD) and Bank Transfer (10% off). You help customers choose shoes, understand sizing, and place orders via WhatsApp on the website. Be very polite, brief, professional, and maintain an 'Old Money' luxury tone. Only answer questions related to the store, shoes, and fashion.";
+                
+                const payload = {
+                    contents: chatHistory,
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+                
+                // Uses Gemini API securely through Canvas environment
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                document.getElementById(typingId).remove();
+                
+                if (result.candidates && result.candidates.length > 0) {
+                    const reply = result.candidates[0].content.parts[0].text;
+                    addChatMessage(reply, 'bot');
+                    chatHistory.push({ role: "model", parts: [{ text: reply }] });
+                } else {
+                    addChatMessage("I apologize, I am having trouble connecting to the atelier right now. Please message us on WhatsApp for immediate assistance.", 'bot');
+                }
+            } catch (error) {
+                console.error("Chatbot Error:", error);
+                document.getElementById(typingId).remove();
+                addChatMessage("I apologize, my system is currently unavailable. Please reach out via WhatsApp.", 'bot');
+            }
+        };
+
+        function addChatMessage(text, sender, isTyping = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            const id = 'msg-' + Date.now();
+            msgDiv.id = id;
+            
+            if(sender === 'user') {
+                msgDiv.className = 'bg-brand-gold text-black p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
+            } else {
+                msgDiv.className = `bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed ${isTyping ? 'animate-pulse text-brand-gray italic' : ''}`;
+            }
+            msgDiv.innerText = text;
+            messagesContainer.appendChild(msgDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return id;
         }
 
-        // Initialize App
-        window.onload = () => {
-            checkAuth();
-            loadProducts();
-            document.getElementById('cartCount').innerText = cart.length;
+        // Initialize Application
+        window.onload = async () => {
+            updateCartUI();
+            await initDatabase();
+            await loadProducts();
         };
     </script>
 </body>
