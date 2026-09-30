@@ -40,21 +40,11 @@
         ::-webkit-scrollbar-track { background: #030303; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
         
-        /* Gold Text & Accent Styling */
         .gold-text { background: linear-gradient(135deg, #FDE68A 0%, #D4AF37 50%, #AA8C2C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .btn-gold { background: linear-gradient(135deg, #D4AF37 0%, #AA8C2C 100%); color: #050505; transition: all 0.3s ease; }
         .btn-gold:hover { filter: brightness(1.15); transform: translateY(-2px); }
         .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
         
-        /* Self-Contained Bulletproof Luxury Hero Background (Zero external link dependencies) */
-        .hero-craft-bg {
-            background-color: #080605;
-            background-image: 
-                radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 20% 80%, rgba(170, 140, 44, 0.08) 0%, transparent 50%),
-                linear-gradient(to bottom, rgba(3, 3, 3, 0.4), rgba(3, 3, 3, 0.95));
-        }
-
         .shopify-input { width: 100%; background: #ffffff; border: 1px solid #d9d9d9; padding: 12px 14px; color: #333333; border-radius: 6px; font-size: 0.875rem; transition: all 0.2s; outline: none; }
         .shopify-input:focus { border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26,115,232,0.2); }
         .shopify-input::placeholder { color: #737373; }
@@ -79,7 +69,7 @@
         <div class="flex items-center gap-4">
             <button onclick="window.openAuthModal()" class="text-brand-light hover:text-brand-gold transition flex items-center gap-2" title="Client Portal">
                 <i class="fa-regular fa-user text-xl"></i>
-                <span class="text-xs hidden sm:inline text-brand-gray hover:text-white">Account</span>
+                <span class="text-xs hidden sm:inline text-brand-gray hover:text-white" id="navAccountLabel">Account</span>
             </button>
             <button onclick="window.openTrackingModal()" class="text-brand-light hover:text-brand-gold transition text-sm font-medium tracking-wide flex items-center" title="Track Order">
                 <i class="fa-solid fa-box-open mr-1"></i> Track
@@ -98,13 +88,11 @@
         </div>
     </nav>
 
-    <header class="relative pt-32 pb-24 px-6 md:px-12 flex flex-col items-center justify-center text-center min-h-[80vh] overflow-hidden hero-craft-bg border-b border-brand-border">
-        
-        <!-- Decorative Crafting Crest Motif (Always renders 100% reliably) -->
-        <div class="mb-6 opacity-80 animate-fade-in">
-            <div class="w-20 h-20 rounded-full border border-brand-gold/40 flex items-center justify-center mx-auto bg-black/40 shadow-2xl backdrop-blur-sm">
-                <i class="fa-solid fa-shoe-prints text-2xl text-brand-gold"></i>
-            </div>
+    <header class="relative pt-32 pb-24 px-6 md:px-12 flex flex-col items-center justify-center text-center min-h-[85vh] overflow-hidden border-b border-brand-border">
+        <!-- Guaranteed Shoemaker Workshop Photo with Professional Dark Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=1920&q=80" alt="Master Shoemaker Crafting Leather in Workshop with Tools" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-[2px]"></div>
         </div>
 
         <div class="max-w-3xl z-10 animate-slide-up relative">
@@ -139,17 +127,15 @@
             <p class="text-brand-gray text-sm tracking-widest uppercase">Connecting to Live Sheet...</p>
         </div>
 
-        <!-- Empty State (Only shows when Google Sheet is empty) -->
+        <!-- Strict Empty State (Zero Fake Catalog Guarantee) -->
         <div id="emptyStateMsg" class="hidden text-center py-20 text-brand-gray">
             <i class="fa-solid fa-hammer text-4xl mb-4 text-brand-gold/50"></i>
             <h3 class="font-serif text-2xl text-white mb-2">The Atelier is Preparing</h3>
-            <p class="text-sm max-w-md mx-auto">Our master shoemakers are currently hand-finishing new arrivals. Please check back shortly or contact our concierge.</p>
+            <p class="text-sm max-w-md mx-auto">Our master shoemakers are currently hand-finishing new arrivals. Please add items to your Google Sheet to display your genuine collection.</p>
         </div>
 
         <!-- Product Grid Dynamic Output -->
-        <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Populated strictly from Google Sheets -->
-        </div>
+        <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
     <div id="detailsModal" class="fixed inset-0 z-[60] hidden">
@@ -283,7 +269,7 @@
         </div>
         <div id="chatMessages" class="p-4 h-72 overflow-y-auto custom-scrollbar flex flex-col gap-3 text-sm bg-brand-black">
             <div class="bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed">
-                Welcome to Footwear By Zak. I am your AI Concierge. Ask me about our leather, sizing, or ask "Where is my order?" to check your tracking ID!
+                Welcome to Footwear By Zak. I am your AI Concierge. Ask me about our leather, sizing, or ask "Where is my order?" to check your real tracking ID!
             </div>
         </div>
         <div class="p-3 bg-brand-dark border-t border-brand-border flex gap-2 items-center">
@@ -317,7 +303,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Google Sheet URL CSV published link
         const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT1g0dCg9-B8v82RjYgT3bLwK0B7aHjN2_gG1V4rE1A4nI6uU7V8v9M0cO_F0_Q/pub?output=csv";
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'footwear-by-zak-master';
         
@@ -399,7 +384,7 @@
                 const data = await response.text();
                 const rows = parseCSV(data);
                 
-                // Parse rows strictly - zero mock generation
+                // Strict zero-fake catalog parsing
                 products = rows.slice(1).filter(row => row && row[0] && row[1]).map(row => {
                     const media = [row[7], row[8], row[9], row[10]].filter(m => m && m.trim() !== '');
                     
@@ -593,7 +578,7 @@
                             <textarea id="reviewText" rows="3" class="w-full bg-black border border-brand-border rounded p-3 text-sm text-white mb-3 outline-none focus:border-brand-gold" placeholder="Share your honest experience..."></textarea>
                             
                             <div class="mb-3">
-                                <label class="block text-xs text-brand-gray mb-1">Attach a photo (Optional, max 1)</label>
+                                <label class="block text-xs text-brand-gray mb-1">Attach a photo with your review (Optional)</label>
                                 <input type="file" id="reviewImageUpload" accept="image/*" class="text-xs text-brand-gray file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-brand-gold file:text-black hover:file:bg-brand-goldDark cursor-pointer">
                             </div>
 
@@ -884,19 +869,16 @@
                 timestamp: Date.now()
             };
 
-            // Save to local storage tracking list instantly
             myOrders.push(orderData);
             localStorage.setItem('fbz_my_orders', JSON.stringify(myOrders));
 
-            // Save to Cloud database if authenticated
             if (auth && auth.currentUser && db) {
                 try {
                     await addDoc(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'orders'), orderData);
                 } catch(e) { console.warn("Cloud save note:", e); }
             }
 
-            // Redirect to WhatsApp with complete order message
-            const whatsappNumber = "923000000000"; // Replace with your real WhatsApp number
+            const whatsappNumber = "923000000000"; 
             const orderSummaryText = cart.map(i => `• ${i.name} (Size: ${i.selectedSize}, Color: ${i.selectedColor}) - ${formatRs(i.checkoutPrice)}`).join('%0A');
             const whatsappMsg = `*NEW ORDER - FOOTWEAR BY ZAK*%0A%0A*Tracking ID:* ${trackingId}%0A*Name:* ${fName} ${lName}%0A*Phone:* ${phone}%0A*Address:* ${address}, ${city}%0A*Payment:* ${payMode}%0A%0A*Items:*%0A${orderSummaryText}%0A%0A*Total Amount:* ${formatRs(total)}`;
             
@@ -908,7 +890,6 @@
             btn.disabled = false;
             fetchMyOrders();
 
-            // Open WhatsApp
             window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank');
         };
 
@@ -947,9 +928,11 @@
                 document.getElementById('authForm').classList.add('hidden');
                 document.getElementById('loggedInView').classList.remove('hidden');
                 document.getElementById('userNameDisplay').innerText = localProfileName;
+                document.getElementById('navAccountLabel').innerText = localProfileName.split(' ')[0];
             } else {
                 document.getElementById('authForm').classList.remove('hidden');
                 document.getElementById('loggedInView').classList.add('hidden');
+                document.getElementById('navAccountLabel').innerText = 'Account';
             }
         }
 
@@ -960,6 +943,7 @@
             localStorage.setItem('fbz_profile_name', name);
             updateAuthUI();
             if(auth && !auth.currentUser) { initDatabase(); }
+            window.closeAuthModal();
         };
 
         window.handleLocalLogout = function() {
@@ -986,12 +970,12 @@
             try {
                 chatHistory.push({ role: "user", parts: [{ text: message }] });
                 
-                let orderContext = `The client is named ${localProfileName || 'Guest'}. They currently have no active orders in record.`;
+                let orderContext = `The client is named ${localProfileName || 'Guest'}. They have no active orders in record.`;
                 if(myOrders.length > 0) {
-                    orderContext = `The client (${localProfileName}) has active orders in record: ` + myOrders.map(o => `[Tracking ID: ${o.trackingId}, Status: ${o.status}, Total: Rs ${o.totalAmount}]`).join(', ');
+                    orderContext = `The client (${localProfileName}) has active orders: ` + myOrders.map(o => `[Tracking ID: ${o.trackingId}, Status: ${o.status}, Total: Rs ${o.totalAmount}]`).join(', ');
                 }
 
-                const systemPrompt = `You are the exclusive luxury AI concierge for 'Footwear By Zak' in Pakistan. You speak in a highly polite, executive tone. ${orderContext}. If the client asks for their tracking ID or order status, give it directly from this context! Standard shipping cost is Rs 200. Payments: Cash on Delivery or Bank Deposit (10% OFF).`;
+                const systemPrompt = `You are the exclusive luxury AI concierge for 'Footwear By Zak' in Pakistan. You speak in a highly polite, executive tone. ${orderContext}. If the client asks for their tracking ID or order status, give it directly from this context with absolute accuracy! Standard shipping cost is Rs 200. Payments: Cash on Delivery or Bank Deposit (10% OFF).`;
                 
                 const payload = {
                     contents: chatHistory,
@@ -1032,7 +1016,6 @@
             return id;
         }
 
-        // Initialize Store State
         initDatabase();
         loadProducts();
         updateCartUI();
