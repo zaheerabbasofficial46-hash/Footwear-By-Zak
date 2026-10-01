@@ -11,7 +11,7 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <!-- Keen Slider -->
     <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
@@ -89,29 +89,36 @@
         </div>
     </nav>
 
-    <!-- HERO SECTION WITH CRYSTAL CLEAR BACKGROUND IMAGE (image_a2c81b.jpg.jpg) -->
-    <header class="relative pt-32 pb-24 px-6 md:px-12 flex flex-col items-center justify-center text-center min-h-[85vh] overflow-hidden border-b border-brand-border">
+    <!-- HERO SECTION WITH STYLISH LEFT-ALIGNED TYPOGRAPHY & MASTER CRAFTSMAN BACKGROUND -->
+    <header class="relative pt-32 pb-24 px-6 md:px-16 lg:px-24 flex flex-col items-start justify-center text-left min-h-[90vh] overflow-hidden border-b border-brand-border">
         <div class="absolute inset-0 z-0">
-            <img src="image_a2c81b.jpg.jpg" alt="Master Shoemaker Crafting Leather in Workshop" class="w-full h-full object-cover">
-            <!-- Lighter overlay so the shoemaker picture with all his tools and workshop is crystal clear and fully visible -->
-            <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/60"></div>
+            <img src="image_a2c81b.jpg.jpg" alt="Master Shoemaker Crafting Leather in Workshop" class="w-full h-full object-cover object-center">
+            <!-- Advanced gradient overlay: Deep black on the left for text readability, fading on the right to showcase the shoemaker -->
+            <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/75 to-black/30"></div>
         </div>
 
-        <div class="max-w-3xl z-10 animate-slide-up relative mt-10">
-            <p class="text-brand-gold tracking-[0.3em] text-xs font-semibold uppercase mb-4 flex items-center justify-center gap-2 drop-shadow-md">
-                <span class="w-8 h-[1px] bg-brand-gold/80"></span>
-                Masterfully Crafted in Pakistan
-                <span class="w-8 h-[1px] bg-brand-gold/80"></span>
-            </p>
-            <h1 class="font-serif text-4xl md:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-2xl">
+        <div class="max-w-2xl z-10 animate-slide-up relative mt-10">
+            <div class="inline-flex items-center gap-3 bg-brand-gold/10 border border-brand-gold/30 px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-md">
+                <span class="w-2 h-2 rounded-full bg-brand-gold animate-ping"></span>
+                <p class="text-brand-gold tracking-[0.25em] text-[11px] font-bold uppercase">Masterfully Crafted in Pakistan</p>
+            </div>
+            
+            <h1 class="font-serif text-5xl md:text-7xl font-extrabold mb-6 leading-[1.08] text-white tracking-tight drop-shadow-2xl">
                 The Pinnacle of <br><span class="gold-text">Leather Artistry.</span>
             </h1>
-            <p class="text-brand-light/95 text-sm md:text-base font-medium mb-10 max-w-xl mx-auto leading-relaxed drop-shadow-xl bg-black/40 p-4 rounded-lg backdrop-blur-[2px] border border-white/15">
+            
+            <p class="text-brand-light/95 text-sm md:text-base font-normal mb-8 max-w-xl leading-relaxed drop-shadow-xl bg-black/50 p-5 rounded-lg backdrop-blur-md border border-white/10 shadow-2xl">
                 Experience authentic heritage craftsmanship. Every pair is individually cut, shaped, and hand-finished for the modern gentleman.
             </p>
-            <a href="#collection" class="btn-gold px-8 py-3.5 rounded-sm text-sm font-bold tracking-widest uppercase inline-block shadow-xl">
-                Explore The Collection
-            </a>
+
+            <div class="flex flex-wrap gap-4 items-center">
+                <a href="#collection" class="btn-gold px-8 py-4 rounded-sm text-xs font-bold tracking-[0.2em] uppercase inline-block shadow-2xl">
+                    Explore The Collection
+                </a>
+                <a href="https://instagram.com/footwearbyzak" target="_blank" class="border border-white/20 hover:border-brand-gold text-white px-6 py-4 rounded-sm text-xs font-bold tracking-[0.2em] uppercase transition-all backdrop-blur-md bg-black/30">
+                    Follow Atelier
+                </a>
+            </div>
         </div>
     </header>
 
@@ -249,7 +256,7 @@
         </div>
     </div>
 
-    <!-- CHATBOT PLACED CLEANLY AT BOTTOM-LEFT -->
+    <!-- CHATBOT PLACED SAFELY AT BOTTOM-LEFT -->
     <button id="chatToggleBtn" onclick="window.toggleChat()" class="fixed bottom-8 left-6 z-[85] bg-brand-gold text-brand-black w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform">
         <i class="fa-solid fa-comment-dots text-2xl"></i>
     </button>
@@ -284,7 +291,7 @@
         <img id="fullSizePreview" src="" class="max-w-[90%] max-h-[90%] object-contain rounded-md border border-white/10 shadow-2xl">
     </div>
 
-    <!-- FOOTER WITH TIKTOK, INSTAGRAM, FACEBOOK, AND SHOPIFY -->
+    <!-- FOOTER WITH TIKTOK, INSTAGRAM, FACEBOOK, AND SHOPIFY (UNBLOCKED) -->
     <footer class="border-t border-white/5 pt-16 pb-8 px-6 md:px-12 bg-black mt-20">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="text-center md:text-left">
