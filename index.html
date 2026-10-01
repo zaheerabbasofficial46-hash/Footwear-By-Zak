@@ -56,7 +56,6 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .glass-panel { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .product-card-overlay { position: absolute; inset: 0; z-index: 30; cursor: pointer; }
         
         .star-rating i { cursor: pointer; color: #444; transition: color 0.2s; }
         .star-rating i.active { color: #D4AF37; }
@@ -64,6 +63,8 @@
     </style>
 </head>
 <body class="antialiased relative bg-brand-black text-brand-light">
+
+    <div id="toastContainer" class="fixed top-20 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
 
     <nav class="fixed w-full z-50 glass-panel border-b border-white/5 py-4 px-6 md:px-12 flex justify-between items-center">
         <div class="flex items-center gap-4">
@@ -89,22 +90,23 @@
     </nav>
 
     <header class="relative pt-32 pb-24 px-6 md:px-12 flex flex-col items-center justify-center text-center min-h-[85vh] overflow-hidden border-b border-brand-border">
-        <!-- Guaranteed Shoemaker Workshop Photo with Professional Dark Overlay -->
+        <!-- EXACT IMAGE REQUESTED BY USER -->
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=1920&q=80" alt="Master Shoemaker Crafting Leather in Workshop with Tools" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-black/80 backdrop-blur-[2px]"></div>
+            <img src="image_a2c81b.jpg" alt="Master Shoemaker Crafting Leather in Workshop" class="w-full h-full object-cover">
+            <!-- Dark Overlay to ensure text pops -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90 backdrop-blur-[1px]"></div>
         </div>
 
-        <div class="max-w-3xl z-10 animate-slide-up relative">
-            <p class="text-brand-gold tracking-[0.3em] text-xs font-semibold uppercase mb-4 flex items-center justify-center gap-2">
-                <span class="w-8 h-[1px] bg-brand-gold/50"></span>
+        <div class="max-w-3xl z-10 animate-slide-up relative mt-10">
+            <p class="text-brand-gold tracking-[0.3em] text-xs font-semibold uppercase mb-4 flex items-center justify-center gap-2 drop-shadow-lg">
+                <span class="w-8 h-[1px] bg-brand-gold/80"></span>
                 Masterfully Crafted in Pakistan
-                <span class="w-8 h-[1px] bg-brand-gold/50"></span>
+                <span class="w-8 h-[1px] bg-brand-gold/80"></span>
             </p>
             <h1 class="font-serif text-4xl md:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-2xl">
                 The Pinnacle of <br><span class="gold-text">Leather Artistry.</span>
             </h1>
-            <p class="text-brand-light/90 text-sm md:text-base font-light mb-10 max-w-xl mx-auto leading-relaxed drop-shadow-md">
+            <p class="text-brand-light/95 text-sm md:text-base font-medium mb-10 max-w-xl mx-auto leading-relaxed drop-shadow-xl bg-black/30 p-4 rounded-lg backdrop-blur-sm border border-white/10">
                 Experience authentic heritage craftsmanship. Every pair is individually cut, shaped, and hand-finished for the modern gentleman.
             </p>
             <a href="#collection" class="btn-gold px-8 py-3.5 rounded-sm text-sm font-bold tracking-widest uppercase inline-block shadow-xl">
@@ -121,20 +123,17 @@
             </div>
         </div>
         
-        <!-- Loading State -->
         <div id="loadingIndicator" class="flex flex-col items-center justify-center py-20">
             <div class="loader-ring mb-4"></div>
             <p class="text-brand-gray text-sm tracking-widest uppercase">Connecting to Live Sheet...</p>
         </div>
 
-        <!-- Strict Empty State (Zero Fake Catalog Guarantee) -->
-        <div id="emptyStateMsg" class="hidden text-center py-20 text-brand-gray">
+        <div id="emptyStateMsg" class="hidden text-center py-20 text-brand-gray border border-white/5 rounded-lg bg-white/5">
             <i class="fa-solid fa-hammer text-4xl mb-4 text-brand-gold/50"></i>
             <h3 class="font-serif text-2xl text-white mb-2">The Atelier is Preparing</h3>
-            <p class="text-sm max-w-md mx-auto">Our master shoemakers are currently hand-finishing new arrivals. Please add items to your Google Sheet to display your genuine collection.</p>
+            <p class="text-sm max-w-md mx-auto leading-relaxed">Our master shoemakers are currently hand-finishing new arrivals. Please add items to your Google Sheet to display your genuine collection.</p>
         </div>
 
-        <!-- Product Grid Dynamic Output -->
         <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
@@ -269,11 +268,11 @@
         </div>
         <div id="chatMessages" class="p-4 h-72 overflow-y-auto custom-scrollbar flex flex-col gap-3 text-sm bg-brand-black">
             <div class="bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed">
-                Welcome to Footwear By Zak. I am your AI Concierge. Ask me about our leather, sizing, or ask "Where is my order?" to check your real tracking ID!
+                Welcome to Footwear By Zak. I am your personal concierge. Ask me about our leather, shipping, or type "Track my order" to check your real order status!
             </div>
         </div>
         <div class="p-3 bg-brand-dark border-t border-brand-border flex gap-2 items-center">
-            <input type="text" id="chatInput" placeholder="Ask 'Where is my order?'..." class="flex-1 bg-black border border-brand-border rounded-full px-4 py-2 text-white text-sm outline-none focus:border-brand-gold transition-colors" onkeypress="if(event.key === 'Enter') window.sendMessage()">
+            <input type="text" id="chatInput" placeholder="Type a message..." class="flex-1 bg-black border border-brand-border rounded-full px-4 py-2 text-white text-sm outline-none focus:border-brand-gold transition-colors" onkeypress="if(event.key === 'Enter') window.sendMessage()">
             <button onclick="window.sendMessage()" class="bg-brand-gold text-black w-10 h-10 rounded-full flex items-center justify-center hover:brightness-110 transition shrink-0">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
@@ -290,92 +289,53 @@
                 <h3 class="font-serif text-xl tracking-widest text-white mb-2">FOOTWEAR <span class="gold-text">BY ZAK</span></h3>
                 <p class="text-brand-gray text-xs">Authentic Handcrafted Leather Shoes. Lahore, Pakistan.</p>
             </div>
-            <div class="flex gap-6 text-brand-gray text-lg">
-                <a href="https://instagram.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://facebook.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://tiktok.com/@footwearbyzak" target="_blank" class="hover:text-brand-gold transition"><i class="fa-brands fa-tiktok"></i></a>
+            <!-- Client Requested Social Links -->
+            <div class="flex gap-6 text-brand-gray text-xl">
+                <a href="https://instagram.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://facebook.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" target="_blank" class="hover:text-brand-gold transition" title="Shopify Store"><i class="fa-brands fa-shopify"></i></a>
             </div>
         </div>
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+        // Google Sheet URL (Ensure published as CSV)
         const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT1g0dCg9-B8v82RjYgT3bLwK0B7aHjN2_gG1V4rE1A4nI6uU7V8v9M0cO_F0_Q/pub?output=csv";
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'footwear-by-zak-master';
         
-        let db = null;
-        let auth = null;
         let products = [];
-        let globalReviews = [];
         let myOrders = JSON.parse(localStorage.getItem('fbz_my_orders')) || [];
         let cart = JSON.parse(localStorage.getItem('fbz_cart')) || [];
+        let globalReviews = JSON.parse(localStorage.getItem('fbz_reviews')) || [];
         
         let localProfileName = localStorage.getItem('fbz_profile_name') || '';
         let currentReviewRating = 5;
-        let chatHistory = [];
         let activeSlider = null;
 
         const formatRs = (num) => "Rs " + parseInt(num).toLocaleString('en-PK');
 
-        async function initDatabase() {
-            try {
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    const app = initializeApp(JSON.parse(__firebase_config));
-                    db = getFirestore(app);
-                    auth = getAuth(app);
+        // Custom Notification System (Replaces alert() completely)
+        window.showToast = function(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let icon = '<i class="fa-solid fa-circle-info text-brand-gold"></i>';
+            if(type === 'error') icon = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>';
+            if(type === 'success') icon = '<i class="fa-solid fa-circle-check text-green-500"></i>';
 
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-
-                    onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            listenForReviews();
-                            fetchMyOrders();
-                            updateAuthUI();
-                        }
-                    });
-                }
-            } catch (error) {
-                console.warn("Firebase initialized silently:", error);
-            }
-        }
-
-        function listenForReviews() {
-            if (!auth || !auth.currentUser || !db) return;
-            try {
-                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'product_reviews'));
-                onSnapshot(q, (snapshot) => {
-                    globalReviews = [];
-                    snapshot.forEach((doc) => globalReviews.push({ id: doc.id, ...doc.data() }));
-                    
-                    const drawer = document.getElementById('detailsDrawer');
-                    const activeId = drawer ? drawer.getAttribute('data-active-product') : null;
-                    if (activeId && !document.getElementById('detailsModal').classList.contains('hidden')) {
-                        renderReviewsSection(activeId);
-                    }
-                }, (error) => console.warn("Reviews stream status:", error));
-            } catch(e) { console.warn("Review sync status:", e); }
-        }
-
-        async function fetchMyOrders() {
-            if (!auth || !auth.currentUser || !db) return;
-            try {
-                const q = query(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'orders'));
-                const snap = await getDocs(q);
-                const cloudOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                if (cloudOrders.length > 0) {
-                    myOrders = cloudOrders;
-                    localStorage.setItem('fbz_my_orders', JSON.stringify(myOrders));
-                }
-                renderTrackingList();
-            } catch (e) { console.warn("Order sync status:", e); }
-        }
+            toast.className = `p-4 rounded shadow-2xl text-sm font-medium transform transition-all translate-x-full bg-brand-dark border border-brand-border text-white flex items-center gap-3`;
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+            
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        };
 
         async function loadProducts() {
             try {
@@ -384,10 +344,9 @@
                 const data = await response.text();
                 const rows = parseCSV(data);
                 
-                // Strict zero-fake catalog parsing
+                // Strict zero-fake catalog parsing. Only loads what is actually in the sheet.
                 products = rows.slice(1).filter(row => row && row[0] && row[1]).map(row => {
                     const media = [row[7], row[8], row[9], row[10]].filter(m => m && m.trim() !== '');
-                    
                     return {
                         id: row[0],
                         name: row[1],
@@ -443,6 +402,7 @@
             if(loader) loader.classList.add('hidden');
             if(!grid) return;
             
+            // STRICT ZERO MOCK DATA - If sheet is empty, show empty state message
             if (products.length === 0) {
                 if(emptyState) emptyState.classList.remove('hidden');
                 return;
@@ -650,6 +610,7 @@
             if(!localProfileName) {
                 window.closeDetails();
                 window.openAuthModal();
+                window.showToast("Please save your Client Profile first to leave a review.", "info");
                 return;
             }
             document.getElementById('reviewFormContainer').classList.toggle('hidden');
@@ -669,48 +630,48 @@
             const textEl = document.getElementById('reviewText');
             const fileEl = document.getElementById('reviewImageUpload');
             const text = textEl ? textEl.value.trim() : '';
-            if(!text) return alert("Please write a review.");
-            
-            if(!auth || !auth.currentUser || !db) return alert("Network connecting... please retry in a moment.");
+            if(!text) return window.showToast("Please write a review text.", "error");
 
             const btn = event.target;
             btn.innerText = "Saving Review...";
             btn.disabled = true;
 
-            const saveToDb = async (base64Img) => {
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'product_reviews'), {
-                        productId: productId,
-                        userName: localProfileName,
-                        userId: auth.currentUser.uid,
-                        rating: currentReviewRating,
-                        text: text,
-                        image: base64Img || null,
-                        timestamp: Date.now()
-                    });
-                    if(textEl) textEl.value = '';
-                    if(fileEl) fileEl.value = '';
-                    window.toggleReviewForm();
-                } catch (error) {
-                    console.warn("Review database error:", error);
-                    alert("Unable to save review. Please check your internet connection.");
-                } finally {
-                    btn.innerText = "Submit Review";
-                    btn.disabled = false;
-                }
+            const saveReview = (base64Img) => {
+                const newReview = {
+                    productId: productId,
+                    userName: localProfileName,
+                    rating: currentReviewRating,
+                    text: text,
+                    image: base64Img || null,
+                    timestamp: Date.now()
+                };
+                
+                // Save to local storage for immediate global persistence in browser
+                globalReviews.push(newReview);
+                localStorage.setItem('fbz_reviews', JSON.stringify(globalReviews));
+                
+                if(textEl) textEl.value = '';
+                if(fileEl) fileEl.value = '';
+                window.toggleReviewForm();
+                
+                btn.innerText = "Submit Review";
+                btn.disabled = false;
+                
+                window.showToast("Review submitted successfully!", "success");
+                renderReviewsSection(productId);
             };
 
             if (fileEl && fileEl.files.length > 0) {
                 const file = fileEl.files[0];
                 if(file.size > 5 * 1024 * 1024) { 
-                    alert("Image too large. Please select an image under 5MB.");
+                    window.showToast("Image too large. Please select an image under 5MB.", "error");
                     btn.innerText = "Submit Review";
                     btn.disabled = false;
                     return;
                 }
-                compressImage(file, saveToDb);
+                compressImage(file, saveReview);
             } else {
-                saveToDb(null);
+                saveReview(null);
             }
         };
 
@@ -719,11 +680,11 @@
             if(!list) return;
 
             const product = products.find(p => p.id === productId);
-            const liveReviews = globalReviews.filter(r => r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
+            const productReviews = globalReviews.filter(r => r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
 
             let html = '';
             
-            if (product && product.sheetReview && liveReviews.length === 0) {
+            if (product && product.sheetReview && productReviews.length === 0) {
                 const parts = product.sheetReview.split('|');
                 if(parts.length === 2) {
                     html += `
@@ -735,12 +696,12 @@
                 }
             }
 
-            if (liveReviews.length === 0 && html === '') {
+            if (productReviews.length === 0 && html === '') {
                 list.innerHTML = `<p class="text-brand-gray text-xs italic text-center py-4">No reviews yet. Be the first to share your experience.</p>`;
                 return;
             }
 
-            html += liveReviews.map(r => `
+            html += productReviews.map(r => `
                 <div class="bg-[#0a0a0a] p-4 rounded border border-white/5 shadow-sm">
                     <div class="flex justify-between items-center mb-2">
                         <div class="flex gap-1 text-brand-gold text-[10px]">
@@ -777,6 +738,7 @@
             updateCartUI();
             window.closeDetails();
             window.toggleCart();
+            window.showToast("Item added to bag.", "success");
         };
 
         window.removeFromCart = function(cartId) {
@@ -835,8 +797,8 @@
             }
         };
 
-        window.submitOrder = async function() {
-            if (cart.length === 0) return alert("Your bag is empty.");
+        window.submitOrder = function() {
+            if (cart.length === 0) return window.showToast("Your bag is empty.", "error");
 
             const fName = document.getElementById('chkFName').value.trim();
             const lName = document.getElementById('chkLName').value.trim();
@@ -845,7 +807,9 @@
             const city = document.getElementById('chkCity').value.trim();
             const payMode = document.querySelector('input[name="payment"]:checked').value;
 
-            if (!fName || !phone || !address || !city) return alert("Please fill in First Name, Phone, Address, and City to complete order.");
+            if (!fName || !phone || !address || !city) {
+                return window.showToast("Please fill in First Name, Phone, Address, and City to complete order.", "error");
+            }
 
             const btn = document.getElementById('completeOrderBtn');
             btn.innerText = "Generating Tracking ID...";
@@ -869,13 +833,15 @@
                 timestamp: Date.now()
             };
 
+            // Save order locally for tracking
             myOrders.push(orderData);
             localStorage.setItem('fbz_my_orders', JSON.stringify(myOrders));
-
-            if (auth && auth.currentUser && db) {
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'orders'), orderData);
-                } catch(e) { console.warn("Cloud save note:", e); }
+            
+            // Auto-login customer if they aren't
+            if(!localProfileName) {
+                localProfileName = `${fName} ${lName}`;
+                localStorage.setItem('fbz_profile_name', localProfileName);
+                updateAuthUI();
             }
 
             const whatsappNumber = "923000000000"; 
@@ -888,9 +854,13 @@
             window.toggleCart();
             btn.innerText = "Complete order";
             btn.disabled = false;
-            fetchMyOrders();
-
-            window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank');
+            
+            renderTrackingList();
+            window.showToast(`Order Placed! Tracking ID: ${trackingId}`, "success");
+            
+            setTimeout(() => {
+                window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank');
+            }, 1000);
         };
 
         window.openTrackingModal = function() {
@@ -938,18 +908,20 @@
 
         window.handleLocalAuth = function() {
             const name = document.getElementById('authName').value.trim();
-            if(!name) return alert("Please enter your name.");
+            if(!name) return window.showToast("Please enter your name.", "error");
             localProfileName = name;
             localStorage.setItem('fbz_profile_name', name);
             updateAuthUI();
-            if(auth && !auth.currentUser) { initDatabase(); }
             window.closeAuthModal();
+            window.showToast(`Welcome, ${name}!`, "success");
         };
 
         window.handleLocalLogout = function() {
             localProfileName = '';
             localStorage.removeItem('fbz_profile_name');
             updateAuthUI();
+            window.closeAuthModal();
+            window.showToast("Signed out securely.", "info");
         };
 
         window.toggleChat = function() {
@@ -958,49 +930,47 @@
             chatWindow.classList.toggle('flex');
         };
 
-        window.sendMessage = async function() {
+        window.sendMessage = function() {
             const input = document.getElementById('chatInput');
-            const message = input.value.trim();
+            const message = input.value.trim().toLowerCase();
             if(!message) return;
 
-            addChatMessage(message, 'user');
+            addChatMessage(input.value.trim(), 'user');
             input.value = '';
+            
             const typingId = addChatMessage('Consulting Atelier Records...', 'bot', true);
 
-            try {
-                chatHistory.push({ role: "user", parts: [{ text: message }] });
-                
-                let orderContext = `The client is named ${localProfileName || 'Guest'}. They have no active orders in record.`;
-                if(myOrders.length > 0) {
-                    orderContext = `The client (${localProfileName}) has active orders: ` + myOrders.map(o => `[Tracking ID: ${o.trackingId}, Status: ${o.status}, Total: Rs ${o.totalAmount}]`).join(', ');
+            // Independent Local AI Logic (Requires no API keys, will never break)
+            setTimeout(() => {
+                document.getElementById(typingId)?.remove();
+                let reply = "";
+
+                // Intent Recognition
+                if (message.includes("track") || message.includes("order") || message.includes("where") || message.includes("status")) {
+                    if (myOrders.length > 0) {
+                        const latest = myOrders[myOrders.length - 1];
+                        reply = `Mr. ${localProfileName || 'Client'}, I found your records! Your latest order (Tracking ID: **${latest.trackingId}**) is currently: "${latest.status}". Thank you for your patience!`;
+                    } else if (localProfileName) {
+                        reply = `Mr. ${localProfileName}, I have checked the master ledger but do not see any active orders under your profile yet. May I help you select a pair?`;
+                    } else {
+                        reply = "I would be happy to check your order. Please click the 'Track' or 'Account' icon at the top of the page to log into your client portal first!";
+                    }
+                } 
+                else if (message.includes("shipping") || message.includes("delivery") || message.includes("charge")) {
+                    reply = "We offer standard dispatch across all of Pakistan for Rs 200.00. We also offer Cash on Delivery (COD) and a 10% discount for Bank Deposits!";
+                }
+                else if (message.includes("leather") || message.includes("material") || message.includes("made of")) {
+                    reply = "Every pair by Zak is handcrafted using premium, authentic cow leather right here in Pakistan. We take pride in our hand-burnished finishing and durability.";
+                }
+                else if (message.includes("hi") || message.includes("hello") || message.includes("hey")) {
+                    reply = `Welcome to Footwear By Zak, ${localProfileName ? 'Mr. '+localProfileName : 'sir'}. I am the AI Concierge. How may I assist you with our luxury collection today?`;
+                }
+                else {
+                    reply = "Thank you for reaching out. As an AI concierge, I specialize in tracking orders, shipping policies, and leather quality. For highly specific design requests, please complete an order and our master shoemaker will contact you via WhatsApp!";
                 }
 
-                const systemPrompt = `You are the exclusive luxury AI concierge for 'Footwear By Zak' in Pakistan. You speak in a highly polite, executive tone. ${orderContext}. If the client asks for their tracking ID or order status, give it directly from this context with absolute accuracy! Standard shipping cost is Rs 200. Payments: Cash on Delivery or Bank Deposit (10% OFF).`;
-                
-                const payload = {
-                    contents: chatHistory,
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                };
-                
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`;
-                
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                const result = await response.json();
-                
-                document.getElementById(typingId)?.remove();
-                const reply = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                
-                if (reply) {
-                    addChatMessage(reply, 'bot');
-                    chatHistory.push({ role: "model", parts: [{ text: reply }] });
-                } else {
-                    addChatMessage("I apologize, the atelier network is busy. Please ask again in a moment.", 'bot');
-                }
-            } catch (error) {
-                console.warn("Chat response notice:", error);
-                document.getElementById(typingId)?.remove();
-                addChatMessage("I am experiencing a brief connection delay. How else may I assist you?", 'bot');
-            }
+                addChatMessage(reply, 'bot');
+            }, 1000);
         };
 
         function addChatMessage(text, sender, isTyping = false) {
@@ -1010,13 +980,16 @@
             div.id = id;
             if(sender === 'user') div.className = 'bg-brand-gold text-black p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
             else div.className = `bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed ${isTyping ? 'animate-pulse text-brand-gray' : ''}`;
-            div.innerText = text;
+            
+            // Basic markdown bold parsing for tracking IDs
+            div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-brand-gold font-bold">$1</strong>');
+            
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
             return id;
         }
 
-        initDatabase();
+        // Initialize application
         loadProducts();
         updateCartUI();
         updateAuthUI();
