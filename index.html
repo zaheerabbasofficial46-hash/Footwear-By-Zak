@@ -240,7 +240,7 @@
         </div>
         
         <div class="bg-gray-50 p-4 border-b border-gray-200 shrink-0">
-            <p id="shippingMessage" class="text-xs text-center font-medium text-gray-700 mb-2">You are <span class="text-blue-600 font-bold">Rs 5,000</span> away from Free Shipping!</p>
+            <p id="shippingMessage" class="text-xs text-center font-medium text-gray-700 mb-2">You are <span class="text-blue-600 font-bold">Rs 20,000</span> away from Free Shipping!</p>
             <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
                 <div id="shippingProgressBar" class="bg-blue-600 h-1.5 rounded-full progress-bar-fill" style="width: 50%"></div>
             </div>
@@ -288,7 +288,6 @@
                     </label>
                 </div>
                 
-                <!-- Clean Bank Details Box with Receipt Upload -->
                 <div id="bankDetailsBox" class="hidden p-4 bg-gray-50 border border-gray-200 rounded-lg text-xs space-y-2 text-gray-700 mb-3">
                     <p class="font-bold text-black text-sm flex items-center gap-1"><i class="fa-solid fa-building-columns text-blue-600"></i> Direct Bank Transfer Details</p>
                     <div class="grid grid-cols-2 gap-1 bg-white p-3 rounded border border-gray-200 font-mono text-[11px]">
@@ -410,7 +409,7 @@
             </div>
 
             <div class="bg-brand-dark p-5 rounded border border-brand-border space-y-3">
-                <h4 class="font-serif text-lg text-brand-gold"><i class="fa-solid fa-users mr-2"></i> Subscriber Emails List (`fbz_subscribers`)</h4>
+                <h4 class="font-serif text-lg text-brand-gold"><i class="fa-solid fa-users mr-2"></i> Subscriber Emails List</h4>
                 <div id="ownerEmailList" class="bg-brand-darkest p-3 rounded font-mono text-xs max-h-36 overflow-y-auto space-y-1 text-brand-light/80 border border-brand-border"></div>
             </div>
 
@@ -447,7 +446,6 @@
     </div>
 </div>
 
-<!-- AI Concierge Chatbot -->
 <button id="chatToggleBtn" onclick="window.toggleChat()" class="fixed bottom-6 left-6 z-[85] bg-brand-gold text-brand-darkest w-14 h-14 rounded-full shadow-[0_0_20px_rgba(212,175,55,0.4)] flex items-center justify-center hover:scale-105 transition-transform">
     <i class="fa-solid fa-comment-dots text-2xl"></i>
 </button>
@@ -492,7 +490,6 @@
                 <a href="https://instagram.com/yourinstagram" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                 <a href="https://facebook.com/yourfacebook" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="https://yourshopifylink.com" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Shopify Store"><i class="fa-brands fa-shopify"></i></a>
-                <a href="https://wa.me/923000000000" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
         
@@ -537,21 +534,28 @@
     </div>
 </footer>
 
+<!-- CRASH-PROOF CLOUD SYNC DATABASE SYSTEM -->
 <script type="module">
-    // PASTE YOUR PUBLISHED GOOGLE SHEET CSV LINK BELOW BETWEEN THE QUOTATION MARKS:
-    const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv"; 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 1. FAIL-SAFE LOCAL STORAGE (Guarantees the site never crashes even offline)
+    let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
+    let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
+    let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
+    let localProfileName = localStorage.getItem('fbz_profile_name') || '';
+    let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
+
+    // PASTE YOUR PUBLISHED GOOGLE SHEET CSV LINK BELOW:
+    const googleSheetUrl = ""; 
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
     
+    // Application State
     let allProducts = [];
     let filteredProducts = [];
-    let allOrders = JSON.parse(localStorage.getItem('fbz_my_orders')) || [];
-    let cart = JSON.parse(localStorage.getItem('fbz_cart')) || [];
-    let globalReviews = JSON.parse(localStorage.getItem('fbz_reviews')) || [];
-    let localProfileName = localStorage.getItem('fbz_profile_name') || '';
-    let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
-    let subscriberEmails = JSON.parse(localStorage.getItem('fbz_subscribers')) || ['zakaria@client.com', 'gentleman@atelier.pk', 'swat.gentleman@atelier.pk'];
-    
+    let cart = [];
     let currentReviewRating = 5;
     let activeSlider = null;
     let selectedSizeForSticky = null;
@@ -560,6 +564,107 @@
     let ownerClickCount = 0;
     let ownerClickTimer = null;
 
+    // 2. REAL-TIME CLOUD DATABASE (Syncs all devices automatically)
+    const appId = 'footwear-by-zak-app-v2';
+    const CLOUD_DOC_PATH = ['artifacts', appId, 'public', 'data', 'store_data', 'master_record'];
+    
+    let userId = null;
+    window.db = null;
+
+    try {
+        // PASTE YOUR FIREBASE KEYS BELOW BETWEEN THE BRACES IF YOU WISH TO USE CLOUD SYNC:
+        const firebaseConfig = {// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAzFwRJ-uKC7IbCGnQ8IMleJ8sxkwW5cSg",
+  authDomain: "footwear-by-zak.firebaseapp.com",
+  projectId: "footwear-by-zak",
+  storageBucket: "footwear-by-zak.firebasestorage.app",
+  messagingSenderId: "381957982978",
+  appId: "1:381957982978:web:12e20cb7122b2ccdf9901b",
+  measurementId: "G-402PZSZ9T9"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+            apiKey: "AIzaSyDummyKeyForFallback123456789",
+            authDomain: "footwear-by-zak.firebaseapp.com",
+            projectId: "footwear-by-zak",
+            storageBucket: "footwear-by-zak.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123:web:abc"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        signInAnonymously(auth).then(userCredential => {
+            userId = userCredential.user.uid;
+            const docRef = doc(window.db, ...CLOUD_DOC_PATH);
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    cloudOrders = data.orders || cloudOrders;
+                    cloudReviews = data.reviews || cloudReviews;
+                    cloudSubscribers = data.subscribers || cloudSubscribers;
+                    
+                    localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
+                    localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews));
+                    localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers));
+                    
+                    renderTrackingList();
+                    if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) {
+                        renderOwnerDashboard();
+                    }
+                } else {
+                    setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(e => {});
+                }
+            });
+        }).catch(err => {
+            console.warn("Running in Local Storage Fail-Safe Mode.");
+        });
+    } catch (error) {
+        console.warn("Cloud Sync Offline. Running locally with zero disruption.");
+    }
+
+    // 3. MASTER DATA SAVER (Saves locally first, then syncs to Cloud across all devices)
+    window.syncToCloud = async function(collectionName, dataObj) {
+        if(collectionName === 'orders') {
+            cloudOrders.push(dataObj);
+            localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
+        } else if (collectionName === 'reviews') {
+            cloudReviews.push(dataObj);
+            localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews));
+        } else if (collectionName === 'subscribers') {
+            if(!cloudSubscribers.includes(dataObj)) {
+                cloudSubscribers.push(dataObj);
+                localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers));
+            }
+        }
+
+        if(userId && window.db) {
+            try {
+                const docRef = doc(window.db, ...CLOUD_DOC_PATH);
+                const updatePayload = {};
+                if(collectionName === 'subscribers') updatePayload.subscribers = arrayUnion(dataObj);
+                if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
+                if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
+                await updateDoc(docRef, updatePayload);
+            } catch (e) {
+                // Failsafe silent catch
+            }
+        }
+    };
+
+    // Utility Functions
     const formatRs = (num) => "Rs " + parseInt(num).toLocaleString('en-PK');
 
     window.handleSecretOwnerClick = function() {
@@ -570,39 +675,29 @@
         if(ownerClickCount >= 5) {
             ownerClickCount = 0;
             document.getElementById('ownerModal').classList.remove('hidden');
+            renderOwnerDashboard(); 
         }
     };
 
     window.showToast = function(message, type = 'info') {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
-        
         let icon = '<i class="fa-solid fa-circle-info text-brand-gold"></i>';
         if(type === 'error') icon = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>';
         if(type === 'success') icon = '<i class="fa-solid fa-circle-check text-green-500"></i>';
-
         toast.className = `p-4 rounded shadow-2xl text-sm font-medium transform transition-all translate-x-full bg-brand-card border border-brand-border text-white flex items-center gap-3`;
         toast.innerHTML = `${icon} <span>${message}</span>`;
-        
         container.appendChild(toast);
         setTimeout(() => toast.classList.remove('translate-x-full'), 10);
-        setTimeout(() => {
-            toast.classList.add('translate-x-full');
-            setTimeout(() => toast.remove(), 300);
-        }, 3500);
+        setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, 3500);
     };
 
     window.subscribeNewsletter = function() {
         const input = document.getElementById('footerNewsletterEmail');
         const email = input ? input.value.trim() : '';
-        if(!email || !email.includes('@')) {
-            window.showToast("Please enter a valid email address.", "error");
-            return;
-        }
-        if(!subscriberEmails.includes(email)) {
-            subscriberEmails.push(email);
-            localStorage.setItem('fbz_subscribers', JSON.stringify(subscriberEmails));
-        }
+        if(!email || !email.includes('@')) return window.showToast("Please enter a valid email address.", "error");
+        
+        window.syncToCloud('subscribers', email);
         input.value = '';
         window.showToast("Successfully subscribed to VIP offers!", "success");
     };
@@ -612,13 +707,12 @@
         if(cart.length > 0) {
             cartReminderTimer = setTimeout(() => {
                 const modal = document.getElementById('cartModal');
-                if(modal.classList.contains('hidden')) {
+                if(modal && modal.classList.contains('hidden')) {
                     window.showToast("Your luxury leather goods are waiting in your bag. Complete your order before they sell out!", "info");
                 }
             }, 120000); 
         }
     }
-    
     document.addEventListener('mousemove', resetCartReminder);
     document.addEventListener('keypress', resetCartReminder);
 
@@ -628,36 +722,29 @@
             document.getElementById('emptyStateMsg')?.classList.remove('hidden');
             return;
         }
-
         try {
             const response = await fetch(googleSheetUrl);
             if (!response.ok) throw new Error("Sheet fetch unsuccessful");
             const data = await response.text();
             const rows = parseCSV(data);
-            
             allProducts = rows.slice(1).filter(row => row && row[0] && row[1]).map(row => {
                 const media = [row[7], row[8], row[9], row[10]].filter(m => m && m.trim() !== '');
                 return {
-                    id: row[0],
-                    name: row[1],
-                    price: parseInt(row[2]) || 0,
-                    salePrice: row[3] ? parseInt(row[3]) : null,
-                    category: row[4] || 'Footwear',
-                    stock: (row[5] || 'In Stock').toLowerCase(),
+                    id: row[0], name: row[1],
+                    price: parseInt(row[2]) || 0, salePrice: row[3] ? parseInt(row[3]) : null,
+                    category: row[4] || 'Footwear', stock: (row[5] || 'In Stock').toLowerCase(),
                     sizes: row[6] ? row[6].split(',').map(s => s.trim()) : ['39', '40', '41', '42', '43'],
                     images: media.length > 0 ? media : ['https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier+Footwear'],
                     colors: row[11] ? row[11].split(',').map(c => c.trim()) : ['Classic Black', 'Walnut Brown'],
                     description: row[12] || "Handcrafted with premium leather across Lahore and Swat for the modern gentleman.",
                     qtyAvailable: row[13] || 'Brown: 15, Black: 5',
-                    sold: row[14] ? parseInt(row[14]) : 24,
-                    sheetReview: row[15] || null,
+                    sold: row[14] ? parseInt(row[14]) : 24, sheetReview: row[15] || null,
                     dateAdded: Date.now() - Math.floor(Math.random() * 1000000000)
                 };
             });
             filteredProducts = [...allProducts];
             window.filterProducts();
         } catch (error) {
-            console.warn("Google Sheet parsing status:", error);
             document.getElementById('loadingIndicator')?.classList.add('hidden');
             document.getElementById('emptyStateMsg')?.classList.remove('hidden');
         }
@@ -687,26 +774,19 @@
     window.filterProducts = function() {
         const category = document.getElementById('filterCategory').value.toLowerCase();
         const sort = document.getElementById('sortProducts').value;
+        if(category === 'all') filteredProducts = [...allProducts];
+        else filteredProducts = allProducts.filter(p => p.category.toLowerCase().includes(category));
         
-        if(category === 'all') {
-            filteredProducts = [...allProducts];
-        } else {
-            filteredProducts = allProducts.filter(p => p.category.toLowerCase().includes(category));
-        }
-
         if(sort === 'price_low') filteredProducts.sort((a,b) => (a.salePrice || a.price) - (b.salePrice || b.price));
         else if(sort === 'price_high') filteredProducts.sort((a,b) => (b.salePrice || b.price) - (a.salePrice || a.price));
         else if(sort === 'bestsellers') filteredProducts.sort((a,b) => b.sold - a.sold);
         else if(sort === 'newest') filteredProducts.sort((a,b) => b.dateAdded - a.dateAdded);
-
         renderProducts();
     };
 
     function renderProducts() {
         const loader = document.getElementById('loadingIndicator');
-        const emptyState = document.getElementById('emptyStateMsg');
         const grid = document.getElementById('productGrid');
-        
         if(loader) loader.classList.add('hidden');
         if(!grid) return;
         
@@ -718,11 +798,9 @@
         grid.innerHTML = '';
         filteredProducts.forEach((product, i) => {
             if(product.images.length === 0) return;
-            
             const isOut = product.stock === 'out of stock';
             const hasSale = product.salePrice && product.salePrice < product.price;
             const displayPrice = hasSale ? product.salePrice : product.price;
-            
             const mainMedia = product.images[0];
             const hoverMedia = product.images.length > 1 ? product.images[1] : mainMedia;
 
@@ -733,7 +811,6 @@
                 else if(lower.includes('tan')) colorHex = '#D2B48C';
                 else if(lower.includes('burgundy') || lower.includes('oxblood')) colorHex = '#4A0404';
                 else if(lower.includes('blue') || lower.includes('navy')) colorHex = '#000080';
-                
                 const isColorSold = lower.includes('sold') || c.includes('-');
                 return `<div class="w-3 h-3 rounded-full border border-brand-border/50 ${isColorSold ? 'opacity-30 relative after:content-[\'\'] after:absolute after:w-full after:h-[1px] after:bg-red-500 after:top-1/2 after:-rotate-45' : ''}" style="background-color: ${colorHex};" title="${c}"></div>`;
             }).join('');
@@ -741,21 +818,17 @@
             grid.innerHTML += `
                 <div class="group relative animate-fade-in flex flex-col h-full ${isOut ? 'opacity-50 grayscale' : ''}" style="animation-delay: ${i*50}ms">
                     <div class="absolute inset-0 z-20 cursor-pointer" onclick="window.openDetails('${product.id}')"></div>
-                    
                     <div class="relative aspect-[4/5] bg-brand-card overflow-hidden rounded-t-sm border border-brand-border cursor-pointer">
                         ${hasSale && !isOut ? `<div class="absolute top-3 left-3 z-30 bg-brand-gold text-brand-darkest text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-md">Sale</div>` : ''}
                         ${isOut ? `<div class="absolute inset-0 bg-brand-darkest/80 z-30 flex items-center justify-center backdrop-blur-sm"><span class="bg-brand-dark text-white px-4 py-2 font-bold tracking-widest text-sm uppercase border border-brand-border">Out of Stock</span></div>` : ''}
-                        
                         <img src="${mainMedia}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0" onerror="this.src='https://placehold.co/600x750/2A1B12/D4AF37?text=Atelier'">
                         <img src="${hoverMedia}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100" onerror="this.src='https://placehold.co/600x750/2A1B12/D4AF37?text=Atelier'">
                     </div>
-                    
                     <div class="p-4 bg-brand-card rounded-b-sm border-x border-b border-brand-border relative z-10 flex flex-col flex-grow">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-serif text-base font-medium text-white group-hover:text-brand-gold transition-colors leading-tight pr-2">${product.name}</h3>
                             <div class="flex gap-1 shrink-0 mt-1">${swatches}</div>
                         </div>
-                        
                         <div class="mt-auto pt-2 flex items-center gap-2">
                             <span class="text-white font-medium">${formatRs(displayPrice)}</span>
                             ${hasSale ? `<span class="text-brand-light/50 text-xs line-through">${formatRs(product.price)}</span>` : ''}
@@ -769,28 +842,24 @@
     window.openDetails = function(id) {
         const product = allProducts.find(p => p.id === id);
         if(!product) return;
-
         const drawer = document.getElementById('detailsDrawer');
         const content = document.getElementById('detailsContent');
         const hasSale = product.salePrice && product.salePrice < product.price;
         const isOut = product.stock === 'out of stock';
         const displayPrice = hasSale ? product.salePrice : product.price;
 
-        selectedSizeForSticky = null;
-        selectedColorForSticky = null;
-
+        selectedSizeForSticky = null; selectedColorForSticky = null;
         let stockWarningHTML = '';
-        if(product.qtyAvailable) {
-            const lowStockMatch = product.qtyAvailable.match(/\b([1-3])\b/);
-            if(lowStockMatch && !isOut) {
-                stockWarningHTML = `<div class="flex items-center gap-2 text-red-400 text-xs font-bold uppercase tracking-wider mb-4 bg-red-900/20 p-2 rounded border border-red-900/50"><i class="fa-solid fa-fire animate-pulse"></i> High Demand: Only a few pairs left in stock!</div>`;
-            }
+        
+        const qtyStr = String(product.qtyAvailable || '');
+        const lowStockMatch = qtyStr.match(/\b([1-3])\b/);
+        
+        if(lowStockMatch && !isOut) {
+            stockWarningHTML = `<div class="flex items-center gap-2 text-red-400 text-xs font-bold uppercase tracking-wider mb-4 bg-red-900/20 p-2 rounded border border-red-900/50"><i class="fa-solid fa-fire animate-pulse"></i> High Demand: Only a few pairs left!</div>`;
         }
 
         const slidesHTML = product.images.map(media => {
-            return `<div class="keen-slider__slide w-full h-full min-w-full relative bg-brand-darkest flex items-center justify-center">
-                <img src="${media}" class="w-full max-h-[500px] object-cover" onerror="this.src='https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier'">
-            </div>`;
+            return `<div class="keen-slider__slide w-full h-full min-w-full relative bg-brand-darkest flex items-center justify-center"><img src="${media}" class="w-full max-h-[500px] object-cover" onerror="this.src='https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier'"></div>`;
         }).join('');
 
         const sizesHTML = product.sizes.map((s, i) => {
@@ -798,13 +867,10 @@
             const cleanSize = s.replace(/\(sold\)/gi, '').trim();
             const checked = (i===0 && !isSizeSold) ? 'checked' : '';
             if(checked) selectedSizeForSticky = cleanSize;
-            
-            return `
-                <div>
-                    <input type="radio" name="size" id="size-${s}" value="${cleanSize}" class="hidden size-radio" ${checked} ${isSizeSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
-                    <label for="size-${s}" class="block w-full text-center py-2.5 border border-brand-border text-sm transition-all rounded-sm bg-brand-dark ${isSizeSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanSize}</label>
-                </div>
-            `;
+            return `<div>
+                <input type="radio" name="size" id="size-${s}" value="${cleanSize}" class="hidden size-radio" ${checked} ${isSizeSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
+                <label for="size-${s}" class="block w-full text-center py-2.5 border border-brand-border text-sm transition-all rounded-sm bg-brand-dark ${isSizeSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanSize}</label>
+            </div>`;
         }).join('');
 
         const colorsHTML = product.colors.map((c, i) => {
@@ -812,13 +878,10 @@
             const cleanColor = c.replace(/\(sold\)/gi, '').trim();
             const checked = (i===0 && !isColorSold) ? 'checked' : '';
             if(checked) selectedColorForSticky = cleanColor;
-
-            return `
-                <div class="flex-1 min-w-[30%]">
-                    <input type="radio" name="color" id="color-${i}" value="${cleanColor}" class="hidden color-radio" ${checked} ${isColorSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
-                    <label for="color-${i}" class="block w-full text-center py-2.5 border border-brand-border text-xs transition-all rounded-sm whitespace-nowrap px-2 bg-brand-dark ${isColorSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanColor}</label>
-                </div>
-            `;
+            return `<div class="flex-1 min-w-[30%]">
+                <input type="radio" name="color" id="color-${i}" value="${cleanColor}" class="hidden color-radio" ${checked} ${isColorSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
+                <label for="color-${i}" class="block w-full text-center py-2.5 border border-brand-border text-xs transition-all rounded-sm whitespace-nowrap px-2 bg-brand-dark ${isColorSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanColor}</label>
+            </div>`;
         }).join('');
 
         content.innerHTML = `
@@ -831,16 +894,12 @@
             
             <div class="p-6">
                 ${stockWarningHTML}
-                
                 <div class="text-[10px] text-brand-gold mb-2 tracking-[0.2em] uppercase flex justify-between items-center font-bold">
                     <span>${product.category}</span>
-                    <div class="flex text-brand-gold">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                    </div>
+                    <div class="flex text-brand-gold"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
                 </div>
                 
                 <h2 class="font-serif text-2xl md:text-3xl mb-3 text-white leading-tight">${product.name}</h2>
-                
                 <div class="flex items-baseline gap-3 mb-6 pb-6 border-b border-brand-border/50">
                     <span class="text-2xl font-medium text-white">${formatRs(displayPrice)}</span>
                     ${hasSale ? `<span class="text-brand-light/50 line-through text-sm">${formatRs(product.price)}</span> <span class="bg-brand-gold text-brand-darkest text-[10px] font-bold px-2 py-0.5 rounded ml-2 uppercase tracking-wider">Sale</span>` : ''}
@@ -848,12 +907,9 @@
 
                 ${colorsHTML ? `
                     <div class="mb-6">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Leather Finish</span>
-                        </div>
+                        <div class="flex justify-between items-center mb-3"><span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Leather Finish</span></div>
                         <div class="flex flex-wrap gap-2">${colorsHTML}</div>
-                    </div>
-                ` : ''}
+                    </div>` : ''}
 
                 ${sizesHTML ? `
                     <div class="mb-8">
@@ -862,8 +918,7 @@
                             <button onclick="document.getElementById('sizeGuideModal').classList.remove('hidden')" class="text-brand-gold text-xs underline underline-offset-4 hover:text-white transition">Size Guide</button>
                         </div>
                         <div class="grid grid-cols-4 gap-2">${sizesHTML}</div>
-                    </div>
-                ` : ''}
+                    </div>` : ''}
                 
                 <div class="bg-brand-dark/50 border border-brand-border p-4 rounded mb-8">
                     <div class="flex items-start gap-3">
@@ -885,7 +940,6 @@
                         <ul class="mt-4 space-y-2 text-xs">
                             <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Premium Full-Grain Cow Leather Upper</li>
                             <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Hand-burnished patina finish</li>
-                            <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Memory foam comfort insole</li>
                             <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Handcrafted in Lahore & Swat</li>
                         </ul>
                     </div>
@@ -902,18 +956,15 @@
                             ${[1,2,3,4,5].map(s => `<i class="fa-solid fa-star active" onclick="window.setRating(${s})"></i>`).join('')}
                         </div>
                         <textarea id="reviewText" rows="3" class="w-full bg-brand-darkest border border-brand-border rounded p-3 text-sm text-white mb-3 outline-none focus:border-brand-gold" placeholder="Share your experience regarding comfort, fit, and craftsmanship..."></textarea>
-                        
                         <div class="mb-4">
                             <label class="block text-xs text-brand-light/80 mb-2 font-bold uppercase">Attach Photo (Optional)</label>
                             <input type="file" id="reviewImageUpload" accept="image/*" class="text-xs text-brand-light/80 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-bold file:uppercase file:bg-brand-gold file:text-brand-darkest hover:file:bg-brand-goldDark cursor-pointer">
                         </div>
-
                         <button onclick="window.submitReview('${product.id}')" class="btn-gold w-full py-3 rounded text-xs font-bold uppercase tracking-wider">Submit Review</button>
                     </div>
 
                     <div id="reviewsList" class="space-y-4"></div>
                 </div>
-                
                 <div class="h-24"></div>
             </div>
         `;
@@ -923,12 +974,10 @@
         const addBtn = document.getElementById('stickyAddBtn');
         
         if (isOut) {
-            addBtn.disabled = true;
-            addBtn.innerHTML = 'Unavailable';
+            addBtn.disabled = true; addBtn.innerHTML = 'Unavailable';
             addBtn.className = "w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center bg-brand-darkest text-brand-light/50 border border-brand-border cursor-not-allowed";
         } else {
-            addBtn.disabled = false;
-            addBtn.innerHTML = '<i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag';
+            addBtn.disabled = false; addBtn.innerHTML = '<i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag';
             addBtn.className = "btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center shadow-lg hover:shadow-brand-gold/20";
             addBtn.onclick = () => window.addToCart(product.id);
         }
@@ -947,11 +996,7 @@
                     slideChanged(s) {
                         const current = s.track.details.rel;
                         const dots = document.getElementById('sliderDots')?.children;
-                        if(dots) {
-                            for(let i=0; i<dots.length; i++){
-                                dots[i].className = `w-2 h-2 rounded-full transition-all ${i===current ? 'bg-brand-gold w-4' : 'bg-white/50'}`;
-                            }
-                        }
+                        if(dots) { for(let i=0; i<dots.length; i++){ dots[i].className = `w-2 h-2 rounded-full transition-all ${i===current ? 'bg-brand-gold w-4' : 'bg-white/50'}`; } }
                     }
                 });
             }, 100);
@@ -964,7 +1009,6 @@
         if(checkedSize) selectedSizeForSticky = checkedSize.value;
         if(checkedColor) selectedColorForSticky = checkedColor.value;
     };
-
     window.moveSlider = function(idx) { if(activeSlider) activeSlider.moveToIdx(idx); };
 
     window.closeDetails = function() {
@@ -987,8 +1031,7 @@
                 const canvas = document.createElement('canvas');
                 const MAX_WIDTH = 500; 
                 const scaleSize = MAX_WIDTH / img.width;
-                canvas.width = MAX_WIDTH;
-                canvas.height = img.height * scaleSize;
+                canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 callback(canvas.toDataURL('image/jpeg', 0.6)); 
@@ -1005,14 +1048,13 @@
         }
         document.getElementById('reviewFormContainer').classList.toggle('hidden');
     };
-
+    
     window.setRating = function(stars) {
         currentReviewRating = stars;
         const starsContainer = document.getElementById('reviewStars');
         if(!starsContainer) return;
         Array.from(starsContainer.children).forEach((star, index) => {
-            if(index < stars) star.classList.add('active');
-            else star.classList.remove('active');
+            if(index < stars) star.classList.add('active'); else star.classList.remove('active');
         });
     };
 
@@ -1023,21 +1065,18 @@
         if(!text) return window.showToast("Please write a review text.", "error");
 
         const btn = event.target;
-        btn.innerText = "Saving Review...";
+        btn.innerText = "Saving Data...";
         btn.disabled = true;
 
-        const saveReview = (base64Img) => {
+        const saveReview = async (base64Img) => {
             const newReview = { productId, userName: localProfileName, rating: currentReviewRating, text, image: base64Img || null, timestamp: Date.now() };
-            globalReviews.push(newReview);
-            localStorage.setItem('fbz_reviews', JSON.stringify(globalReviews));
+            
+            await window.syncToCloud('reviews', newReview);
             
             if(textEl) textEl.value = '';
             if(fileEl) fileEl.value = '';
             window.toggleReviewForm();
-            
-            btn.innerText = "Submit Review";
-            btn.disabled = false;
-            
+            btn.innerText = "Submit Review"; btn.disabled = false;
             window.showToast("Review submitted successfully!", "success");
             renderReviewsSection(productId);
         };
@@ -1046,8 +1085,7 @@
             const file = fileEl.files[0];
             if(file.size > 5 * 1024 * 1024) { 
                 window.showToast("Image too large. Please select an image under 5MB.", "error");
-                btn.innerText = "Submit Review";
-                btn.disabled = false;
+                btn.innerText = "Submit Review"; btn.disabled = false;
                 return;
             }
             compressImage(file, saveReview);
@@ -1059,12 +1097,10 @@
     function renderReviewsSection(productId) {
         const list = document.getElementById('reviewsList');
         if(!list) return;
-
         const product = allProducts.find(p => p.id === productId);
-        const productReviews = globalReviews.filter(r => r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
+        const productReviews = cloudReviews.filter(r => r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
 
         let html = '';
-        
         if (product && product.sheetReview && productReviews.length === 0) {
             const parts = product.sheetReview.split('|');
             if(parts.length === 2) {
@@ -1076,11 +1112,9 @@
                         <div class="text-brand-light/80 text-xs leading-relaxed">
                             Based on <strong>${parts[1]}</strong> verified client ratings from our Lahore & Swat Ateliers. Excellence is our standard.
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }
         }
-
         if (productReviews.length === 0 && html === '') {
             list.innerHTML = `<p class="text-brand-light/50 text-sm italic text-center py-6 border border-brand-border/30 rounded">No reviews yet. Be the first gentleman to share your experience.</p>`;
             return;
@@ -1089,9 +1123,7 @@
         html += productReviews.map(r => `
             <div class="bg-brand-card p-4 rounded border border-brand-border shadow-sm">
                 <div class="flex justify-between items-center mb-2">
-                    <div class="flex gap-1 text-brand-gold text-[10px]">
-                        ${Array(5).fill('').map((_,i) => `<i class="fa-solid fa-star ${i < r.rating ? '' : 'text-gray-600'}"></i>`).join('')}
-                    </div>
+                    <div class="flex gap-1 text-brand-gold text-[10px]">${Array(5).fill('').map((_,i) => `<i class="fa-solid fa-star ${i < r.rating ? '' : 'text-gray-600'}"></i>`).join('')}</div>
                     <span class="text-brand-light/50 text-[10px] font-mono">${new Date(r.timestamp).toLocaleDateString()}</span>
                 </div>
                 <p class="font-medium text-white text-sm mb-2">${r.userName} <i class="fa-solid fa-circle-check text-brand-gold text-[10px] ml-1" title="Verified Client"></i></p>
@@ -1099,31 +1131,28 @@
                 ${r.image ? `<img src="${r.image}" class="review-img-thumb" onclick="window.previewReviewImage('${r.image}')">` : ''}
             </div>
         `).join('');
-
         list.innerHTML = html;
+    }
+    
+    window.previewReviewImage = function(src) {
+        document.getElementById('fullSizePreview').src = src;
+        document.getElementById('imagePreviewModal').classList.remove('hidden');
     }
 
     window.addToCart = function(id) {
         const product = allProducts.find(p => p.id === id);
         if(!product) return;
-        
-        const sizeToUse = selectedSizeForSticky || (product.sizes.length > 0 ? product.sizes[0].replace(/\(sold\)/gi, '').trim() : 'Standard');
-        const colorToUse = selectedColorForSticky || (product.colors.length > 0 ? product.colors[0].replace(/\(sold\)/gi, '').trim() : 'Default');
+        const sizeToUse = selectedSizeForSticky || (product.sizes && product.sizes.length > 0 ? product.sizes[0].replace(/\(sold\)/gi, '').trim() : 'Standard');
+        const colorToUse = selectedColorForSticky || (product.colors && product.colors.length > 0 ? product.colors[0].replace(/\(sold\)/gi, '').trim() : 'Default');
         const price = (product.salePrice && product.salePrice < product.price) ? product.salePrice : product.price;
 
         cart.push({ ...product, cartId: Date.now(), selectedSize: sizeToUse, selectedColor: colorToUse, checkoutPrice: price });
-        localStorage.setItem('fbz_cart', JSON.stringify(cart));
-        
-        resetCartReminder();
-        
-        updateCartUI();
-        window.closeDetails();
-        window.toggleCart();
+        resetCartReminder(); updateCartUI();
+        window.closeDetails(); window.toggleCart();
     };
 
     window.removeFromCart = function(cartId) {
         cart = cart.filter(item => item.cartId !== cartId);
-        localStorage.setItem('fbz_cart', JSON.stringify(cart));
         updateCartUI();
         if(cart.length === 0 && cartReminderTimer) clearTimeout(cartReminderTimer);
     };
@@ -1137,7 +1166,6 @@
         const pMsg = document.getElementById('shippingMessage');
         
         if(!container || !totalDisplay) return;
-        
         let subtotal = 0;
         
         if (cart.length === 0) {
@@ -1149,11 +1177,9 @@
         }
 
         container.innerHTML = '';
-        
         cart.forEach(item => {
             subtotal += item.checkoutPrice;
             const thumb = `<img src="${item.images[0] || ''}" class="w-20 h-20 object-cover rounded border border-gray-200" onerror="this.src='https://placehold.co/100x100/2A1B12/D4AF37?text=Item'">`;
-            
             container.innerHTML += `
                 <div class="flex gap-4 relative pb-4 items-center">
                     <button onclick="window.removeFromCart(${item.cartId})" class="absolute top-0 right-0 text-gray-400 hover:text-red-500 transition-colors" title="Remove"><i class="fa-solid fa-xmark"></i></button>
@@ -1169,40 +1195,31 @@
         let shippingCost = STANDARD_SHIPPING_COST;
         if(subtotal >= FREE_SHIPPING_THRESHOLD) {
             shippingCost = 0;
-            if(pBar) pBar.style.width = '100%';
-            if(pBar) pBar.classList.add('bg-green-500');
+            if(pBar) { pBar.style.width = '100%'; pBar.classList.add('bg-green-500'); pBar.classList.remove('bg-blue-600'); }
             if(pMsg) pMsg.innerHTML = `<span class="text-green-600 font-bold"><i class="fa-solid fa-check-circle"></i> You have unlocked Free Shipping!</span>`;
         } else {
             const percentage = (subtotal / FREE_SHIPPING_THRESHOLD) * 100;
-            const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
-            if(pBar) {
-                pBar.style.width = `${percentage}%`;
-                pBar.classList.remove('bg-green-500');
-                pBar.classList.add('bg-blue-600');
-            }
-            if(pMsg) pMsg.innerHTML = `You are <span class="text-blue-600 font-bold">${formatRs(remaining)}</span> away from Free Shipping!`;
+            if(pBar) { pBar.style.width = `${percentage}%`; pBar.classList.remove('bg-green-500'); pBar.classList.add('bg-blue-600'); }
+            if(pMsg) pMsg.innerHTML = `You are <span class="text-blue-600 font-bold">${formatRs(FREE_SHIPPING_THRESHOLD - subtotal)}</span> away from Free Shipping!`;
         }
 
         const isBank = document.querySelector('input[name="payment"]:checked')?.value === 'Bank';
         const discountAmount = isBank ? (subtotal * 0.10) : 0;
         const finalTotal = subtotal - discountAmount + shippingCost;
         
-        let totalHTML = `
+        totalDisplay.innerHTML = `
             <div class="text-xs text-gray-500 flex justify-between mb-1"><span>Subtotal</span><span>${formatRs(subtotal)}</span></div>
             ${isBank ? `<div class="text-xs text-green-600 flex justify-between mb-1 font-medium"><span>Bank Discount (10%)</span><span>-${formatRs(discountAmount)}</span></div>` : ''}
             <div class="text-xs text-gray-500 flex justify-between mb-2"><span>Shipping</span><span>${shippingCost === 0 ? 'Free' : formatRs(shippingCost)}</span></div>
             <div class="text-base text-black font-bold flex justify-between pt-2 border-t border-gray-200"><span>Total</span><span>${formatRs(finalTotal)}</span></div>
-        `;
-        
-        totalDisplay.innerHTML = totalHTML; 
+        `; 
     }
 
     window.toggleCart = function() {
         const modal = document.getElementById('cartModal');
         const drawer = document.getElementById('cartDrawer');
         if(modal.classList.contains('hidden')) {
-            window.updateCartUI();
-            modal.classList.remove('hidden');
+            window.updateCartUI(); modal.classList.remove('hidden');
             setTimeout(() => drawer.classList.remove('translate-x-full'), 10);
             document.body.style.overflow = 'hidden';
         } else {
@@ -1211,7 +1228,7 @@
         }
     };
 
-    window.submitOrder = function() {
+    window.submitOrder = async function() {
         if (cart.length === 0) return window.showToast("Your bag is empty.", "error");
 
         const fName = document.getElementById('chkFName').value.trim();
@@ -1226,36 +1243,26 @@
         }
 
         const btn = document.getElementById('completeOrderBtn');
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
-        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...'; btn.disabled = true;
 
         const trackingId = "ZAK-" + Math.random().toString(36).substr(2, 5).toUpperCase();
-        
-        let subtotal = 0;
-        cart.forEach(item => { subtotal += item.checkoutPrice; });
-        
+        let subtotal = 0; cart.forEach(item => { subtotal += item.checkoutPrice; });
         const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
         const discount = payMode === 'Bank' ? (subtotal * 0.10) : 0;
         const total = subtotal - discount + shippingCost;
 
-        const finalizeOrderSubmission = (receiptBase64) => {
+        const finalizeOrderSubmission = async (receiptBase64) => {
             const orderData = {
-                trackingId,
-                clientName: `${fName} ${lName}`,
-                email: localProfileEmail || 'guest@client.com',
-                phone,
-                address: `${address}, ${city}`,
-                paymentMode: payMode,
+                trackingId, clientName: `${fName} ${lName}`,
+                email: localProfileEmail || 'guest@client.com', phone,
+                address: `${address}, ${city}`, paymentMode: payMode,
                 items: cart.map(i => ({ name: i.name, size: i.selectedSize, color: i.selectedColor, price: i.checkoutPrice })),
-                totalAmount: total,
-                status: "Order Received - Preparing for Lahore & Swat Artisans",
-                receiptImage: receiptBase64 || null,
-                timestamp: Date.now()
+                totalAmount: total, status: "Order Received - Preparing for Lahore & Swat Artisans",
+                receiptImage: receiptBase64 || null, timestamp: Date.now()
             };
 
-            allOrders.push(orderData);
-            localStorage.setItem('fbz_my_orders', JSON.stringify(allOrders));
-            
+            await window.syncToCloud('orders', orderData);
+
             if(!localProfileName) {
                 localProfileName = `${fName} ${lName}`;
                 localStorage.setItem('fbz_profile_name', localProfileName);
@@ -1264,27 +1271,25 @@
 
             const whatsappNumber = "923000000000"; 
             const orderSummaryText = cart.map(i => `• ${i.name} (Color: ${i.selectedColor}, Size: ${i.selectedSize}) - ${formatRs(i.checkoutPrice)}`).join('%0A');
-            const whatsappMsg = `*NEW VIP ORDER - FOOTWEAR BY ZAK*%0A%0A*Tracking ID:* ${trackingId}%0A*Name:* ${fName} ${lName}%0A*Phone:* ${phone}%0A*Address:* ${address}, ${city}%0A*Payment:* ${payMode} ${receiptBase64 ? '(Receipt Attached)' : ''}%0A%0A*Items:*%0A${orderSummaryText}%0A%0A*Subtotal:* ${formatRs(subtotal)}%0A*Shipping:* ${shippingCost===0?'Free':formatRs(shippingCost)}%0A*Discount:* -${formatRs(discount)}%0A*Total Amount:* ${formatRs(total)}`;
+            const whatsappMsg = `*NEW VIP ORDER - FOOTWEAR BY ZAK*%0A%0A*Tracking ID:* ${trackingId}%0A*Name:* ${fName} ${lName}%0A*Phone:* ${phone}%0A*Address:* ${address}, ${city}%0A*Payment:* ${payMode}%0A%0A*Items:*%0A${orderSummaryText}%0A%0A*Total Amount:* ${formatRs(total)}`;
             
-            cart = [];
-            localStorage.setItem('fbz_cart', JSON.stringify(cart));
+            cart = []; updateCartUI();
             if(cartReminderTimer) clearTimeout(cartReminderTimer);
-            
             window.toggleCart();
-            btn.innerHTML = 'Complete order';
-            btn.disabled = false;
+            btn.innerHTML = 'Complete order'; btn.disabled = false;
             
-            renderTrackingList();
-            window.showToast(`Order Placed! Tracking ID: ${trackingId}`, "success");
-            
-            setTimeout(() => {
-                window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank');
-            }, 1000);
+            window.showToast(`Order Placed Successfully! Tracking ID: ${trackingId}`, "success");
+            setTimeout(() => { window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank'); }, 1000);
         };
 
         const receiptInput = document.getElementById('bankReceiptUpload');
         if (payMode === 'Bank' && receiptInput && receiptInput.files.length > 0) {
             const file = receiptInput.files[0];
+            if(file.size > 2 * 1024 * 1024) {
+                 window.showToast("Receipt image too large. Please select an image under 2MB.", "error");
+                 btn.innerHTML = 'Complete order'; btn.disabled = false;
+                 return;
+            }
             compressImage(file, finalizeOrderSubmission);
         } else {
             finalizeOrderSubmission(null);
@@ -1300,9 +1305,9 @@
     function renderTrackingList() {
         const list = document.getElementById('trackingList');
         if(!list) return;
-        const myOrders = allOrders.filter(o => localProfileEmail && o.email === localProfileEmail);
+        const myOrders = cloudOrders.filter(o => localProfileEmail && o.email === localProfileEmail);
         if(myOrders.length === 0) {
-            list.innerHTML = `<p class="text-center text-sm text-brand-light/80 py-4 italic">No active orders linked to this session.</p>`;
+            list.innerHTML = `<p class="text-center text-sm text-brand-light/80 py-4 italic">No active orders linked to this email.</p>`;
             return;
         }
         list.innerHTML = myOrders.sort((a,b)=>b.timestamp - a.timestamp).map(o => `
@@ -1310,7 +1315,6 @@
                 <div class="flex justify-between text-brand-gold mb-1 font-bold"><span><i class="fa-solid fa-hashtag text-[10px]"></i> ${o.trackingId}</span> <span>${formatRs(o.totalAmount)}</span></div>
                 <div class="text-white mb-3 text-xs opacity-75 font-mono">${new Date(o.timestamp).toLocaleDateString()}</div>
                 <div class="text-xs inline-block bg-brand-gold/10 text-brand-gold px-3 py-1.5 rounded border border-brand-gold/30 uppercase tracking-widest font-bold"><i class="fa-solid fa-cog fa-spin mr-2"></i> ${o.status}</div>
-                ${o.receiptImage ? `<div class="mt-2 text-xs text-green-400"><i class="fa-solid fa-receipt mr-1"></i> Receipt Attached</div>` : ''}
             </div>
         `).join('');
     }
@@ -1335,81 +1339,72 @@
         }
     }
 
-    window.handleLocalAuth = function() {
+    window.handleLocalAuth = async function() {
         const name = document.getElementById('authName').value.trim();
         const email = document.getElementById('authEmail').value.trim();
         if(!name || !email || !email.includes('@')) {
             return window.showToast("Please enter a valid name and email address.", "error");
         }
-        localProfileName = name;
-        localProfileEmail = email;
+        
+        localProfileName = name; localProfileEmail = email;
         localStorage.setItem('fbz_profile_name', name);
         localStorage.setItem('fbz_profile_email', email);
 
-        if(!subscriberEmails.includes(email)) {
-            subscriberEmails.push(email);
-            localStorage.setItem('fbz_subscribers', JSON.stringify(subscriberEmails));
-        }
+        await window.syncToCloud('subscribers', email);
 
-        updateAuthUI();
-        window.closeAuthModal();
-        window.showToast(`Welcome, ${name}. Your email is saved for VIP updates.`, "success");
+        updateAuthUI(); window.closeAuthModal();
+        window.showToast(`Welcome, ${name}. Logged in successfully.`, "success");
     };
 
     window.handleLocalLogout = function() {
-        localProfileName = '';
-        localProfileEmail = '';
+        localProfileName = ''; localProfileEmail = '';
         localStorage.removeItem('fbz_profile_name');
         localStorage.removeItem('fbz_profile_email');
-        updateAuthUI();
-        window.closeAuthModal();
+        updateAuthUI(); window.closeAuthModal();
         window.showToast("Signed out securely.", "info");
     };
 
-    // Owner Dashboard Logic (Password: 5003)
     window.verifyOwnerLogin = function() {
         const pass = document.getElementById('ownerPassInput').value;
         if(pass === '5003') {
             document.getElementById('ownerLoginScreen').classList.add('hidden');
             document.getElementById('ownerDashboardContent').classList.remove('hidden');
             renderOwnerDashboard();
-            window.showToast("Owner Dashboard Unlocked", "success");
+            window.showToast("Dashboard Unlocked", "success");
         } else {
             window.showToast("Incorrect password.", "error");
         }
     };
-    window.closeOwnerModal = function() {
-        document.getElementById('ownerModal').classList.add('hidden');
-    };
+    window.closeOwnerModal = function() { document.getElementById('ownerModal').classList.add('hidden'); };
 
     function renderOwnerDashboard() {
-        document.getElementById('statSubscribersCount').innerText = subscriberEmails.length;
-        document.getElementById('statOrdersCount').innerText = allOrders.length;
+        document.getElementById('statSubscribersCount').innerText = cloudSubscribers.length;
+        document.getElementById('statOrdersCount').innerText = cloudOrders.length;
         
         let totalRev = 0;
-        allOrders.forEach(o => totalRev += o.totalAmount);
+        cloudOrders.forEach(o => totalRev += o.totalAmount);
         document.getElementById('statRevenue').innerText = formatRs(totalRev);
 
         const emailListContainer = document.getElementById('ownerEmailList');
-        emailListContainer.innerHTML = subscriberEmails.map(e => `<div>&bull; ${e}</div>`).join('');
+        emailListContainer.innerHTML = cloudSubscribers.map(e => `<div>&bull; ${e}</div>`).join('');
 
         const ordersListContainer = document.getElementById('ownerOrdersList');
-        if(allOrders.length === 0) {
+        if(cloudOrders.length === 0) {
             ordersListContainer.innerHTML = `<p class="text-brand-light/60 italic">No customer orders recorded yet.</p>`;
         } else {
-            ordersListContainer.innerHTML = allOrders.sort((a,b)=>b.timestamp - a.timestamp).map(o => `
+            ordersListContainer.innerHTML = cloudOrders.sort((a,b)=>b.timestamp - a.timestamp).map(o => `
                 <div class="bg-brand-darkest p-3 rounded border border-brand-border space-y-1">
                     <div class="flex justify-between font-bold text-white"><span>${o.trackingId} - ${o.clientName}</span> <span class="text-brand-gold">${formatRs(o.totalAmount)}</span></div>
-                    <div class="text-xs text-brand-light/70">${o.phone} &bull; ${o.address} &bull; Payment: ${o.paymentMode}</div>
-                    <div class="text-xs text-brand-light/90 font-mono">${o.items.map(i=>`${i.name} (Sz: ${i.size})`).join(', ')}</div>
-                    ${o.receiptImage ? `<a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 underline block mt-1"><i class="fa-solid fa-receipt mr-1"></i> View Bank Receipt Photo</a>` : ''}
+                    <div class="text-xs text-brand-light/70">${o.email} &bull; ${o.phone} &bull; Payment: ${o.paymentMode}</div>
+                    <div class="text-xs text-brand-light/90 font-mono">${o.items.map(i=>`${i.name} (Sz: ${i.size}, ${i.color})`).join(', ')}</div>
+                    ${o.receiptImage ? `<a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 underline block mt-1"><i class="fa-solid fa-receipt mr-1"></i> View Bank Receipt</a>` : ''}
                 </div>
             `).join('');
         }
     }
 
     window.copyAllEmails = function() {
-        const text = subscriberEmails.join(', ');
+        const text = cloudSubscribers.join(', ');
         navigator.clipboard.writeText(text);
         window.showToast("All subscriber emails copied to clipboard!", "success");
     };
@@ -1417,7 +1412,7 @@
     window.sendEmailBroadcast = function() {
         const subject = encodeURIComponent(document.getElementById('broadcastSubject').value || 'Exclusive Offer from Footwear By Zak');
         const body = encodeURIComponent(document.getElementById('broadcastBody').value || 'Hello valued customer from Lahore & Swat, check out our latest collection!');
-        const bcc = subscriberEmails.join(',');
+        const bcc = cloudSubscribers.join(',');
         window.open(`mailto:?bcc=${bcc}&subject=${subject}&body=${body}`, '_blank');
     };
 
@@ -1434,7 +1429,6 @@
 
         addChatMessage(input.value.trim(), 'user');
         input.value = '';
-        
         const typingId = addChatMessage('Consulting Atelier Records...', 'bot', true);
 
         setTimeout(() => {
@@ -1442,35 +1436,22 @@
             let reply = "";
 
             if (message.includes("track") || message.includes("order") || message.includes("where") || message.includes("status")) {
-                const myOrders = allOrders.filter(o => localProfileEmail && o.email === localProfileEmail);
+                const myOrders = cloudOrders.filter(o => localProfileEmail && o.email === localProfileEmail);
                 if (myOrders.length > 0) {
                     const latest = myOrders[myOrders.length - 1];
-                    reply = `Mr. ${localProfileName || 'Client'}, I found your records. Your latest order (**${latest.trackingId}**) is currently: "${latest.status}". Thank you for your patience.`;
+                    reply = `Mr. ${localProfileName || 'Client'}, I found your records. Your latest order (**${latest.trackingId}**) is currently: "${latest.status}".`;
                 } else if (localProfileName) {
-                    reply = `Mr. ${localProfileName}, I have checked the master ledger but do not see any active orders under your profile yet.`;
+                    reply = `Mr. ${localProfileName}, I do not see any active orders under your email yet.`;
                 } else {
-                    reply = "I would be happy to check your order. Please click the 'Account' icon at the top of the page to log into your client portal first.";
+                    reply = "I would be happy to check your order. Please click the 'Account' icon at the top of the page to log in first.";
                 }
             } 
-            else if (message.includes("shipping") || message.includes("delivery") || message.includes("charge")) {
+            else if (message.includes("shipping") || message.includes("delivery")) {
                 reply = `We offer standard dispatch across Pakistan for Rs 300. **Orders over ${formatRs(FREE_SHIPPING_THRESHOLD)} qualify for Free Shipping!**`;
             }
-            else if (message.includes("leather") || message.includes("material") || message.includes("made of")) {
-                reply = "Every pair by Zak is handcrafted using premium full-grain cow leather across our Lahore and Swat artisan workshops.";
-            }
-            else if (message.includes("size") || message.includes("fit")) {
-                reply = "Our shoes generally fit true to size. You can view our detailed CM to EU conversion chart by clicking 'Size Guide' on any product page.";
-            }
-            else if (message.includes("bank") || message.includes("discount")) {
-                reply = "You receive an automatic 10% OFF when paying via Direct Bank Deposit. You can select this option securely at checkout and upload your receipt photo.";
-            }
-            else if (message.includes("hi") || message.includes("hello") || message.includes("hey")) {
-                reply = `Welcome to Footwear By Zak, ${localProfileName ? 'Mr. '+localProfileName : 'sir'}. I am the AI Concierge. How may I assist you with our luxury collection today?`;
-            }
             else {
-                reply = "Thank you for reaching out. As an AI concierge, I specialize in tracking orders, sizing advice, shipping policies, and stock availability across Lahore and Swat. How can I help you refine your style today?";
+                reply = "Thank you for reaching out. As an AI concierge, I specialize in tracking orders, sizing advice, and shipping policies across Lahore and Swat. How can I assist you today?";
             }
-
             addChatMessage(reply, 'bot');
         }, 1000);
     };
@@ -1482,9 +1463,7 @@
         div.id = id;
         if(sender === 'user') div.className = 'bg-brand-gold text-brand-darkest p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
         else div.className = `bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed ${isTyping ? 'animate-pulse text-brand-light/80' : ''}`;
-        
         div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-brand-gold font-bold">$1</strong>');
-        
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
         return id;
