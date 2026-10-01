@@ -119,7 +119,7 @@
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-gold"></span>
             </span>
-            Lahore Workshop Active
+            Swat Workshop Active
         </div>
     </div>
 
@@ -291,7 +291,7 @@
                     </label>
                     <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50" onclick="document.getElementById('bankDetailsBox').classList.remove('hidden'); window.updateCartUI();">
                         <input type="radio" name="payment" value="Bank" class="w-4 h-4 text-blue-600">
-                        <span class="text-sm text-black font-medium">Bank Deposit - Get 10% OFF</span>
+                        <span class="text-sm text-black font-medium">Bank Deposit - Get 5% OFF</span>
                     </label>
                 </div>
                 
@@ -299,10 +299,10 @@
                 <div id="bankDetailsBox" class="hidden p-4 bg-gray-50 border border-gray-200 rounded-lg text-xs space-y-2 text-gray-700 mb-3">
                     <p class="font-bold text-black text-sm flex items-center gap-1"><i class="fa-solid fa-building-columns text-blue-600"></i> Direct Bank Transfer Details</p>
                     <div class="grid grid-cols-2 gap-1 bg-white p-3 rounded border border-gray-200 font-mono text-[11px]">
-                        <span class="text-gray-500">Bank:</span> <span class="font-bold text-black">Meezan Bank Ltd</span>
-                        <span class="text-gray-500">Account Title:</span> <span class="font-bold text-black">Footwear By Zak</span>
-                        <span class="text-gray-500">Account No:</span> <span class="font-bold text-black">0123-9876543210</span>
-                        <span class="text-gray-500">IBAN:</span> <span class="font-bold text-black">PK36MEZN0001239876543210</span>
+                        <span class="text-gray-500">Bank:</span> <span class="font-bold text-black">United Bank</span>
+                        <span class="text-gray-500">Account Title:</span> <span class="font-bold text-black">Zaheer Abbas</span>
+                        <span class="text-gray-500">Account No:</span> <span class="font-bold text-black">1905397610026</span>
+                        <span class="text-gray-500">IBAN:</span> <span class="font-bold text-black">PK90UNIL0109000397610026</span>
                     </div>
                     <div class="pt-2">
                         <label class="block font-bold text-black mb-1">Attach Payment Receipt Photo:</label>
@@ -464,10 +464,10 @@
         <div>
             <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Bank Details (For 10% Off)</h4>
             <div class="text-brand-light/80 text-xs space-y-1 mb-4 bg-brand-darkest p-3 rounded border border-brand-border font-mono">
-                <p><strong>Bank:</strong> Meezan Bank Ltd.</p>
-                <p><strong>Title:</strong> Footwear By Zak</p>
-                <p><strong>Acc:</strong> 0123-9876543210</p>
-                <p><strong>IBAN:</strong> PK36MEZN0001239876543210</p>
+                <p><strong>Bank:</strong> United bank.</p>
+                <p><strong>Title:</strong> Zaheer Abbas</p>
+                <p><strong>Acc:</strong> 1905397610026</p>
+                <p><strong>IBAN:</strong> PK90UNIL0109000397610026</p>
             </div>
             
             <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Join The Atelier</h4>
@@ -483,7 +483,7 @@
 </footer>
 
 <script type="module">
-    const googleSheetUrl = ""; 
+    const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv"; 
     const FREE_SHIPPING_THRESHOLD = 20000;
     
     let allProducts = [];
@@ -1108,7 +1108,7 @@
                 </div>`;
         });
 
-        let shippingCost = 200;
+        let shippingCost = 300;
         if(subtotal >= FREE_SHIPPING_THRESHOLD) {
             shippingCost = 0;
             if(pBar) pBar.style.width = '100%';
@@ -1206,7 +1206,7 @@
                 updateAuthUI();
             }
 
-            const whatsappNumber = "923000000000"; 
+            const whatsappNumber = "923200217208"; 
             const orderSummaryText = cart.map(i => `• ${i.name} (Color: ${i.selectedColor}, Size: ${i.selectedSize}) - ${formatRs(i.checkoutPrice)}`).join('%0A');
             const whatsappMsg = `*NEW VIP ORDER - FOOTWEAR BY ZAK*%0A%0A*Tracking ID:* ${trackingId}%0A*Name:* ${fName} ${lName}%0A*Phone:* ${phone}%0A*Address:* ${address}, ${city}%0A*Payment:* ${payMode} ${receiptBase64 ? '(Receipt Attached)' : ''}%0A%0A*Items:*%0A${orderSummaryText}%0A%0A*Subtotal:* ${formatRs(subtotal)}%0A*Shipping:* ${shippingCost===0?'Free':formatRs(shippingCost)}%0A*Discount:* -${formatRs(discount)}%0A*Total Amount:* ${formatRs(total)}`;
             
