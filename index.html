@@ -89,16 +89,16 @@
         </div>
     </nav>
 
+    <!-- HERO SECTION WITH CRYSTAL CLEAR BACKGROUND IMAGE (image_a2c81b.jpg.jpg) -->
     <header class="relative pt-32 pb-24 px-6 md:px-12 flex flex-col items-center justify-center text-center min-h-[85vh] overflow-hidden border-b border-brand-border">
-        <!-- EXACT IMAGE UPLOADED BY USER (.jpg.jpg) -->
         <div class="absolute inset-0 z-0">
             <img src="image_a2c81b.jpg.jpg" alt="Master Shoemaker Crafting Leather in Workshop" class="w-full h-full object-cover">
-            <!-- Dark Overlay to ensure text pops -->
-            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90 backdrop-blur-[1px]"></div>
+            <!-- Lighter overlay so the shoemaker picture with all his tools and workshop is crystal clear and fully visible -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/60"></div>
         </div>
 
         <div class="max-w-3xl z-10 animate-slide-up relative mt-10">
-            <p class="text-brand-gold tracking-[0.3em] text-xs font-semibold uppercase mb-4 flex items-center justify-center gap-2 drop-shadow-lg">
+            <p class="text-brand-gold tracking-[0.3em] text-xs font-semibold uppercase mb-4 flex items-center justify-center gap-2 drop-shadow-md">
                 <span class="w-8 h-[1px] bg-brand-gold/80"></span>
                 Masterfully Crafted in Pakistan
                 <span class="w-8 h-[1px] bg-brand-gold/80"></span>
@@ -106,7 +106,7 @@
             <h1 class="font-serif text-4xl md:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-2xl">
                 The Pinnacle of <br><span class="gold-text">Leather Artistry.</span>
             </h1>
-            <p class="text-brand-light/95 text-sm md:text-base font-medium mb-10 max-w-xl mx-auto leading-relaxed drop-shadow-xl bg-black/30 p-4 rounded-lg backdrop-blur-sm border border-white/10">
+            <p class="text-brand-light/95 text-sm md:text-base font-medium mb-10 max-w-xl mx-auto leading-relaxed drop-shadow-xl bg-black/40 p-4 rounded-lg backdrop-blur-[2px] border border-white/15">
                 Experience authentic heritage craftsmanship. Every pair is individually cut, shaped, and hand-finished for the modern gentleman.
             </p>
             <a href="#collection" class="btn-gold px-8 py-3.5 rounded-sm text-sm font-bold tracking-widest uppercase inline-block shadow-xl">
@@ -249,11 +249,12 @@
         </div>
     </div>
 
-    <button id="chatToggleBtn" onclick="window.toggleChat()" class="fixed bottom-6 right-6 z-[85] bg-brand-gold text-brand-black w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform">
+    <!-- CHATBOT PLACED CLEANLY AT BOTTOM-LEFT -->
+    <button id="chatToggleBtn" onclick="window.toggleChat()" class="fixed bottom-8 left-6 z-[85] bg-brand-gold text-brand-black w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform">
         <i class="fa-solid fa-comment-dots text-2xl"></i>
     </button>
 
-    <div id="chatWindow" class="fixed bottom-24 right-6 w-[340px] sm:w-[380px] bg-brand-card border border-brand-border rounded-lg shadow-2xl z-[90] hidden flex-col overflow-hidden">
+    <div id="chatWindow" class="fixed bottom-28 left-6 w-[340px] sm:w-[380px] bg-brand-card border border-brand-border rounded-lg shadow-2xl z-[90] hidden flex-col overflow-hidden">
         <div class="bg-brand-dark p-4 border-b border-brand-border flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center text-black font-bold">
@@ -283,23 +284,23 @@
         <img id="fullSizePreview" src="" class="max-w-[90%] max-h-[90%] object-contain rounded-md border border-white/10 shadow-2xl">
     </div>
 
+    <!-- FOOTER WITH TIKTOK, INSTAGRAM, FACEBOOK, AND SHOPIFY -->
     <footer class="border-t border-white/5 pt-16 pb-8 px-6 md:px-12 bg-black mt-20">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="text-center md:text-left">
                 <h3 class="font-serif text-xl tracking-widest text-white mb-2">FOOTWEAR <span class="gold-text">BY ZAK</span></h3>
                 <p class="text-brand-gray text-xs">Authentic Handcrafted Leather Shoes. Lahore, Pakistan.</p>
             </div>
-            <!-- Client Requested Social Links -->
             <div class="flex gap-6 text-brand-gray text-xl">
+                <a href="https://tiktok.com/@footwearbyzak" target="_blank" class="hover:text-brand-gold transition" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                 <a href="https://instagram.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                 <a href="https://facebook.com/footwearbyzak" target="_blank" class="hover:text-brand-gold transition" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#" target="_blank" class="hover:text-brand-gold transition" title="Shopify Store"><i class="fa-brands fa-shopify"></i></a>
+                <a href="https://shop.com" target="_blank" class="hover:text-brand-gold transition" title="Shopify Store"><i class="fa-brands fa-shopify"></i></a>
             </div>
         </div>
     </footer>
 
     <script type="module">
-        // Google Sheet URL (Ensure published as CSV)
         const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT1g0dCg9-B8v82RjYgT3bLwK0B7aHjN2_gG1V4rE1A4nI6uU7V8v9M0cO_F0_Q/pub?output=csv";
         
         let products = [];
@@ -313,7 +314,6 @@
 
         const formatRs = (num) => "Rs " + parseInt(num).toLocaleString('en-PK');
 
-        // Custom Notification System (Replaces alert() completely)
         window.showToast = function(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -326,11 +326,7 @@
             toast.innerHTML = `${icon} <span>${message}</span>`;
             
             container.appendChild(toast);
-            
-            // Animate in
             setTimeout(() => toast.classList.remove('translate-x-full'), 10);
-            
-            // Animate out and remove
             setTimeout(() => {
                 toast.classList.add('translate-x-full');
                 setTimeout(() => toast.remove(), 300);
@@ -344,7 +340,6 @@
                 const data = await response.text();
                 const rows = parseCSV(data);
                 
-                // Strict zero-fake catalog parsing. Only loads what is actually in the sheet.
                 products = rows.slice(1).filter(row => row && row[0] && row[1]).map(row => {
                     const media = [row[7], row[8], row[9], row[10]].filter(m => m && m.trim() !== '');
                     return {
@@ -402,7 +397,6 @@
             if(loader) loader.classList.add('hidden');
             if(!grid) return;
             
-            // STRICT ZERO MOCK DATA - If sheet is empty, show empty state message
             if (products.length === 0) {
                 if(emptyState) emptyState.classList.remove('hidden');
                 return;
@@ -422,8 +416,8 @@
 
                 grid.innerHTML += `
                     <div class="group relative animate-fade-in ${isOut ? 'opacity-50 grayscale' : ''}" style="animation-delay: ${i*100}ms">
-                        <div class="product-card-overlay" onclick="window.openDetails('${product.id}')"></div>
-                        <div class="relative aspect-square bg-brand-card overflow-hidden rounded-t-sm border border-white/5">
+                        <div class="product-card-overlay cursor-pointer" onclick="window.openDetails('${product.id}')"></div>
+                        <div class="relative aspect-square bg-brand-card overflow-hidden rounded-t-sm border border-white/5 cursor-pointer" onclick="window.openDetails('${product.id}')">
                             ${hasSale && !isOut ? `<div class="absolute top-3 left-3 z-20 bg-red-800 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-md">Sale</div>` : ''}
                             ${isOut ? `<div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center backdrop-blur-sm"><span class="bg-black text-white px-4 py-2 font-bold tracking-widest text-sm uppercase border border-white/20">Out of Stock</span></div>` : ''}
                             
@@ -432,12 +426,12 @@
                                 : `<img src="${mainMedia}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://placehold.co/600x600/121212/D4AF37?text=Atelier+Footwear'">`
                             }
                         </div>
-                        <div class="pt-4 pb-2 relative z-10 pointer-events-none">
+                        <div class="pt-4 pb-2 relative z-10">
                             <div class="text-xs text-brand-gold mb-1 tracking-widest uppercase flex justify-between items-center">
                                 ${product.category}
                                 ${product.sold ? `<span class="text-brand-gray text-[10px]"><i class="fa-solid fa-fire text-orange-500"></i> ${product.sold} Sold</span>` : ''}
                             </div>
-                            <h3 class="font-serif text-lg text-white mb-1">${product.name}</h3>
+                            <h3 class="font-serif text-lg text-white mb-1 cursor-pointer hover:text-brand-gold" onclick="window.openDetails('${product.id}')">${product.name}</h3>
                             <div class="flex items-center gap-2">
                                 <span class="text-white font-medium">${formatRs(displayPrice)}</span>
                                 ${hasSale ? `<span class="text-brand-gray text-sm line-through">${formatRs(product.price)}</span>` : ''}
@@ -646,7 +640,6 @@
                     timestamp: Date.now()
                 };
                 
-                // Save to local storage for immediate global persistence in browser
                 globalReviews.push(newReview);
                 localStorage.setItem('fbz_reviews', JSON.stringify(globalReviews));
                 
@@ -833,11 +826,9 @@
                 timestamp: Date.now()
             };
 
-            // Save order locally for tracking
             myOrders.push(orderData);
             localStorage.setItem('fbz_my_orders', JSON.stringify(myOrders));
             
-            // Auto-login customer if they aren't
             if(!localProfileName) {
                 localProfileName = `${fName} ${lName}`;
                 localStorage.setItem('fbz_profile_name', localProfileName);
@@ -940,12 +931,10 @@
             
             const typingId = addChatMessage('Consulting Atelier Records...', 'bot', true);
 
-            // Independent Local AI Logic (Requires no API keys, will never break)
             setTimeout(() => {
                 document.getElementById(typingId)?.remove();
                 let reply = "";
 
-                // Intent Recognition
                 if (message.includes("track") || message.includes("order") || message.includes("where") || message.includes("status")) {
                     if (myOrders.length > 0) {
                         const latest = myOrders[myOrders.length - 1];
@@ -981,7 +970,6 @@
             if(sender === 'user') div.className = 'bg-brand-gold text-black p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
             else div.className = `bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed ${isTyping ? 'animate-pulse text-brand-gray' : ''}`;
             
-            // Basic markdown bold parsing for tracking IDs
             div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-brand-gold font-bold">$1</strong>');
             
             container.appendChild(div);
@@ -989,7 +977,6 @@
             return id;
         }
 
-        // Initialize application
         loadProducts();
         updateCartUI();
         updateAuthUI();
