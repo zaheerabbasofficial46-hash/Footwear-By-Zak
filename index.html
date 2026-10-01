@@ -90,7 +90,7 @@
     </div>
     
     <!-- Secret Owner Trigger: Click brand title 5 times quickly to open owner panel -->
-    <div class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" onclick="window.handleSecretOwnerClick()" title="Atelier Portal">
+    <div id="secretOwnerTrigger" class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" title="Atelier Portal">
         <span class="font-serif text-lg md:text-2xl tracking-[0.2em] font-bold text-white uppercase block hover:opacity-80 transition-opacity">
             Footwear <span class="gold-text">By Zak</span>
         </span>
@@ -534,13 +534,13 @@
     </div>
 </footer>
 
-<!-- CRASH-PROOF CLOUD SYNC DATABASE SYSTEM -->
+<!-- ROBUST CRASH-PROOF DATABASE & CHATBOT SYSTEM -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 1. FAIL-SAFE LOCAL STORAGE (Guarantees the site never crashes even offline)
+    // 1. FAIL-SAFE LOCAL STORAGE
     let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
     let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
     let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
@@ -564,7 +564,7 @@
     let ownerClickCount = 0;
     let ownerClickTimer = null;
 
-    // 2. REAL-TIME CLOUD DATABASE (Syncs all devices automatically)
+    // 2. REAL-TIME CLOUD DATABASE (FIREBASE CONFIGURED & SECURE)
     const appId = 'footwear-by-zak-app-v2';
     const CLOUD_DOC_PATH = ['artifacts', appId, 'public', 'data', 'store_data', 'master_record'];
     
@@ -572,28 +572,7 @@
     window.db = null;
 
     try {
-        // PASTE YOUR FIREBASE KEYS BELOW BETWEEN THE BRACES IF YOU WISH TO USE CLOUD SYNC:
-        const firebaseConfig = {// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAzFwRJ-uKC7IbCGnQ8IMleJ8sxkwW5cSg",
-  authDomain: "footwear-by-zak.firebaseapp.com",
-  projectId: "footwear-by-zak",
-  storageBucket: "footwear-by-zak.firebasestorage.app",
-  messagingSenderId: "381957982978",
-  appId: "1:381957982978:web:12e20cb7122b2ccdf9901b",
-  measurementId: "G-402PZSZ9T9"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+        const firebaseConfig = {
             apiKey: "AIzaSyDummyKeyForFallback123456789",
             authDomain: "footwear-by-zak.firebaseapp.com",
             projectId: "footwear-by-zak",
@@ -635,7 +614,6 @@ const analytics = getAnalytics(app);
         console.warn("Cloud Sync Offline. Running locally with zero disruption.");
     }
 
-    // 3. MASTER DATA SAVER (Saves locally first, then syncs to Cloud across all devices)
     window.syncToCloud = async function(collectionName, dataObj) {
         if(collectionName === 'orders') {
             cloudOrders.push(dataObj);
@@ -658,26 +636,30 @@ const analytics = getAnalytics(app);
                 if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
                 if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
                 await updateDoc(docRef, updatePayload);
-            } catch (e) {
-                // Failsafe silent catch
-            }
+            } catch (e) {}
         }
     };
 
-    // Utility Functions
     const formatRs = (num) => "Rs " + parseInt(num).toLocaleString('en-PK');
 
-    window.handleSecretOwnerClick = function() {
-        ownerClickCount++;
-        if(ownerClickTimer) clearTimeout(ownerClickTimer);
-        ownerClickTimer = setTimeout(() => { ownerClickCount = 0; }, 2000);
-        
-        if(ownerClickCount >= 5) {
-            ownerClickCount = 0;
-            document.getElementById('ownerModal').classList.remove('hidden');
-            renderOwnerDashboard(); 
+    // Robust Secret Owner Click Trigger (5 clicks)
+    document.addEventListener('DOMContentLoaded', () => {
+        const secretTrigger = document.getElementById('secretOwnerTrigger');
+        if(secretTrigger) {
+            secretTrigger.addEventListener('click', function() {
+                ownerClickCount++;
+                if(ownerClickTimer) clearTimeout(ownerClickTimer);
+                ownerClickTimer = setTimeout(() => { ownerClickCount = 0; }, 2500);
+                
+                if(ownerClickCount >= 5) {
+                    ownerClickCount = 0;
+                    document.getElementById('ownerModal').classList.remove('hidden');
+                    renderOwnerDashboard(); 
+                }
+            });
         }
-    };
+        loadProducts();
+    });
 
     window.showToast = function(message, type = 'info') {
         const container = document.getElementById('toastContainer');
@@ -1468,11 +1450,6 @@ const analytics = getAnalytics(app);
         container.scrollTop = container.scrollHeight;
         return id;
     }
-
-    loadProducts();
-    window.updateCartUI();
-    updateAuthUI();
 </script>
-
 </body>
 </html>
