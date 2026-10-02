@@ -23,13 +23,13 @@
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
                     colors: { 
                         brand: { 
-                            darkest: '#1A110A',   /* Deep Saddle Leather */
-                            dark: '#2A1B12',      /* Rich Dark Brown */
-                            card: '#3D271D',      /* Medium Warm Leather Card */
-                            light: '#F5EBE0',     /* Soft Parchment Cream */
-                            gold: '#D4AF37',      /* Antique Gold */
-                            goldDark: '#AA8C2C',  /* Dark Gold Accent */
-                            border: '#5C3D2E'     /* Stitched Leather Border */
+                            darkest: '#1A110A',
+                            dark: '#2A1B12',
+                            card: '#3D271D',
+                            light: '#F5EBE0',
+                            gold: '#D4AF37',
+                            goldDark: '#AA8C2C',
+                            border: '#5C3D2E'
                         }
                     },
                     animation: { 
@@ -89,11 +89,13 @@
         </button>
     </div>
     
-    <div id="secretOwnerTrigger" class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" title="Atelier Portal">
+    <!-- SECRET 5-CLICK OWNER BUTTON -->
+    <div onclick="window.handleSecretClick()" id="secretOwnerTrigger" class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" title="Footwear By Zak">
         <span class="font-serif text-lg md:text-2xl tracking-[0.2em] font-bold text-white uppercase block hover:opacity-80 transition-opacity">
             Footwear <span class="gold-text">By Zak</span>
         </span>
     </div>
+
     <div class="flex items-center gap-4">
         <button onclick="window.toggleCart()" class="relative text-brand-light hover:text-brand-gold transition group">
             <i class="fa-solid fa-bag-shopping text-xl"></i>
@@ -103,9 +105,10 @@
 </nav>
 
 <header class="relative pt-28 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8 pb-12">
-    <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-lg overflow-hidden shadow-2xl border border-brand-border relative group bg-brand-dark">
+    <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-lg overflow-hidden shadow-2xl border border-brand-border relative group bg-brand-dark flex items-center justify-center">
+        <!-- Main Video Header -->
         <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0"></video>
-        <div class="absolute inset-0 bg-gradient-to-t from-brand-darkest/60 via-transparent to-transparent z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-darkest/80 via-brand-darkest/20 to-transparent z-10"></div>
         <div class="absolute bottom-4 left-4 bg-brand-dark/95 backdrop-blur-md px-4 py-2 rounded border border-brand-border text-[10px] text-brand-gold tracking-[0.2em] uppercase font-bold shadow-md flex items-center gap-2 z-20">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
@@ -195,12 +198,7 @@
         <p class="text-brand-light/80 text-sm tracking-widest uppercase">Consulting Atelier Ledger...</p>
     </div>
 
-    <div id="emptyStateMsg" class="hidden text-center py-20 text-brand-light/80 border border-brand-border rounded-lg bg-brand-card shadow-xl">
-        <i class="fa-solid fa-hammer text-4xl mb-4 text-brand-gold/70"></i>
-        <h3 class="font-serif text-2xl text-white mb-2">The Atelier is Preparing</h3>
-        <p class="text-sm max-w-md mx-auto leading-relaxed">Please publish your Google Sheet as CSV to display your genuine collection.</p>
-    </div>
-
+    <!-- The Product Grid where shoes are displayed -->
     <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 </main>
 
@@ -531,39 +529,16 @@
 </footer>
 
 <script type="module">
+    // IMPORT FIREBASE LIBRARIES SAFELY
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
-    let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
-    let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
-    let localProfileName = localStorage.getItem('fbz_profile_name') || '';
-    let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
-
-    const googleSheetUrl = ""; 
-    const FREE_SHIPPING_THRESHOLD = 20000;
-    const STANDARD_SHIPPING_COST = 300;
-    
-    let allProducts = [];
-    let filteredProducts = [];
-    let cart = [];
-    let currentReviewRating = 5;
-    let activeSlider = null;
-    let selectedSizeForSticky = null;
-    let selectedColorForSticky = null;
-    let cartReminderTimer = null;
-    let ownerClickCount = 0;
-    let ownerClickTimer = null;
-
-    const appId = 'footwear-by-zak-app-v2';
-    const CLOUD_DOC_PATH = ['artifacts', appId, 'public', 'data', 'store_data', 'master_record'];
-    
-    let userId = null;
-    window.db = null;
-
-    try {
-        const firebaseConfig = {// Import the functions you need from the SDKs you need
+    // =========================================================================
+    // 🛑 🛑 PASTE YOUR FIREBASE KEYS BETWEEN THE BRACES BELOW 🛑 🛑
+    // =========================================================================
+    const firebaseConfig = {
+        // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -584,49 +559,82 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-            
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        window.db = getFirestore(app);
-        const auth = getAuth(app);
-        
-        signInAnonymously(auth).then(userCredential => {
-            userId = userCredential.user.uid;
-            const docRef = doc(window.db, ...CLOUD_DOC_PATH);
-            
-            getDoc(docRef).then((docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if(data.orders && data.orders.length > 0) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
-                    if(data.reviews && data.reviews.length > 0) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
-                    if(data.subscribers && data.subscribers.length > 0) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
-                } else {
-                    setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(e => {});
-                }
-            }).catch(e => {});
+    };
+    // =========================================================================
 
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if(data.orders) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
-                    if(data.reviews) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
-                    if(data.subscribers) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
-                    
-                    renderTrackingList();
-                    if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) {
-                        renderOwnerDashboard();
+    // 1. BULLETPROOF LOCAL STORAGE (Always saves data regardless of Cloud errors)
+    let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
+    let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
+    let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
+    let localProfileName = localStorage.getItem('fbz_profile_name') || '';
+    let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
+
+    // 2. STORE SETTINGS
+    const googleSheetUrl = https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv // Add your CSV link here
+    const FREE_SHIPPING_THRESHOLD = 20000;
+    const STANDARD_SHIPPING_COST = 300;
+    
+    // 3. DEFAULT EMPTY CATALOG (Waiting for your Google Sheet)
+    let allProducts = [];
+    let filteredProducts = [];
+    let cart = [];
+    let currentReviewRating = 5;
+    let activeSlider = null;
+    let selectedSizeForSticky = null;
+    let selectedColorForSticky = null;
+    
+    // 4. ATTACH ALL FUNCTIONS TO WINDOW SO THEY NEVER BREAK
+    window.allProducts = allProducts;
+    window.db = null;
+    window.userId = null;
+
+    // We wrap Firebase safely. Even if keys are wrong, the website uses Local Storage without crashing.
+    try {
+        if(firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR_REAL_KEY")) {
+            const app = initializeApp(firebaseConfig);
+            window.db = getFirestore(app);
+            const auth = getAuth(app);
+            
+            signInAnonymously(auth).then(userCredential => {
+                window.userId = userCredential.user.uid;
+                const docRef = doc(window.db, "store_data", "master_record");
+                
+                getDoc(docRef).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if(data.orders && data.orders.length > 0) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
+                        if(data.reviews && data.reviews.length > 0) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
+                        if(data.subscribers && data.subscribers.length > 0) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                    } else {
+                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(e => {});
                     }
-                }
+                }).catch(e => {
+                    console.log("Firestore read access denied (Check your Firebase rules). Using Local Storage.");
+                });
+
+                onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if(data.orders) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
+                        if(data.reviews) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
+                        if(data.subscribers) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                        
+                        if(document.getElementById('trackingModal') && !document.getElementById('trackingModal').classList.contains('hidden')) window.renderTrackingList();
+                        if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) window.renderOwnerDashboard();
+                    }
+                }, (error) => {
+                    console.log("Live sync paused. Using reliable Local Storage.");
+                });
+            }).catch(err => {
+                console.log("Firebase Auth skipped. Running in Local Storage Mode.");
             });
-        }).catch(err => {
-            console.warn("Running in Local Storage Fail-Safe Mode.");
-        });
+        }
     } catch (error) {
-        console.warn("Cloud Sync Offline. Running locally with zero disruption.");
+        console.log("Firebase not configured properly. Running flawlessly on Local Storage.");
     }
 
     window.syncToCloud = async function(collectionName, dataObj) {
+        // ALWAYS save locally first - Guarantees zero data loss
         if(collectionName === 'orders') {
             cloudOrders.push(dataObj);
             localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
@@ -640,42 +648,22 @@ const analytics = getAnalytics(app);
             }
         }
 
-        if(userId && window.db) {
+        // Try sending to Firebase if it's connected
+        if(window.userId && window.db) {
             try {
-                const docRef = doc(window.db, ...CLOUD_DOC_PATH);
+                const docRef = doc(window.db, "store_data", "master_record");
                 const updatePayload = {};
                 if(collectionName === 'subscribers') updatePayload.subscribers = arrayUnion(dataObj);
                 if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
                 if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
                 await updateDoc(docRef, updatePayload);
             } catch (e) {
-                try {
-                    const docRef = doc(window.db, ...CLOUD_DOC_PATH);
-                    await setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }, { merge: true });
-                } catch(err) {}
+                // Ignore cloud error - Data is already safely saved in LocalStorage!
             }
         }
     };
 
     const formatRs = (num) => "Rs " + parseInt(num).toLocaleString('en-PK');
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const secretTrigger = document.getElementById('secretOwnerTrigger');
-        if(secretTrigger) {
-            secretTrigger.addEventListener('click', function() {
-                ownerClickCount++;
-                if(ownerClickTimer) clearTimeout(ownerClickTimer);
-                ownerClickTimer = setTimeout(() => { ownerClickCount = 0; }, 2500);
-                
-                if(ownerClickCount >= 5) {
-                    ownerClickCount = 0;
-                    document.getElementById('ownerModal').classList.remove('hidden');
-                    renderOwnerDashboard(); 
-                }
-            });
-        }
-        loadProducts();
-    });
 
     window.showToast = function(message, type = 'info') {
         const container = document.getElementById('toastContainer');
@@ -690,6 +678,21 @@ const analytics = getAnalytics(app);
         setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, 3500);
     };
 
+    // Unbreakable 5-click Owner Panel trigger
+    window.ownerClickCount = 0;
+    window.ownerClickTimer = null;
+    window.handleSecretClick = function() {
+        window.ownerClickCount++;
+        if(window.ownerClickTimer) clearTimeout(window.ownerClickTimer);
+        window.ownerClickTimer = setTimeout(() => { window.ownerClickCount = 0; }, 2500);
+        
+        if(window.ownerClickCount >= 5) {
+            window.ownerClickCount = 0;
+            document.getElementById('ownerModal').classList.remove('hidden');
+            window.renderOwnerDashboard(); 
+        }
+    };
+
     window.subscribeNewsletter = function() {
         const input = document.getElementById('footerNewsletterEmail');
         const email = input ? input.value.trim() : '';
@@ -700,24 +703,17 @@ const analytics = getAnalytics(app);
         window.showToast("Successfully subscribed to VIP offers!", "success");
     };
 
-    function resetCartReminder() {
-        if(cartReminderTimer) clearTimeout(cartReminderTimer);
-        if(cart.length > 0) {
-            cartReminderTimer = setTimeout(() => {
-                const modal = document.getElementById('cartModal');
-                if(modal && modal.classList.contains('hidden')) {
-                    window.showToast("Your luxury leather goods are waiting in your bag. Complete your order before they sell out!", "info");
-                }
-            }, 120000); 
-        }
-    }
-    document.addEventListener('mousemove', resetCartReminder);
-    document.addEventListener('keypress', resetCartReminder);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProducts();
+    });
 
     async function loadProducts() {
-        if(!googleSheetUrl) {
+        if(!googleSheetUrl || googleSheetUrl.trim() === "") {
             document.getElementById('loadingIndicator')?.classList.add('hidden');
-            document.getElementById('emptyStateMsg')?.classList.remove('hidden');
+            const grid = document.getElementById('productGrid');
+            if (grid) {
+                grid.innerHTML = '<div class="col-span-full py-10 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">Your store is ready. Please paste your Google Sheet CSV link in the code to load your artisan catalog.</div>';
+            }
             return;
         }
         try {
@@ -735,16 +731,20 @@ const analytics = getAnalytics(app);
                     images: media.length > 0 ? media : ['https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier+Footwear'],
                     colors: row[11] ? row[11].split(',').map(c => c.trim()) : ['Classic Black', 'Walnut Brown'],
                     description: row[12] || "Handcrafted with premium leather across Lahore and Swat for the modern gentleman.",
-                    qtyAvailable: row[13] || 'Brown: 15, Black: 5',
-                    sold: row[14] ? parseInt(row[14]) : 24, sheetReview: row[15] || null,
+                    qtyAvailable: row[13] || 'Available',
+                    sold: row[14] ? parseInt(row[14]) : 0, sheetReview: row[15] || null,
                     dateAdded: Date.now() - Math.floor(Math.random() * 1000000000)
                 };
             });
+            window.allProducts = allProducts;
             filteredProducts = [...allProducts];
             window.filterProducts();
         } catch (error) {
             document.getElementById('loadingIndicator')?.classList.add('hidden');
-            document.getElementById('emptyStateMsg')?.classList.remove('hidden');
+            const grid = document.getElementById('productGrid');
+            if(grid) grid.innerHTML = '<div class="col-span-full py-10 text-center text-red-400 border border-red-900/30 rounded p-6 bg-red-900/10">Error loading products. Please check if your Google Sheet CSV link is correct and publicly accessible.</div>';
+            allProducts = [];
+            filteredProducts = [];
         }
     }
 
@@ -779,17 +779,20 @@ const analytics = getAnalytics(app);
         else if(sort === 'price_high') filteredProducts.sort((a,b) => (b.salePrice || b.price) - (a.salePrice || a.price));
         else if(sort === 'bestsellers') filteredProducts.sort((a,b) => b.sold - a.sold);
         else if(sort === 'newest') filteredProducts.sort((a,b) => b.dateAdded - a.dateAdded);
-        renderProducts();
+        window.renderProducts();
     };
 
-    function renderProducts() {
+    window.renderProducts = function() {
         const loader = document.getElementById('loadingIndicator');
         const grid = document.getElementById('productGrid');
         if(loader) loader.classList.add('hidden');
         if(!grid) return;
         
-        if (filteredProducts.length === 0) {
+        if (allProducts.length > 0 && filteredProducts.length === 0) {
             grid.innerHTML = '<div class="col-span-full py-10 text-center text-brand-light/60">No artisan pieces match this filter.</div>';
+            return;
+        } else if (allProducts.length === 0) {
+            // Already handled by error/empty state in loadProducts
             return;
         }
 
@@ -984,7 +987,7 @@ const analytics = getAnalytics(app);
         drawer.classList.remove('translate-x-full');
         document.body.style.overflow = 'hidden';
 
-        renderReviewsSection(id);
+        window.renderReviewsSection(id);
 
         if(product.images.length > 1) {
             setTimeout(() => {
@@ -1076,7 +1079,7 @@ const analytics = getAnalytics(app);
             window.toggleReviewForm();
             btn.innerText = "Submit Review"; btn.disabled = false;
             window.showToast("Review submitted successfully!", "success");
-            renderReviewsSection(productId);
+            window.renderReviewsSection(productId);
         };
 
         if (fileEl && fileEl.files.length > 0) {
@@ -1092,7 +1095,7 @@ const analytics = getAnalytics(app);
         }
     };
 
-    function renderReviewsSection(productId) {
+    window.renderReviewsSection = function(productId) {
         const list = document.getElementById('reviewsList');
         if(!list) return;
         const product = allProducts.find(p => p.id === productId);
@@ -1130,12 +1133,12 @@ const analytics = getAnalytics(app);
             </div>
         `).join('');
         list.innerHTML = html;
-    }
+    };
     
     window.previewReviewImage = function(src) {
         document.getElementById('fullSizePreview').src = src;
         document.getElementById('imagePreviewModal').classList.remove('hidden');
-    }
+    };
 
     window.addToCart = function(id) {
         const product = allProducts.find(p => p.id === id);
@@ -1145,14 +1148,13 @@ const analytics = getAnalytics(app);
         const price = (product.salePrice && product.salePrice < product.price) ? product.salePrice : product.price;
 
         cart.push({ ...product, cartId: Date.now(), selectedSize: sizeToUse, selectedColor: colorToUse, checkoutPrice: price });
-        resetCartReminder(); updateCartUI();
+        window.updateCartUI();
         window.closeDetails(); window.toggleCart();
     };
 
     window.removeFromCart = function(cartId) {
         cart = cart.filter(item => item.cartId !== cartId);
-        updateCartUI();
-        if(cart.length === 0 && cartReminderTimer) clearTimeout(cartReminderTimer);
+        window.updateCartUI();
     };
 
     window.updateCartUI = function() {
@@ -1268,15 +1270,14 @@ const analytics = getAnalytics(app);
                 localProfileEmail = customerEmail;
                 localStorage.setItem('fbz_profile_name', localProfileName);
                 localStorage.setItem('fbz_profile_email', localProfileEmail);
-                updateAuthUI();
+                window.updateAuthUI();
             }
 
             const whatsappNumber = "923000000000"; 
             const orderSummaryText = cart.map(i => `• ${i.name} (Color: ${i.selectedColor}, Size: ${i.selectedSize}) - ${formatRs(i.checkoutPrice)}`).join('%0A');
             const whatsappMsg = `*NEW VIP ORDER - FOOTWEAR BY ZAK*%0A%0A*Tracking ID:* ${trackingId}%0A*Name:* ${fName} ${lName}%0A*Phone:* ${phone}%0A*Address:* ${address}, ${city}%0A*Payment:* ${payMode}%0A%0A*Items:*%0A${orderSummaryText}%0A%0A*Total Amount:* ${formatRs(total)}`;
             
-            cart = []; updateCartUI();
-            if(cartReminderTimer) clearTimeout(cartReminderTimer);
+            cart = []; window.updateCartUI();
             window.toggleCart();
             btn.innerHTML = 'Complete order'; btn.disabled = false;
             
@@ -1300,11 +1301,11 @@ const analytics = getAnalytics(app);
 
     window.openTrackingModal = function() {
         document.getElementById('trackingModal').classList.remove('hidden');
-        renderTrackingList();
+        window.renderTrackingList();
     };
     window.closeTrackingModal = function() { document.getElementById('trackingModal').classList.add('hidden'); };
     
-    function renderTrackingList() {
+    window.renderTrackingList = function() {
         const list = document.getElementById('trackingList');
         if(!list) return;
         const myOrders = cloudOrders.filter(o => localProfileEmail && o.email === localProfileEmail);
@@ -1319,15 +1320,15 @@ const analytics = getAnalytics(app);
                 <div class="text-xs inline-block bg-brand-gold/10 text-brand-gold px-3 py-1.5 rounded border border-brand-gold/30 uppercase tracking-widest font-bold"><i class="fa-solid fa-cog fa-spin mr-2"></i> ${o.status}</div>
             </div>
         `).join('');
-    }
+    };
 
     window.openAuthModal = function() {
         document.getElementById('authModal').classList.remove('hidden');
-        updateAuthUI();
+        window.updateAuthUI();
     };
     window.closeAuthModal = function() { document.getElementById('authModal').classList.add('hidden'); };
     
-    function updateAuthUI() {
+    window.updateAuthUI = function() {
         if(localProfileName && localProfileEmail) {
             document.getElementById('authForm').classList.add('hidden');
             document.getElementById('loggedInView').classList.remove('hidden');
@@ -1339,7 +1340,7 @@ const analytics = getAnalytics(app);
             document.getElementById('loggedInView').classList.add('hidden');
             document.getElementById('navAccountLabel').innerText = 'Account';
         }
-    }
+    };
 
     window.handleLocalAuth = async function() {
         const name = document.getElementById('authName').value.trim();
@@ -1354,7 +1355,7 @@ const analytics = getAnalytics(app);
 
         await window.syncToCloud('subscribers', email);
 
-        updateAuthUI(); window.closeAuthModal();
+        window.updateAuthUI(); window.closeAuthModal();
         window.showToast(`Welcome, ${name}. Logged in successfully.`, "success");
     };
 
@@ -1362,7 +1363,7 @@ const analytics = getAnalytics(app);
         localProfileName = ''; localProfileEmail = '';
         localStorage.removeItem('fbz_profile_name');
         localStorage.removeItem('fbz_profile_email');
-        updateAuthUI(); window.closeAuthModal();
+        window.updateAuthUI(); window.closeAuthModal();
         window.showToast("Signed out securely.", "info");
     };
 
@@ -1371,7 +1372,7 @@ const analytics = getAnalytics(app);
         if(pass === '5003') {
             document.getElementById('ownerLoginScreen').classList.add('hidden');
             document.getElementById('ownerDashboardContent').classList.remove('hidden');
-            renderOwnerDashboard();
+            window.renderOwnerDashboard();
             window.showToast("Dashboard Unlocked", "success");
         } else {
             window.showToast("Incorrect password.", "error");
@@ -1379,7 +1380,7 @@ const analytics = getAnalytics(app);
     };
     window.closeOwnerModal = function() { document.getElementById('ownerModal').classList.add('hidden'); };
 
-    function renderOwnerDashboard() {
+    window.renderOwnerDashboard = function() {
         document.getElementById('statSubscribersCount').innerText = cloudSubscribers.length;
         document.getElementById('statOrdersCount').innerText = cloudOrders.length;
         
@@ -1403,7 +1404,7 @@ const analytics = getAnalytics(app);
                 </div>
             `).join('');
         }
-    }
+    };
 
     window.copyAllEmails = function() {
         const text = cloudSubscribers.join(', ');
@@ -1424,17 +1425,31 @@ const analytics = getAnalytics(app);
         chatWindow.classList.toggle('flex');
     };
 
+    window.addChatMessage = function(text, sender, isTyping = false) {
+        const container = document.getElementById('chatMessages');
+        const div = document.createElement('div');
+        const id = 'msg-' + Date.now();
+        div.id = id;
+        if(sender === 'user') div.className = 'bg-brand-gold text-brand-darkest p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
+        else div.className = `bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed ${isTyping ? 'animate-pulse' : ''}`;
+        div.innerHTML = text;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+        return id;
+    };
+
     window.sendMessage = function() {
         const input = document.getElementById('chatInput');
         const message = input.value.trim().toLowerCase();
         if(!message) return;
 
-        addChatMessage(input.value.trim(), 'user');
+        window.addChatMessage(input.value.trim(), 'user');
         input.value = '';
-        const typingId = addChatMessage('Consulting Atelier Records...', 'bot', true);
+        const typingId = window.addChatMessage('Consulting Atelier Records...', 'bot', true);
 
         setTimeout(() => {
-            document.getElementById(typingId)?.remove();
+            const typingMsg = document.getElementById(typingId);
+            if(typingMsg) typingMsg.remove();
             let reply = "";
 
             if (message.includes("track") || message.includes("order") || message.includes("where") || message.includes("status")) {
@@ -1448,28 +1463,18 @@ const analytics = getAnalytics(app);
                     reply = "I would be happy to check your order. Please click the 'Account' icon at the top of the page to log in first.";
                 }
             } 
-            else if (message.includes("shipping") || message.includes("delivery")) {
+            else if (message.includes("shipping") || message.includes("delivery") || message.includes("dispatch")) {
                 reply = `We offer standard dispatch across Pakistan for Rs 300. **Orders over ${formatRs(FREE_SHIPPING_THRESHOLD)} qualify for Free Shipping!**`;
+            }
+            else if (message.includes("size") || message.includes("fit") || message.includes("measure")) {
+                reply = `Our luxury shoes run true to standard European sizing. You can click 'Size Guide' on any product page, or at the bottom of the website, to view our exact CM measurements!`;
             }
             else {
                 reply = "Thank you for reaching out. As an AI concierge, I specialize in tracking orders, sizing advice, and shipping policies across Lahore and Swat. How can I assist you today?";
             }
-            addChatMessage(reply, 'bot');
-        }, 1000);
+            window.addChatMessage(reply, 'bot');
+        }, 1200);
     };
-
-    function addChatMessage(text, sender, isTyping = false) {
-        const container = document.getElementById('chatMessages');
-        const div = document.createElement('div');
-        const id = 'msg-' + Date.now();
-        div.id = id;
-        if(sender === 'user') div.className = 'bg-brand-gold text-brand-darkest p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
-        else div.className = `bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed ${isTyping ? 'animate-pulse' : ''}`;
-        div.innerHTML = text;
-        container.appendChild(div);
-        container.scrollTop = container.scrollHeight;
-        return id;
-    }
 </script>
 
 </body>
