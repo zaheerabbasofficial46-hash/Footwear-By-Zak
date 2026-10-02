@@ -538,27 +538,12 @@
     // 🛑 🛑 PASTE YOUR FIREBASE KEYS BETWEEN THE BRACES BELOW 🛑 🛑
     // =========================================================================
     const firebaseConfig = {
-       // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAzFwRJ-uKC7IbCGnQ8IMleJ8sxkwW5cSg",
-  authDomain: "footwear-by-zak.firebaseapp.com",
-  projectId: "footwear-by-zak",
-  storageBucket: "footwear-by-zak.firebasestorage.app",
-  messagingSenderId: "381957982978",
-  appId: "1:381957982978:web:12e20cb7122b2ccdf9901b",
-  measurementId: "G-402PZSZ9T9"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+        apiKey: "AIzaSyAzFwR3-wKC7tbCGnQ8IHleJ8sxkwW5c5g",
+        authDomain: "footwear-by-zak.firebaseapp.com",
+        projectId: "footwear-by-zak",
+        storageBucket: "footwear-by-zak.firebasestorage.app",
+        messagingSenderId: "381957982978",
+        appId: "1:381957982978:web:12e20cb7122b2ccdf9901b"
     };
     // =========================================================================
 
@@ -570,7 +555,7 @@ const analytics = getAnalytics(app);
     let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
 
     // 2. STORE SETTINGS
-    const googleSheetUrl = ""; // Add your CSV link here
+    const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv"; // Add your CSV link here
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
     
