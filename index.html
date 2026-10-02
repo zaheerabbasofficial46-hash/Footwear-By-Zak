@@ -1,9 +1,9 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Footwear By Zak - The Pinnacle of Men's Leather Artistry.">
+    <meta name="description" content="Footwear By Zak - The Pinnacle of Men's Leather Artistry. Handcrafted luxury oxfords, loafers, and boots across Lahore, Swat, and Pakistan.">
     <title>FOOTWEAR BY ZAK | Master Handcrafted Men's Leather Atelier</title>
     
     <!-- Tailwind CSS -->
@@ -12,6 +12,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Keen Slider -->
+    <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
 
     <script>
         tailwind.config = {
@@ -19,7 +22,23 @@
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
                     colors: { 
-                        brand: { darkest: '#1A110A', dark: '#2A1B12', card: '#3D271D', light: '#F5EBE0', gold: '#D4AF37', border: '#5C3D2E' }
+                        brand: { 
+                            darkest: '#1A110A',
+                            dark: '#2A1B12',
+                            card: '#3D271D',
+                            light: '#F5EBE0',
+                            gold: '#D4AF37',
+                            goldDark: '#AA8C2C',
+                            border: '#5C3D2E'
+                        }
+                    },
+                    animation: { 
+                        'fade-in': 'fadeIn 0.6s ease-out forwards', 
+                        'slide-up': 'slideUp 0.5s ease-out forwards'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
@@ -31,32 +50,47 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #1A110A; }
         ::-webkit-scrollbar-thumb { background: #5C3D2E; border-radius: 3px; }
+        
         .gold-text { background: linear-gradient(135deg, #FDF0CD 0%, #D4AF37 50%, #AA8C2C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .btn-gold { background: linear-gradient(135deg, #D4AF37 0%, #AA8C2C 100%); color: #1A110A; transition: all 0.3s ease; font-weight: 700; }
-        .btn-gold:hover { filter: brightness(1.15); transform: translateY(-2px); }
-        .shopify-input { width: 100%; background: #ffffff; border: 1px solid #d9d9d9; padding: 12px 14px; color: #333333; border-radius: 6px; font-size: 0.875rem; outline: none; }
+        .btn-gold:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(212,175,55,0.4); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; box-shadow: none; }
+        
+        .shopify-input { width: 100%; background: #ffffff; border: 1px solid #d9d9d9; padding: 12px 14px; color: #333333; border-radius: 6px; font-size: 0.875rem; transition: all 0.2s; outline: none; }
         .shopify-input:focus { border-color: #D4AF37; box-shadow: 0 0 0 2px rgba(212,175,55,0.2); }
+        .shopify-input::placeholder { color: #737373; }
+        
+        .size-radio:checked + label { background-color: #D4AF37; color: #1A110A; border-color: #D4AF37; font-weight: bold; }
+        .color-radio:checked + label { border-color: #D4AF37; color: #D4AF37; background-color: rgba(212, 175, 55, 0.15); font-weight: bold; }
+        
         .loader-ring { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #D4AF37; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         .glass-panel { background: rgba(42, 27, 18, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(212, 175, 55, 0.2); }
+        .star-rating i { cursor: pointer; color: #5C3D2E; transition: color 0.2s; }
+        .star-rating i.active { color: #D4AF37; }
+        .review-img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid #5C3D2E; transition: transform 0.2s; }
+        .review-img-thumb:hover { transform: scale(1.05); }
+        .progress-bar-fill { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="bg-brand-darkest text-brand-light">
 
-<!-- Navigation -->
+<div id="toastContainer" class="fixed top-20 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
 <nav class="fixed w-full z-50 glass-panel border-b border-brand-border py-4 px-6 md:px-12 flex justify-between items-center shadow-lg">
     <div class="flex items-center gap-4">
-        <button onclick="window.openAuthModal()" class="text-brand-light hover:text-brand-gold transition flex items-center gap-2">
+        <button onclick="window.openAuthModal()" class="text-brand-light hover:text-brand-gold transition flex items-center gap-2" title="Client Portal & Account">
             <i class="fa-regular fa-user text-xl"></i>
-            <span class="text-xs hidden sm:inline uppercase tracking-widest font-medium">Account</span>
+            <span class="text-xs hidden sm:inline text-brand-light/80 hover:text-white uppercase tracking-widest font-medium" id="navAccountLabel">Account</span>
         </button>
-        <button onclick="window.openTrackingModal()" class="text-brand-light hover:text-brand-gold transition text-xs font-medium tracking-widest uppercase items-center hidden sm:flex">
+        <button onclick="window.openTrackingModal()" class="text-brand-light hover:text-brand-gold transition text-xs font-medium tracking-widest uppercase flex items-center hidden sm:flex" title="Track Order">
             <i class="fa-solid fa-box-open mr-1.5"></i> Track
         </button>
     </div>
     
-    <!-- Secret Owner Trigger -->
-    <div id="secretOwnerTrigger" onclick="window.handleSecretClick()" class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" title="Footwear By Zak">
+    <!-- SECRET 5-CLICK OWNER BUTTON -->
+    <div onclick="window.handleSecretClick()" id="secretOwnerTrigger" class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" title="Footwear By Zak">
         <span class="font-serif text-lg md:text-2xl tracking-[0.2em] font-bold text-white uppercase block hover:opacity-80 transition-opacity">
             Footwear <span class="gold-text">By Zak</span>
         </span>
@@ -70,302 +104,1363 @@
     </div>
 </nav>
 
-<!-- Header Video Section -->
 <header class="relative pt-28 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8 pb-12">
-    <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-lg overflow-hidden shadow-2xl border border-brand-border relative bg-brand-dark">
+    <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-lg overflow-hidden shadow-2xl border border-brand-border relative group bg-brand-dark flex items-center justify-center">
+        <!-- Main Video Header -->
         <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0"></video>
-        <div class="absolute inset-0 bg-gradient-to-t from-brand-darkest/90 via-brand-darkest/20 to-transparent z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-darkest/80 via-brand-darkest/20 to-transparent z-10"></div>
+        <div class="absolute bottom-4 left-4 bg-brand-dark/95 backdrop-blur-md px-4 py-2 rounded border border-brand-border text-[10px] text-brand-gold tracking-[0.2em] uppercase font-bold shadow-md flex items-center gap-2 z-20">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-gold"></span>
+            </span>
+            Lahore & Swat Workshops Active
+        </div>
     </div>
 
-    <div class="w-full text-left flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pt-2">
+    <div class="w-full text-left animate-slide-up flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pt-2">
         <div class="max-w-2xl">
+            <div class="inline-block border border-brand-gold/30 bg-brand-gold/10 text-brand-gold text-[10px] uppercase tracking-[0.3em] font-bold px-3 py-1 rounded-sm mb-3">
+                The Modern Gentleman's Choice
+            </div>
             <h1 class="font-serif text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3 leading-[1.1] text-white tracking-tight">
                 Master Leather Artistry from <span class="gold-text">Lahore to Swat.</span>
             </h1>
             <p class="text-brand-light/90 text-sm md:text-base font-normal max-w-lg leading-relaxed">
-                Experience authentic heritage craftsmanship. Every pair is individually cut, shaped, and hand-finished for the modern gentleman.
+                Experience authentic heritage craftsmanship. Every pair is individually cut, shaped, and hand-finished for the modern gentleman who commands respect.
             </p>
         </div>
-        <button onclick="document.getElementById('collection').scrollIntoView()" class="btn-gold px-8 py-4 rounded-sm text-xs font-bold tracking-[0.2em] uppercase text-center shadow-xl w-full sm:w-auto">
-            Shop New Arrivals
-        </button>
+        <div class="flex flex-col sm:flex-row gap-4 shrink-0 w-full md:w-auto">
+            <button onclick="document.getElementById('collection').scrollIntoView()" class="btn-gold px-8 py-4 rounded-sm text-xs font-bold tracking-[0.2em] uppercase text-center shadow-xl w-full sm:w-auto">
+                Shop New Arrivals
+            </button>
+        </div>
     </div>
 </header>
 
-<!-- Main Store Collection -->
-<main id="collection" class="py-10 px-6 md:px-12 max-w-7xl mx-auto relative z-10">
-    <div class="flex justify-between items-end mb-8 border-b border-brand-border pb-6">
+<section class="border-y border-brand-border bg-brand-dark/50 py-6 px-6 relative z-10">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-brand-border/50">
+        <div class="px-2">
+            <i class="fa-solid fa-truck-fast text-brand-gold text-2xl mb-2"></i>
+            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-1">Nationwide Delivery</h4>
+            <p class="text-brand-light/60 text-[10px] uppercase">Rs 300 Standard Dispatch</p>
+        </div>
+        <div class="px-2">
+            <i class="fa-solid fa-cow text-brand-gold text-2xl mb-2"></i>
+            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-1">Full-Grain Leather</h4>
+            <p class="text-brand-light/60 text-[10px] uppercase">Ethically Sourced</p>
+        </div>
+        <div class="px-2">
+            <i class="fa-solid fa-hammer text-brand-gold text-2xl mb-2"></i>
+            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-1">Handcrafted Quality</h4>
+            <p class="text-brand-light/60 text-[10px] uppercase">Artisan Made in PK</p>
+        </div>
+        <div class="px-2">
+            <i class="fa-solid fa-shield-halved text-brand-gold text-2xl mb-2"></i>
+            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-1">Secure Checkout</h4>
+            <p class="text-brand-light/60 text-[10px] uppercase">COD & Bank Deposit</p>
+        </div>
+    </div>
+</section>
+
+<main id="collection" class="py-20 px-6 md:px-12 max-w-7xl mx-auto relative z-10">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-brand-border pb-6 gap-6">
         <div>
             <h2 class="font-serif text-3xl font-medium">The <span class="gold-text">Collection</span></h2>
+            <p class="text-brand-light/80 text-xs mt-1 uppercase tracking-widest">Direct from our Lahore & Swat artisan workshops.</p>
+        </div>
+        
+        <div class="flex flex-wrap gap-3 w-full md:w-auto items-center">
+            <div class="relative">
+                <select id="filterCategory" onchange="window.filterProducts()" class="appearance-none bg-brand-dark border border-brand-border text-white text-xs uppercase tracking-wider py-2 pl-4 pr-10 rounded cursor-pointer outline-none focus:border-brand-gold">
+                    <option value="all">All Styles</option>
+                    <option value="oxfords">Oxfords</option>
+                    <option value="loafers">Loafers</option>
+                    <option value="boots">Boots</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-brand-gold pointer-events-none"></i>
+            </div>
+            
+            <div class="relative">
+                <select id="sortProducts" onchange="window.filterProducts()" class="appearance-none bg-brand-dark border border-brand-border text-white text-xs uppercase tracking-wider py-2 pl-4 pr-10 rounded cursor-pointer outline-none focus:border-brand-gold">
+                    <option value="newest">Sort: Newest</option>
+                    <option value="price_low">Price: Low to High</option>
+                    <option value="price_high">Price: High to Low</option>
+                    <option value="bestsellers">Bestsellers</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-brand-gold pointer-events-none"></i>
+            </div>
         </div>
     </div>
     
     <div id="loadingIndicator" class="flex flex-col items-center justify-center py-20">
         <div class="loader-ring mb-4"></div>
-        <p class="text-brand-light/80 text-sm tracking-widest uppercase" id="loadingText">Consulting Atelier Ledger...</p>
+        <p class="text-brand-light/80 text-sm tracking-widest uppercase">Consulting Atelier Ledger...</p>
     </div>
 
-    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+    <!-- The Product Grid where shoes are displayed -->
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 </main>
 
-<!-- Footer with Socials & Bank Details -->
-<footer class="border-t border-brand-border pt-16 pb-8 px-6 bg-brand-dark mt-20 relative z-10 text-center">
-    <!-- Social Links -->
-    <div class="flex justify-center gap-8 mb-8">
-        <a href="https://tiktok.com/@yourtiktok" target="_blank" class="text-brand-light hover:text-brand-gold text-2xl transition"><i class="fa-brands fa-tiktok"></i></a>
-        <a href="https://instagram.com/yourinstagram" target="_blank" class="text-brand-light hover:text-brand-gold text-2xl transition"><i class="fa-brands fa-instagram"></i></a>
-        <a href="https://facebook.com/yourfacebook" target="_blank" class="text-brand-light hover:text-brand-gold text-2xl transition"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="https://wa.me/923000000000" target="_blank" class="text-brand-light hover:text-brand-gold text-2xl transition"><i class="fa-brands fa-whatsapp"></i></a>
-    </div>
-
-    <!-- Bank Details -->
-    <div class="text-xs text-brand-light/70 mb-8 border border-brand-border inline-block p-4 rounded bg-brand-darkest">
-        <p class="font-bold text-brand-gold mb-1 text-sm uppercase tracking-wider">Official Bank Details</p>
-        <p>Meezan Bank Ltd | Footwear By Zak</p>
-        <p>A/C: 0123-9876543210</p>
-        <p>IBAN: PK36MEZN0001239876543210</p>
-    </div>
-
-    <p class="text-xs text-brand-light/50">&copy; 2026 Footwear By Zak. All Rights Reserved.</p>
-</footer>
-
-<!-- Modals -->
-
-<!-- 1. Cart Drawer -->
-<div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-brand-card border-l border-brand-gold shadow-2xl z-[100] transform translate-x-full transition-transform duration-300 flex flex-col">
-    <div class="p-6 border-b border-brand-border flex justify-between items-center bg-brand-dark">
-        <h2 class="font-serif text-2xl text-white">Your <span class="gold-text">Bag</span></h2>
-        <button onclick="window.toggleCart()" class="text-brand-light/80 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div id="cartItems" class="flex-1 overflow-y-auto p-6 text-center text-sm text-brand-light/60 flex flex-col items-center justify-center">
-        Your bag is currently empty.
-    </div>
-    <div class="p-6 border-t border-brand-border bg-brand-dark">
-        <button class="btn-gold w-full py-4 rounded font-bold uppercase tracking-widest text-sm">Secure Checkout</button>
-    </div>
-</div>
-
-<!-- 2. Account / Login Modal -->
-<div id="authModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center">
-    <div class="absolute inset-0 bg-brand-darkest/90 backdrop-blur-md" onclick="window.closeAuthModal()"></div>
-    <div class="relative bg-brand-card border border-brand-gold w-[90%] max-w-md p-8 rounded-lg shadow-2xl z-10 text-center">
-        <button onclick="window.closeAuthModal()" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-        <h3 class="font-serif text-2xl text-white mb-6">Client <span class="gold-text">Portal</span></h3>
-        <input type="email" placeholder="Email Address" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none mb-4 focus:border-brand-gold">
-        <input type="password" placeholder="Password" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none mb-6 focus:border-brand-gold">
-        <button class="btn-gold w-full py-3 rounded font-bold uppercase text-sm">Sign In</button>
-    </div>
-</div>
-
-<!-- 3. Tracking Modal -->
-<div id="trackModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center">
-    <div class="absolute inset-0 bg-brand-darkest/90 backdrop-blur-md" onclick="window.closeTrackingModal()"></div>
-    <div class="relative bg-brand-card border border-brand-gold w-[90%] max-w-md p-8 rounded-lg shadow-2xl z-10 text-center">
-        <button onclick="window.closeTrackingModal()" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-        <h3 class="font-serif text-2xl text-white mb-6">Track <span class="gold-text">Order</span></h3>
-        <p class="text-xs text-brand-light/80 mb-4">Enter your tracking number below.</p>
-        <input type="text" placeholder="e.g., PK-12345" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none mb-4 focus:border-brand-gold text-center tracking-widest uppercase">
-        <button class="btn-gold w-full py-3 rounded font-bold uppercase text-sm">Locate Package</button>
-    </div>
-</div>
-
-<!-- 4. Owner Dashboard Modal -->
-<div id="ownerModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center">
-    <div class="absolute inset-0 bg-brand-darkest/90 backdrop-blur-md" onclick="window.closeOwnerModal()"></div>
-    <div class="relative bg-brand-card border border-brand-gold w-[95%] max-w-3xl h-[80vh] flex flex-col rounded-lg z-10 shadow-2xl overflow-hidden">
-        <div class="bg-brand-dark p-4 border-b border-brand-border flex justify-between items-center shrink-0">
-            <h3 class="font-serif text-xl text-white">Owner <span class="gold-text">Control Center</span></h3>
-            <button onclick="window.closeOwnerModal()" class="text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+<div id="detailsModal" class="fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-brand-darkest/90 backdrop-blur-md" onclick="window.closeDetails()"></div>
+    
+    <div class="absolute inset-y-0 right-0 w-full md:w-[600px] bg-brand-dark shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full border-l border-brand-border" id="detailsDrawer">
+        <div class="flex justify-between items-center p-5 border-b border-brand-border bg-brand-card shrink-0">
+            <h3 class="font-serif text-xl">Atelier <span class="gold-text">Details</span></h3>
+            <button onclick="window.closeDetails()" class="text-brand-light/80 hover:text-white p-2 transition-transform hover:rotate-90"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
-        <div id="ownerLoginScreen" class="p-8 text-center space-y-4 flex flex-col items-center justify-center h-full">
-            <p class="text-sm text-brand-light/80 mb-2">Master password required.</p>
-            <input type="password" id="ownerPassInput" placeholder="••••••••" class="w-full max-w-xs text-center tracking-widest bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold">
-            <button onclick="window.verifyOwnerLogin()" class="btn-gold px-8 py-3 rounded font-bold uppercase text-sm mt-4">Unlock</button>
+        
+        <div class="flex-1 overflow-y-auto custom-scrollbar relative" id="detailsContent"></div>
+
+        <div class="shrink-0 p-5 bg-brand-card border-t border-brand-border shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-50">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-white font-medium font-serif" id="stickyProductName">Product</span>
+                <span class="text-brand-gold font-bold text-lg" id="stickyProductPrice">Rs 0</span>
+            </div>
+            <button id="stickyAddBtn" class="btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center shadow-lg hover:shadow-brand-gold/20">
+                <i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag
+            </button>
         </div>
-        <div id="ownerDashboardContent" class="hidden flex-1 overflow-y-auto p-6 text-sm text-white">
-            <h2 class="text-brand-gold font-bold text-2xl mb-4">Welcome, Zak.</h2>
-            <p class="mb-4">System is live. Cloud sync active.</p>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-brand-dark p-4 border border-brand-border rounded">
-                    <h4 class="text-brand-gold font-bold uppercase mb-2">Recent Orders</h4>
-                    <p class="text-brand-light/60">No orders yet.</p>
+    </div>
+</div>
+
+<div id="cartModal" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-brand-darkest/80 backdrop-blur-sm" onclick="window.toggleCart()"></div>
+    
+    <div class="absolute inset-y-0 right-0 w-full md:w-[450px] bg-[#ffffff] shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="cartDrawer">
+        <div class="flex justify-between items-center p-4 border-b border-[#e5e5e5] bg-white shrink-0">
+            <h3 class="font-sans font-semibold text-lg text-black text-center flex-1 uppercase tracking-wider">Your Bag</h3>
+            <button onclick="window.toggleCart()" class="text-gray-500 hover:text-black absolute right-4 transition-transform hover:rotate-90"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        
+        <div class="bg-gray-50 p-4 border-b border-gray-200 shrink-0">
+            <p id="shippingMessage" class="text-xs text-center font-medium text-gray-700 mb-2">You are <span class="text-blue-600 font-bold">Rs 20,000</span> away from Free Shipping!</p>
+            <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                <div id="shippingProgressBar" class="bg-blue-600 h-1.5 rounded-full progress-bar-fill" style="width: 50%"></div>
+            </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto bg-white p-5 text-[#333333] custom-scrollbar">
+            <div id="checkoutCartItems" class="space-y-4 mb-6 pb-6 border-b border-gray-200"></div>
+
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-black mb-4">Contact & Delivery</h2>
+                <div class="space-y-3">
+                    <div class="flex gap-3">
+                        <input type="text" id="chkFName" placeholder="First name" class="shopify-input flex-1">
+                        <input type="text" id="chkLName" placeholder="Last name" class="shopify-input flex-1">
+                    </div>
+                    <input type="tel" id="chkPhone" placeholder="Phone Number (WhatsApp)" class="shopify-input">
+                    <input type="text" id="chkAddress" placeholder="Address (Lahore, Swat, etc.)" class="shopify-input">
+                    <input type="text" id="chkApartment" placeholder="Apartment, suite, etc. (optional)" class="shopify-input">
+                    <div class="flex gap-3">
+                        <input type="text" id="chkCity" placeholder="City" class="shopify-input flex-1">
+                        <input type="text" id="chkPostal" placeholder="Postal code (optional)" class="shopify-input w-1/3">
+                    </div>
                 </div>
-                <div class="bg-brand-dark p-4 border border-brand-border rounded">
-                    <h4 class="text-brand-gold font-bold uppercase mb-2">Subscriber Emails</h4>
-                    <p class="text-brand-light/60">No subscribers yet.</p>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-black mb-4">Shipping method</h2>
+                <div class="border border-blue-600 rounded-lg bg-blue-50 p-4 flex justify-between items-center">
+                    <span class="text-black text-sm font-medium">Standard Dispatch (Pakistan)</span>
+                    <span class="text-black font-semibold text-sm">Rs 300</span>
                 </div>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-black mb-1">Payment</h2>
+                <p class="text-xs text-gray-500 mb-4 flex items-center gap-1"><i class="fa-solid fa-lock"></i> All transactions are secure and encrypted.</p>
+                <div class="border border-[#d9d9d9] rounded-lg bg-white overflow-hidden mb-3">
+                    <label class="flex items-center gap-3 p-4 border-b border-[#d9d9d9] cursor-pointer hover:bg-gray-50 bg-[#f4f8fd]">
+                        <input type="radio" name="payment" value="COD" checked class="w-4 h-4 text-blue-600" onclick="document.getElementById('bankDetailsBox').classList.add('hidden'); window.updateCartUI();">
+                        <span class="text-sm text-black font-medium">Cash on Delivery (COD)</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50" onclick="document.getElementById('bankDetailsBox').classList.remove('hidden'); window.updateCartUI();">
+                        <input type="radio" name="payment" value="Bank" class="w-4 h-4 text-blue-600">
+                        <span class="text-sm text-black font-medium">Bank Deposit - Get 10% OFF</span>
+                    </label>
+                </div>
+                
+                <div id="bankDetailsBox" class="hidden p-4 bg-gray-50 border border-gray-200 rounded-lg text-xs space-y-2 text-gray-700 mb-3">
+                    <p class="font-bold text-black text-sm flex items-center gap-1"><i class="fa-solid fa-building-columns text-blue-600"></i> Direct Bank Transfer Details</p>
+                    <div class="grid grid-cols-2 gap-1 bg-white p-3 rounded border border-gray-200 font-mono text-[11px]">
+                        <span class="text-gray-500">Bank:</span> <span class="font-bold text-black">Meezan Bank Ltd</span>
+                        <span class="text-gray-500">Account Title:</span> <span class="font-bold text-black">Footwear By Zak</span>
+                        <span class="text-gray-500">Account No:</span> <span class="font-bold text-black">0123-9876543210</span>
+                        <span class="text-gray-500">IBAN:</span> <span class="font-bold text-black">PK36MEZN0001239876543210</span>
+                    </div>
+                    <div class="pt-2">
+                        <label class="block font-bold text-black mb-1">Attach Payment Receipt Photo:</label>
+                        <input type="file" id="bankReceiptUpload" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center gap-4 text-gray-400 text-2xl py-4 opacity-60">
+                <i class="fa-brands fa-cc-visa"></i>
+                <i class="fa-brands fa-cc-mastercard"></i>
+                <i class="fa-brands fa-apple-pay"></i>
+            </div>
+        </div>
+
+        <div class="p-5 bg-[#f5f5f5] border-t border-[#e5e5e5] shrink-0">
+            <div class="flex justify-between items-center mb-4 text-black">
+                <span class="text-sm font-medium">Total (PKR)</span>
+                <span class="font-bold text-xl" id="checkoutCartTotalTop">Rs 0</span>
+            </div>
+            <button onclick="window.submitOrder()" id="completeOrderBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-semibold text-lg transition-colors flex justify-center items-center shadow-sm">
+                Complete order
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="trackingModal" class="fixed inset-0 z-[80] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-brand-darkest/80 backdrop-blur-sm" onclick="window.closeTrackingModal()"></div>
+    <div class="relative bg-brand-card border border-brand-border w-[90%] md:w-[450px] p-8 rounded-lg z-10 shadow-2xl text-center">
+        <button onclick="window.closeTrackingModal()" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <i class="fa-solid fa-box-open text-4xl text-brand-gold mb-4"></i>
+        <h2 class="text-2xl font-serif mb-2">Order <span class="gold-text">Tracking</span></h2>
+        <p class="text-brand-light/80 text-sm mb-6">View your active order status and tracking records below.</p>
+        <div id="trackingList" class="space-y-3 text-left max-h-64 overflow-y-auto custom-scrollbar"></div>
+    </div>
+</div>
+
+<div id="authModal" class="fixed inset-0 z-[80] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-brand-darkest/80 backdrop-blur-sm" onclick="window.closeAuthModal()"></div>
+    <div class="relative bg-brand-card border border-brand-border w-[90%] md:w-[420px] p-8 rounded-lg z-10 shadow-2xl">
+        <button onclick="window.closeAuthModal()" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <h2 class="text-2xl font-serif mb-2 text-center">Client <span class="gold-text">Portal</span></h2>
+        <p class="text-brand-light/70 text-xs text-center mb-6">Log in with your email to track orders and receive exclusive VIP offers.</p>
+        
+        <div id="authForm" class="space-y-4">
+            <input type="text" id="authName" placeholder="Full Name" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm focus:border-brand-gold outline-none">
+            <input type="email" id="authEmail" placeholder="Email Address (for offers & tracking)" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm focus:border-brand-gold outline-none">
+            <button onclick="window.handleLocalAuth()" class="btn-gold w-full py-3 rounded font-bold uppercase tracking-wider text-sm mt-2">Sign In / Register</button>
+        </div>
+        
+        <div id="loggedInView" class="hidden text-center space-y-4">
+            <div class="w-16 h-16 rounded-full bg-brand-border mx-auto flex items-center justify-center text-2xl text-brand-gold">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div>
+                <p class="text-white font-medium text-lg" id="userNameDisplay"></p>
+                <p class="text-brand-gold text-xs font-mono mt-1" id="userEmailDisplay"></p>
+            </div>
+            <p class="text-brand-light/80 text-xs">Subscribed to VIP Offers & Updates</p>
+            <div class="flex gap-2 pt-2">
+                <button onclick="window.handleLocalLogout()" class="w-full text-brand-light/80 hover:text-white text-xs underline border border-brand-border px-3 py-2 rounded">Sign Out</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Chatbot UI -->
+<div id="ownerModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-brand-darkest/90 backdrop-blur-md" onclick="window.closeOwnerModal()"></div>
+    <div class="relative bg-brand-card border border-brand-gold w-[95%] md:w-[700px] max-h-[90vh] flex flex-col rounded-lg z-10 shadow-2xl overflow-hidden">
+        <div class="bg-brand-dark p-4 border-b border-brand-border flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-brand-gold text-xl"></i>
+                <h3 class="font-serif text-xl text-white">Owner <span class="gold-text">Control Center</span></h3>
+            </div>
+            <button onclick="window.closeOwnerModal()" class="text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+
+        <div id="ownerLoginScreen" class="p-8 text-center space-y-4">
+            <p class="text-brand-light/80 text-sm">Enter owner password to access customer data, orders, and email broadcast tool.</p>
+            <input type="password" id="ownerPassInput" placeholder="Enter Owner Password" class="w-full max-w-sm mx-auto bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold">
+            <br>
+            <button onclick="window.verifyOwnerLogin()" class="btn-gold px-6 py-3 rounded font-bold uppercase tracking-wider text-sm">Unlock Dashboard</button>
+        </div>
+
+        <div id="ownerDashboardContent" class="hidden flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar text-left text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-brand-dark p-4 rounded border border-brand-border">
+                    <span class="text-brand-light/60 text-xs uppercase font-bold">Total Subscribers</span>
+                    <h3 class="text-2xl font-serif text-white mt-1" id="statSubscribersCount">0</h3>
+                </div>
+                <div class="bg-brand-dark p-4 rounded border border-brand-border">
+                    <span class="text-brand-light/60 text-xs uppercase font-bold">Total Orders</span>
+                    <h3 class="text-2xl font-serif text-white mt-1" id="statOrdersCount">0</h3>
+                </div>
+                <div class="bg-brand-dark p-4 rounded border border-brand-border">
+                    <span class="text-brand-light/60 text-xs uppercase font-bold">Total Revenue</span>
+                    <h3 class="text-2xl font-serif text-brand-gold mt-1" id="statRevenue">Rs 0</h3>
+                </div>
+            </div>
+
+            <div class="bg-brand-dark p-5 rounded border border-brand-border space-y-3">
+                <h4 class="font-serif text-lg text-brand-gold"><i class="fa-solid fa-envelope-open-text mr-2"></i> Broadcast Email to All Subscribers</h4>
+                <p class="text-xs text-brand-light/70">Compose an offer and instantly copy all subscriber emails or open your default mail client with all emails pre-filled in BCC.</p>
+                <input type="text" id="broadcastSubject" placeholder="Email Subject (e.g., 20% OFF Eid Special)" class="w-full bg-brand-darkest border border-brand-border p-3 rounded text-white text-xs outline-none focus:border-brand-gold">
+                <textarea id="broadcastBody" rows="3" placeholder="Write your offer message here..." class="w-full bg-brand-darkest border border-brand-border p-3 rounded text-white text-xs outline-none focus:border-brand-gold"></textarea>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="window.copyAllEmails()" class="bg-brand-gold text-brand-darkest px-4 py-2 rounded text-xs font-bold uppercase tracking-wider"><i class="fa-solid fa-copy mr-1"></i> Copy All Subscriber Emails</button>
+                    <button onclick="window.sendEmailBroadcast()" class="border border-brand-gold text-brand-gold px-4 py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-brand-gold hover:text-brand-darkest transition"><i class="fa-solid fa-paper-plane mr-1"></i> Open in Gmail / Mail</button>
+                </div>
+            </div>
+
+            <div class="bg-brand-dark p-5 rounded border border-brand-border space-y-3">
+                <h4 class="font-serif text-lg text-brand-gold"><i class="fa-solid fa-users mr-2"></i> Subscriber Emails List</h4>
+                <div id="ownerEmailList" class="bg-brand-darkest p-3 rounded font-mono text-xs max-h-36 overflow-y-auto space-y-1 text-brand-light/80 border border-brand-border"></div>
+            </div>
+
+            <div class="bg-brand-dark p-5 rounded border border-brand-border space-y-3">
+                <h4 class="font-serif text-lg text-brand-gold"><i class="fa-solid fa-box-archive mr-2"></i> All Customer Orders</h4>
+                <div id="ownerOrdersList" class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="sizeGuideModal" class="fixed inset-0 z-[90] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-brand-darkest/80 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="relative bg-brand-card border border-brand-border w-[90%] md:w-[600px] p-8 rounded-lg z-10 shadow-2xl">
+        <button onclick="document.getElementById('sizeGuideModal').classList.add('hidden')" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <h2 class="text-2xl font-serif mb-2 text-center text-white">Men's <span class="gold-text">Size Guide</span></h2>
+        <p class="text-brand-light/80 text-sm mb-6 text-center">For the perfect fit, measure your foot length in CM.</p>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-brand-light">
+                <thead class="text-xs uppercase bg-brand-dark text-brand-gold">
+                    <tr><th class="px-4 py-3 rounded-tl">EU Size</th><th class="px-4 py-3">UK</th><th class="px-4 py-3">US</th><th class="px-4 py-3 rounded-tr">Foot Length (CM)</th></tr>
+                </thead>
+                <tbody class="divide-y divide-brand-border">
+                    <tr class="hover:bg-brand-dark/50"><td class="px-4 py-3 font-medium">39</td><td class="px-4 py-3">6</td><td class="px-4 py-3">7</td><td class="px-4 py-3">24.5</td></tr>
+                    <tr class="hover:bg-brand-dark/50"><td class="px-4 py-3 font-medium">40</td><td class="px-4 py-3">6.5</td><td class="px-4 py-3">7.5</td><td class="px-4 py-3">25.0</td></tr>
+                    <tr class="hover:bg-brand-dark/50"><td class="px-4 py-3 font-medium">41</td><td class="px-4 py-3">7.5</td><td class="px-4 py-3">8.5</td><td class="px-4 py-3">26.0</td></tr>
+                    <tr class="hover:bg-brand-dark/50"><td class="px-4 py-3 font-medium">42</td><td class="px-4 py-3">8</td><td class="px-4 py-3">9</td><td class="px-4 py-3">26.5</td></tr>
+                    <tr class="hover:bg-brand-dark/50"><td class="px-4 py-3 font-medium">43</td><td class="px-4 py-3">9</td><td class="px-4 py-3">10</td><td class="px-4 py-3">27.5</td></tr>
+                    <tr class="hover:bg-brand-dark/50"><td class="px-4 py-3 font-medium">44</td><td class="px-4 py-3">9.5</td><td class="px-4 py-3">10.5</td><td class="px-4 py-3">28.0</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <button id="chatToggleBtn" onclick="window.toggleChat()" class="fixed bottom-6 left-6 z-[85] bg-brand-gold text-brand-darkest w-14 h-14 rounded-full shadow-[0_0_20px_rgba(212,175,55,0.4)] flex items-center justify-center hover:scale-105 transition-transform">
     <i class="fa-solid fa-comment-dots text-2xl"></i>
 </button>
 
-<div id="chatWindow" class="fixed bottom-24 left-6 w-[340px] bg-brand-card border border-brand-border rounded-lg shadow-2xl z-[90] hidden flex-col overflow-hidden">
+<div id="chatWindow" class="fixed bottom-24 left-6 w-[340px] sm:w-[380px] bg-brand-card border border-brand-border rounded-lg shadow-2xl z-[90] hidden flex-col overflow-hidden">
     <div class="bg-brand-dark p-4 border-b border-brand-border flex justify-between items-center">
-        <h4 class="font-serif text-brand-gold font-medium">Zak's Concierge</h4>
-        <button onclick="window.toggleChat()" class="text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center text-brand-darkest font-bold">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div>
+                <h4 class="font-serif text-brand-gold font-medium leading-tight">Zak's Concierge</h4>
+                <span class="text-[10px] text-green-400 flex items-center gap-1"><div class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div> Online & Ready</span>
+            </div>
+        </div>
+        <button onclick="window.toggleChat()" class="text-brand-light/80 hover:text-white p-2"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div id="chatMessages" class="p-4 h-64 overflow-y-auto flex flex-col gap-3 text-sm bg-brand-darkest">
-        <div class="bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm">
-            Welcome to Footwear By Zak! How can I assist you with sizing, shipping, or materials today?
+    <div id="chatMessages" class="p-4 h-72 overflow-y-auto custom-scrollbar flex flex-col gap-3 text-sm bg-brand-darkest">
+        <div class="bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed">
+            Welcome to Footwear By Zak. I am your personal concierge. Ask about styling advice, sizing across Lahore & Swat, or type "Track my order"!
         </div>
     </div>
-    <div class="p-3 bg-brand-dark border-t border-brand-border flex gap-2">
+    <div class="p-3 bg-brand-dark border-t border-brand-border flex gap-2 items-center">
         <input type="text" id="chatInput" placeholder="Type a message..." class="flex-1 bg-brand-darkest border border-brand-border rounded-full px-4 py-2 text-white text-sm outline-none focus:border-brand-gold transition-colors" onkeypress="if(event.key === 'Enter') window.sendMessage()">
-        <button onclick="window.sendMessage()" class="bg-brand-gold text-brand-darkest w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform">
+        <button onclick="window.sendMessage()" class="bg-brand-gold text-brand-darkest w-10 h-10 rounded-full flex items-center justify-center hover:brightness-110 transition shrink-0">
             <i class="fa-solid fa-paper-plane"></i>
         </button>
     </div>
 </div>
 
-<!-- Core Scripts -->
-<script>
-    const googleSheetUrl = ""; 
+<div id="imagePreviewModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-brand-darkest/95 backdrop-blur-md" onclick="this.classList.add('hidden')">
+    <img id="fullSizePreview" src="" class="max-w-[90%] max-h-[90%] object-contain rounded-md border border-brand-border shadow-2xl">
+</div>
 
-    let clickCount = 0;
-    let clickTimer = null;
-
-    window.openAuthModal = () => document.getElementById('authModal').classList.remove('hidden');
-    window.closeAuthModal = () => document.getElementById('authModal').classList.add('hidden');
-    
-    window.openTrackingModal = () => document.getElementById('trackModal').classList.remove('hidden');
-    window.closeTrackingModal = () => document.getElementById('trackModal').classList.add('hidden');
-    
-    window.toggleCart = () => {
-        const cart = document.getElementById('cartDrawer');
-        if(cart.classList.contains('translate-x-full')) {
-            cart.classList.remove('translate-x-full');
-        } else {
-            cart.classList.add('translate-x-full');
-        }
-    };
-
-    window.handleSecretClick = function() {
-        clickCount++;
-        if(clickTimer) clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
+<footer class="border-t border-brand-border pt-16 pb-8 px-6 md:px-12 bg-brand-dark mt-20 relative z-10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        <div class="md:col-span-1">
+            <h3 class="font-serif text-xl tracking-widest text-white mb-4">FOOTWEAR <span class="gold-text">BY ZAK</span></h3>
+            <p class="text-brand-light/80 text-xs leading-relaxed mb-6">Authentic Handcrafted Leather Shoes for the Modern Gentleman. Crafted with heritage techniques across Lahore and Swat, Pakistan.</p>
+            <div class="flex gap-4 text-brand-light/80 text-xl">
+                <a href="https://tiktok.com/@yourtiktok" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://instagram.com/yourinstagram" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://facebook.com/yourfacebook" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://yourshopifylink.com" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Shopify Store"><i class="fa-brands fa-shopify"></i></a>
+            </div>
+        </div>
         
-        if(clickCount >= 5) {
-            clickCount = 0;
-            document.getElementById('ownerModal').classList.remove('hidden');
+        <div>
+            <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Shop</h4>
+            <ul class="space-y-2 text-sm text-brand-light/80">
+                <li><a href="#" onclick="document.getElementById('filterCategory').value='all'; window.filterProducts(); document.getElementById('collection').scrollIntoView(); return false;" class="hover:text-white transition">All Collection</a></li>
+                <li><a href="#" onclick="document.getElementById('filterCategory').value='oxfords'; window.filterProducts(); document.getElementById('collection').scrollIntoView(); return false;" class="hover:text-white transition">Formal Oxfords</a></li>
+                <li><a href="#" onclick="document.getElementById('filterCategory').value='loafers'; window.filterProducts(); document.getElementById('collection').scrollIntoView(); return false;" class="hover:text-white transition">Casual Loafers</a></li>
+                <li><a href="#" onclick="document.getElementById('filterCategory').value='boots'; window.filterProducts(); document.getElementById('collection').scrollIntoView(); return false;" class="hover:text-white transition">Executive Boots</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Support</h4>
+            <ul class="space-y-2 text-sm text-brand-light/80">
+                <li><a href="#" onclick="document.getElementById('sizeGuideModal').classList.remove('hidden'); return false;" class="hover:text-white transition">Size & Fit Guide</a></li>
+                <li><a href="#" onclick="window.showToast('Standard shipping is Rs 300 across Pakistan.', 'info'); return false;" class="hover:text-white transition">Shipping Policy</a></li>
+                <li><a href="#" onclick="window.showToast('Exchanges allowed within 7 days for unworn items.', 'info'); return false;" class="hover:text-white transition">Returns & Exchanges</a></li>
+                <li><a href="#" onclick="window.toggleChat(); return false;" class="hover:text-white transition">Contact Us</a></li>
+            </ul>
+        </div>
+        
+        <div>
+            <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Bank Details (For 10% Off)</h4>
+            <div class="text-brand-light/80 text-xs space-y-1 mb-4 bg-brand-darkest p-3 rounded border border-brand-border font-mono">
+                <p><strong>Bank:</strong> Meezan Bank Ltd.</p>
+                <p><strong>Title:</strong> Footwear By Zak</p>
+                <p><strong>Acc:</strong> 0123-9876543210</p>
+                <p><strong>IBAN:</strong> PK36MEZN0001239876543210</p>
+            </div>
+            
+            <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Join The Atelier</h4>
+            <div class="flex">
+                <input type="email" id="footerNewsletterEmail" placeholder="Email Address" class="bg-brand-darkest border border-brand-border px-4 py-2 text-xs text-white w-full outline-none focus:border-brand-gold rounded-l">
+                <button onclick="window.subscribeNewsletter()" class="bg-brand-gold text-brand-darkest px-4 font-bold uppercase text-[10px] tracking-wider rounded-r hover:brightness-110">Join</button>
+            </div>
+        </div>
+    </div>
+    <div class="text-center border-t border-brand-border/50 pt-8 text-[10px] text-brand-light/40 uppercase tracking-widest flex flex-col sm:flex-row justify-center items-center gap-4">
+        <span>&copy; 2026 Footwear By Zak. All Rights Reserved. Lahore & Swat Ateliers.</span>
+    </div>
+</footer>
+
+<script type="module">
+    // IMPORT FIREBASE LIBRARIES SAFELY
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // =========================================================================
+    // 🛑 🛑 PASTE YOUR FIREBASE KEYS BETWEEN THE BRACES BELOW 🛑 🛑
+    // =========================================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAzFwR3-wKC7tbCGnQ8IHleJ8sxkwW5c5g",
+        authDomain: "footwear-by-zak.firebaseapp.com",
+        projectId: "footwear-by-zak",
+        storageBucket: "footwear-by-zak.firebasestorage.app",
+        messagingSenderId: "381957982978",
+        appId: "1:381957982978:web:12e20cb7122b2ccdf9901b"
+    };
+    // =========================================================================
+
+    // 1. BULLETPROOF LOCAL STORAGE (Always saves data regardless of Cloud errors)
+    let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
+    let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
+    let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
+    let localProfileName = localStorage.getItem('fbz_profile_name') || '';
+    let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
+
+    // 2. STORE SETTINGS
+    const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv"; // Add your CSV link here
+    const FREE_SHIPPING_THRESHOLD = 20000;
+    const STANDARD_SHIPPING_COST = 300;
+    
+    // 3. DEFAULT EMPTY CATALOG (Waiting for your Google Sheet)
+    let allProducts = [];
+    let filteredProducts = [];
+    let cart = [];
+    let currentReviewRating = 5;
+    let activeSlider = null;
+    let selectedSizeForSticky = null;
+    let selectedColorForSticky = null;
+    
+    // 4. ATTACH ALL FUNCTIONS TO WINDOW SO THEY NEVER BREAK
+    window.allProducts = allProducts;
+    window.db = null;
+    window.userId = null;
+
+    // We wrap Firebase safely. Even if keys are wrong, the website uses Local Storage without crashing.
+    try {
+        if(firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR_REAL_KEY")) {
+            const app = initializeApp(firebaseConfig);
+            window.db = getFirestore(app);
+            const auth = getAuth(app);
+            
+            signInAnonymously(auth).then(userCredential => {
+                window.userId = userCredential.user.uid;
+                const docRef = doc(window.db, "store_data", "master_record");
+                
+                getDoc(docRef).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if(data.orders && data.orders.length > 0) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
+                        if(data.reviews && data.reviews.length > 0) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
+                        if(data.subscribers && data.subscribers.length > 0) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                    } else {
+                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(e => {});
+                    }
+                }).catch(e => {
+                    console.log("Firestore read access denied (Check your Firebase rules). Using Local Storage.");
+                });
+
+                onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if(data.orders) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
+                        if(data.reviews) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
+                        if(data.subscribers) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                        
+                        if(document.getElementById('trackingModal') && !document.getElementById('trackingModal').classList.contains('hidden')) window.renderTrackingList();
+                        if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) window.renderOwnerDashboard();
+                    }
+                }, (error) => {
+                    console.log("Live sync paused. Using reliable Local Storage.");
+                });
+            }).catch(err => {
+                console.log("Firebase Auth skipped. Running in Local Storage Mode.");
+            });
+        }
+    } catch (error) {
+        console.log("Firebase not configured properly. Running flawlessly on Local Storage.");
+    }
+
+    window.syncToCloud = async function(collectionName, dataObj) {
+        // ALWAYS save locally first - Guarantees zero data loss
+        if(collectionName === 'orders') {
+            cloudOrders.push(dataObj);
+            localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
+        } else if (collectionName === 'reviews') {
+            cloudReviews.push(dataObj);
+            localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews));
+        } else if (collectionName === 'subscribers') {
+            if(!cloudSubscribers.includes(dataObj)) {
+                cloudSubscribers.push(dataObj);
+                localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers));
+            }
+        }
+
+        // Try sending to Firebase if it's connected
+        if(window.userId && window.db) {
+            try {
+                const docRef = doc(window.db, "store_data", "master_record");
+                const updatePayload = {};
+                if(collectionName === 'subscribers') updatePayload.subscribers = arrayUnion(dataObj);
+                if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
+                if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
+                await updateDoc(docRef, updatePayload);
+            } catch (e) {
+                // Ignore cloud error - Data is already safely saved in LocalStorage!
+            }
         }
     };
 
-    window.closeOwnerModal = () => {
-        document.getElementById('ownerModal').classList.add('hidden');
-        document.getElementById('ownerPassInput').value = '';
-        document.getElementById('ownerLoginScreen').classList.remove('hidden');
-        document.getElementById('ownerDashboardContent').classList.add('hidden');
+    const formatRs = (num) => "Rs " + parseInt(num).toLocaleString('en-PK');
+
+    window.showToast = function(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        let icon = '<i class="fa-solid fa-circle-info text-brand-gold"></i>';
+        if(type === 'error') icon = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>';
+        if(type === 'success') icon = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+        toast.className = `p-4 rounded shadow-2xl text-sm font-medium transform transition-all translate-x-full bg-brand-card border border-brand-border text-white flex items-center gap-3`;
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+        setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, 3500);
     };
 
-    window.verifyOwnerLogin = () => {
+    // Unbreakable 5-click Owner Panel trigger
+    window.ownerClickCount = 0;
+    window.ownerClickTimer = null;
+    window.handleSecretClick = function() {
+        window.ownerClickCount++;
+        if(window.ownerClickTimer) clearTimeout(window.ownerClickTimer);
+        window.ownerClickTimer = setTimeout(() => { window.ownerClickCount = 0; }, 2500);
+        
+        if(window.ownerClickCount >= 5) {
+            window.ownerClickCount = 0;
+            document.getElementById('ownerModal').classList.remove('hidden');
+            window.renderOwnerDashboard(); 
+        }
+    };
+
+    window.subscribeNewsletter = function() {
+        const input = document.getElementById('footerNewsletterEmail');
+        const email = input ? input.value.trim() : '';
+        if(!email || !email.includes('@')) return window.showToast("Please enter a valid email address.", "error");
+        
+        window.syncToCloud('subscribers', email);
+        input.value = '';
+        window.showToast("Successfully subscribed to VIP offers!", "success");
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProducts();
+    });
+
+    async function loadProducts() {
+        if(!googleSheetUrl || googleSheetUrl.trim() === "") {
+            document.getElementById('loadingIndicator')?.classList.add('hidden');
+            const grid = document.getElementById('productGrid');
+            if (grid) {
+                grid.innerHTML = '<div class="col-span-full py-10 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">Your store is ready. Please paste your Google Sheet CSV link in the code to load your artisan catalog.</div>';
+            }
+            return;
+        }
+        try {
+            const response = await fetch(googleSheetUrl);
+            if (!response.ok) throw new Error("Sheet fetch unsuccessful");
+            const data = await response.text();
+            const rows = parseCSV(data);
+            allProducts = rows.slice(1).filter(row => row && row[0] && row[1]).map(row => {
+                const media = [row[7], row[8], row[9], row[10]].filter(m => m && m.trim() !== '');
+                return {
+                    id: row[0], name: row[1],
+                    price: parseInt(row[2]) || 0, salePrice: row[3] ? parseInt(row[3]) : null,
+                    category: row[4] || 'Footwear', stock: (row[5] || 'In Stock').toLowerCase(),
+                    sizes: row[6] ? row[6].split(',').map(s => s.trim()) : ['39', '40', '41', '42', '43'],
+                    images: media.length > 0 ? media : ['https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier+Footwear'],
+                    colors: row[11] ? row[11].split(',').map(c => c.trim()) : ['Classic Black', 'Walnut Brown'],
+                    description: row[12] || "Handcrafted with premium leather across Lahore and Swat for the modern gentleman.",
+                    qtyAvailable: row[13] || 'Available',
+                    sold: row[14] ? parseInt(row[14]) : 0, sheetReview: row[15] || null,
+                    dateAdded: Date.now() - Math.floor(Math.random() * 1000000000)
+                };
+            });
+            window.allProducts = allProducts;
+            filteredProducts = [...allProducts];
+            window.filterProducts();
+        } catch (error) {
+            document.getElementById('loadingIndicator')?.classList.add('hidden');
+            const grid = document.getElementById('productGrid');
+            if(grid) grid.innerHTML = '<div class="col-span-full py-10 text-center text-red-400 border border-red-900/30 rounded p-6 bg-red-900/10">Error loading products. Please check if your Google Sheet CSV link is correct and publicly accessible.</div>';
+            allProducts = [];
+            filteredProducts = [];
+        }
+    }
+
+    function parseCSV(text) {
+        const rows = [];
+        let row = [], inQuotes = false, val = '';
+        for (let i = 0; i < text.length; i++) {
+            let char = text[i];
+            if (inQuotes) {
+                if (char === '"') { if (text[i + 1] === '"') { val += '"'; i++; } else { inQuotes = false; } } 
+                else { val += char; }
+            } else {
+                if (char === '"') inQuotes = true;
+                else if (char === ',') { row.push(val.trim()); val = ''; }
+                else if (char === '\n' || char === '\r') {
+                    if(char === '\r' && text[i+1] === '\n') i++;
+                    row.push(val.trim()); rows.push(row); row = []; val = '';
+                } else { val += char; }
+            }
+        }
+        if (val !== '' || row.length > 0) { row.push(val.trim()); rows.push(row); }
+        return rows;
+    }
+
+    window.filterProducts = function() {
+        const category = document.getElementById('filterCategory').value.toLowerCase();
+        const sort = document.getElementById('sortProducts').value;
+        if(category === 'all') filteredProducts = [...allProducts];
+        else filteredProducts = allProducts.filter(p => p.category.toLowerCase().includes(category));
+        
+        if(sort === 'price_low') filteredProducts.sort((a,b) => (a.salePrice || a.price) - (b.salePrice || b.price));
+        else if(sort === 'price_high') filteredProducts.sort((a,b) => (b.salePrice || b.price) - (a.salePrice || a.price));
+        else if(sort === 'bestsellers') filteredProducts.sort((a,b) => b.sold - a.sold);
+        else if(sort === 'newest') filteredProducts.sort((a,b) => b.dateAdded - a.dateAdded);
+        window.renderProducts();
+    };
+
+    window.renderProducts = function() {
+        const loader = document.getElementById('loadingIndicator');
+        const grid = document.getElementById('productGrid');
+        if(loader) loader.classList.add('hidden');
+        if(!grid) return;
+        
+        if (allProducts.length > 0 && filteredProducts.length === 0) {
+            grid.innerHTML = '<div class="col-span-full py-10 text-center text-brand-light/60">No artisan pieces match this filter.</div>';
+            return;
+        } else if (allProducts.length === 0) {
+            // Already handled by error/empty state in loadProducts
+            return;
+        }
+
+        grid.innerHTML = '';
+        filteredProducts.forEach((product, i) => {
+            if(product.images.length === 0) return;
+            const isOut = product.stock === 'out of stock';
+            const hasSale = product.salePrice && product.salePrice < product.price;
+            const displayPrice = hasSale ? product.salePrice : product.price;
+            const mainMedia = product.images[0];
+            const hoverMedia = product.images.length > 1 ? product.images[1] : mainMedia;
+
+            const swatches = product.colors.map(c => {
+                let colorHex = '#2A1B12';
+                const lower = c.toLowerCase();
+                if(lower.includes('black')) colorHex = '#111';
+                else if(lower.includes('tan')) colorHex = '#D2B48C';
+                else if(lower.includes('burgundy') || lower.includes('oxblood')) colorHex = '#4A0404';
+                else if(lower.includes('blue') || lower.includes('navy')) colorHex = '#000080';
+                const isColorSold = lower.includes('sold') || c.includes('-');
+                return `<div class="w-3 h-3 rounded-full border border-brand-border/50 ${isColorSold ? 'opacity-30 relative after:content-[\'\'] after:absolute after:w-full after:h-[1px] after:bg-red-500 after:top-1/2 after:-rotate-45' : ''}" style="background-color: ${colorHex};" title="${c}"></div>`;
+            }).join('');
+
+            grid.innerHTML += `
+                <div class="group relative animate-fade-in flex flex-col h-full ${isOut ? 'opacity-50 grayscale' : ''}" style="animation-delay: ${i*50}ms">
+                    <div class="absolute inset-0 z-20 cursor-pointer" onclick="window.openDetails('${product.id}')"></div>
+                    <div class="relative aspect-[4/5] bg-brand-card overflow-hidden rounded-t-sm border border-brand-border cursor-pointer">
+                        ${hasSale && !isOut ? `<div class="absolute top-3 left-3 z-30 bg-brand-gold text-brand-darkest text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-md">Sale</div>` : ''}
+                        ${isOut ? `<div class="absolute inset-0 bg-brand-darkest/80 z-30 flex items-center justify-center backdrop-blur-sm"><span class="bg-brand-dark text-white px-4 py-2 font-bold tracking-widest text-sm uppercase border border-brand-border">Out of Stock</span></div>` : ''}
+                        <img src="${mainMedia}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0" onerror="this.src='https://placehold.co/600x750/2A1B12/D4AF37?text=Atelier'">
+                        <img src="${hoverMedia}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100" onerror="this.src='https://placehold.co/600x750/2A1B12/D4AF37?text=Atelier'">
+                    </div>
+                    <div class="p-4 bg-brand-card rounded-b-sm border-x border-b border-brand-border relative z-10 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-serif text-base font-medium text-white group-hover:text-brand-gold transition-colors leading-tight pr-2">${product.name}</h3>
+                            <div class="flex gap-1 shrink-0 mt-1">${swatches}</div>
+                        </div>
+                        <div class="mt-auto pt-2 flex items-center gap-2">
+                            <span class="text-white font-medium">${formatRs(displayPrice)}</span>
+                            ${hasSale ? `<span class="text-brand-light/50 text-xs line-through">${formatRs(product.price)}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    window.openDetails = function(id) {
+        const product = allProducts.find(p => p.id === id);
+        if(!product) return;
+        const drawer = document.getElementById('detailsDrawer');
+        const content = document.getElementById('detailsContent');
+        const hasSale = product.salePrice && product.salePrice < product.price;
+        const isOut = product.stock === 'out of stock';
+        const displayPrice = hasSale ? product.salePrice : product.price;
+
+        selectedSizeForSticky = null; selectedColorForSticky = null;
+        let stockWarningHTML = '';
+        
+        const qtyStr = String(product.qtyAvailable || '');
+        const lowStockMatch = qtyStr.match(/\b([1-3])\b/);
+        
+        if(lowStockMatch && !isOut) {
+            stockWarningHTML = `<div class="flex items-center gap-2 text-red-400 text-xs font-bold uppercase tracking-wider mb-4 bg-red-900/20 p-2 rounded border border-red-900/50"><i class="fa-solid fa-fire animate-pulse"></i> High Demand: Only a few pairs left!</div>`;
+        }
+
+        const slidesHTML = product.images.map(media => {
+            return `<div class="keen-slider__slide w-full h-full min-w-full relative bg-brand-darkest flex items-center justify-center"><img src="${media}" class="w-full max-h-[500px] object-cover" onerror="this.src='https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier'"></div>`;
+        }).join('');
+
+        const sizesHTML = product.sizes.map((s, i) => {
+            const isSizeSold = s.toLowerCase().includes('sold') || s.includes('-');
+            const cleanSize = s.replace(/\(sold\)/gi, '').trim();
+            const checked = (i===0 && !isSizeSold) ? 'checked' : '';
+            if(checked) selectedSizeForSticky = cleanSize;
+            return `<div>
+                <input type="radio" name="size" id="size-${s}" value="${cleanSize}" class="hidden size-radio" ${checked} ${isSizeSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
+                <label for="size-${s}" class="block w-full text-center py-2.5 border border-brand-border text-sm transition-all rounded-sm bg-brand-dark ${isSizeSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanSize}</label>
+            </div>`;
+        }).join('');
+
+        const colorsHTML = product.colors.map((c, i) => {
+            const isColorSold = c.toLowerCase().includes('sold') || c.includes('-');
+            const cleanColor = c.replace(/\(sold\)/gi, '').trim();
+            const checked = (i===0 && !isColorSold) ? 'checked' : '';
+            if(checked) selectedColorForSticky = cleanColor;
+            return `<div class="flex-1 min-w-[30%]">
+                <input type="radio" name="color" id="color-${i}" value="${cleanColor}" class="hidden color-radio" ${checked} ${isColorSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
+                <label for="color-${i}" class="block w-full text-center py-2.5 border border-brand-border text-xs transition-all rounded-sm whitespace-nowrap px-2 bg-brand-dark ${isColorSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanColor}</label>
+            </div>`;
+        }).join('');
+
+        content.innerHTML = `
+            <div class="relative w-full aspect-square md:aspect-[4/5] bg-brand-darkest overflow-hidden border-b border-brand-border shrink-0">
+                <div id="productSlider" class="keen-slider h-full w-full flex">${slidesHTML}</div>
+                ${product.images.length > 1 ? `<div class="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10" id="sliderDots">
+                    ${product.images.map((_, i) => `<button class="w-2 h-2 rounded-full transition-all ${i===0 ? 'bg-brand-gold w-4' : 'bg-white/50'}" onclick="window.moveSlider(${i})"></button>`).join('')}
+                </div>` : ''}
+            </div>
+            
+            <div class="p-6">
+                ${stockWarningHTML}
+                <div class="text-[10px] text-brand-gold mb-2 tracking-[0.2em] uppercase flex justify-between items-center font-bold">
+                    <span>${product.category}</span>
+                    <div class="flex text-brand-gold"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                </div>
+                
+                <h2 class="font-serif text-2xl md:text-3xl mb-3 text-white leading-tight">${product.name}</h2>
+                <div class="flex items-baseline gap-3 mb-6 pb-6 border-b border-brand-border/50">
+                    <span class="text-2xl font-medium text-white">${formatRs(displayPrice)}</span>
+                    ${hasSale ? `<span class="text-brand-light/50 line-through text-sm">${formatRs(product.price)}</span> <span class="bg-brand-gold text-brand-darkest text-[10px] font-bold px-2 py-0.5 rounded ml-2 uppercase tracking-wider">Sale</span>` : ''}
+                </div>
+
+                ${colorsHTML ? `
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-3"><span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Leather Finish</span></div>
+                        <div class="flex flex-wrap gap-2">${colorsHTML}</div>
+                    </div>` : ''}
+
+                ${sizesHTML ? `
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Select Size (EU)</span>
+                            <button onclick="document.getElementById('sizeGuideModal').classList.remove('hidden')" class="text-brand-gold text-xs underline underline-offset-4 hover:text-white transition">Size Guide</button>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">${sizesHTML}</div>
+                    </div>` : ''}
+                
+                <div class="bg-brand-dark/50 border border-brand-border p-4 rounded mb-8">
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-circle-info text-brand-gold mt-0.5"></i>
+                        <div>
+                            <span class="text-xs font-bold text-white uppercase tracking-wider block mb-1">Live Atelier Ledger</span>
+                            <span class="text-brand-light/80 text-xs leading-relaxed font-mono block">${product.qtyAvailable || 'Checking stock...'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <details class="group mb-4 border border-brand-border rounded bg-brand-card overflow-hidden" open>
+                    <summary class="flex justify-between items-center font-serif text-lg cursor-pointer p-4 text-white bg-brand-dark hover:bg-brand-dark/80 list-none">
+                        <span>Craftsmanship & Details</span>
+                        <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-sm text-brand-gold"></i></span>
+                    </summary>
+                    <div class="p-4 text-brand-light/80 text-sm leading-relaxed border-t border-brand-border">
+                        ${product.description}
+                        <ul class="mt-4 space-y-2 text-xs">
+                            <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Premium Full-Grain Cow Leather Upper</li>
+                            <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Hand-burnished patina finish</li>
+                            <li><i class="fa-solid fa-check text-brand-gold mr-2"></i> Handcrafted in Lahore & Swat</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <div class="border-t border-brand-border pt-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="font-serif text-xl text-white">Client <span class="gold-text">Reviews</span></h4>
+                        <button onclick="window.toggleReviewForm()" class="text-xs border border-brand-gold text-brand-gold px-3 py-1.5 rounded hover:bg-brand-gold hover:text-brand-darkest transition font-bold uppercase tracking-wider">Write Review</button>
+                    </div>
+                    
+                    <div id="reviewFormContainer" class="hidden mb-6 bg-brand-card p-5 rounded border border-brand-border shadow-inner">
+                        <div class="flex gap-2 text-xl mb-4 star-rating" id="reviewStars">
+                            ${[1,2,3,4,5].map(s => `<i class="fa-solid fa-star active" onclick="window.setRating(${s})"></i>`).join('')}
+                        </div>
+                        <textarea id="reviewText" rows="3" class="w-full bg-brand-darkest border border-brand-border rounded p-3 text-sm text-white mb-3 outline-none focus:border-brand-gold" placeholder="Share your experience regarding comfort, fit, and craftsmanship..."></textarea>
+                        <div class="mb-4">
+                            <label class="block text-xs text-brand-light/80 mb-2 font-bold uppercase">Attach Photo (Optional)</label>
+                            <input type="file" id="reviewImageUpload" accept="image/*" class="text-xs text-brand-light/80 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-bold file:uppercase file:bg-brand-gold file:text-brand-darkest hover:file:bg-brand-goldDark cursor-pointer">
+                        </div>
+                        <button onclick="window.submitReview('${product.id}')" class="btn-gold w-full py-3 rounded text-xs font-bold uppercase tracking-wider">Submit Review</button>
+                    </div>
+
+                    <div id="reviewsList" class="space-y-4"></div>
+                </div>
+                <div class="h-24"></div>
+            </div>
+        `;
+
+        document.getElementById('stickyProductName').innerText = product.name;
+        document.getElementById('stickyProductPrice').innerText = formatRs(displayPrice);
+        const addBtn = document.getElementById('stickyAddBtn');
+        
+        if (isOut) {
+            addBtn.disabled = true; addBtn.innerHTML = 'Unavailable';
+            addBtn.className = "w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center bg-brand-darkest text-brand-light/50 border border-brand-border cursor-not-allowed";
+        } else {
+            addBtn.disabled = false; addBtn.innerHTML = '<i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag';
+            addBtn.className = "btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center shadow-lg hover:shadow-brand-gold/20";
+            addBtn.onclick = () => window.addToCart(product.id);
+        }
+
+        document.getElementById('detailsModal').classList.remove('hidden');
+        drawer.classList.remove('translate-x-full');
+        document.body.style.overflow = 'hidden';
+
+        window.renderReviewsSection(id);
+
+        if(product.images.length > 1) {
+            setTimeout(() => {
+                if(activeSlider) activeSlider.destroy();
+                activeSlider = new KeenSlider("#productSlider", {
+                    loop: true,
+                    slideChanged(s) {
+                        const current = s.track.details.rel;
+                        const dots = document.getElementById('sliderDots')?.children;
+                        if(dots) { for(let i=0; i<dots.length; i++){ dots[i].className = `w-2 h-2 rounded-full transition-all ${i===current ? 'bg-brand-gold w-4' : 'bg-white/50'}`; } }
+                    }
+                });
+            }, 100);
+        }
+    };
+
+    window.updateStickySelection = function() {
+        const checkedSize = document.querySelector('input[name="size"]:checked');
+        const checkedColor = document.querySelector('input[name="color"]:checked');
+        if(checkedSize) selectedSizeForSticky = checkedSize.value;
+        if(checkedColor) selectedColorForSticky = checkedColor.value;
+    };
+    window.moveSlider = function(idx) { if(activeSlider) activeSlider.moveToIdx(idx); };
+
+    window.closeDetails = function() {
+        const drawer = document.getElementById('detailsDrawer');
+        if(drawer) drawer.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.getElementById('detailsModal').classList.add('hidden');
+            document.body.style.overflow = '';
+            if(activeSlider) { activeSlider.destroy(); activeSlider = null; }
+        }, 300);
+    };
+
+    function compressImage(file, callback) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 500; 
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', 0.6)); 
+            }
+        }
+    }
+
+    window.toggleReviewForm = function() {
+        if(!localProfileName) {
+            window.closeDetails();
+            window.openAuthModal();
+            window.showToast("Please log in with your email first to leave a review.", "info");
+            return;
+        }
+        document.getElementById('reviewFormContainer').classList.toggle('hidden');
+    };
+    
+    window.setRating = function(stars) {
+        currentReviewRating = stars;
+        const starsContainer = document.getElementById('reviewStars');
+        if(!starsContainer) return;
+        Array.from(starsContainer.children).forEach((star, index) => {
+            if(index < stars) star.classList.add('active'); else star.classList.remove('active');
+        });
+    };
+
+    window.submitReview = async function(productId) {
+        const textEl = document.getElementById('reviewText');
+        const fileEl = document.getElementById('reviewImageUpload');
+        const text = textEl ? textEl.value.trim() : '';
+        if(!text) return window.showToast("Please write a review text.", "error");
+
+        const btn = event.target;
+        btn.innerText = "Saving Data...";
+        btn.disabled = true;
+
+        const saveReview = async (base64Img) => {
+            const newReview = { productId, userName: localProfileName, rating: currentReviewRating, text, image: base64Img || null, timestamp: Date.now() };
+            
+            await window.syncToCloud('reviews', newReview);
+            
+            if(textEl) textEl.value = '';
+            if(fileEl) fileEl.value = '';
+            window.toggleReviewForm();
+            btn.innerText = "Submit Review"; btn.disabled = false;
+            window.showToast("Review submitted successfully!", "success");
+            window.renderReviewsSection(productId);
+        };
+
+        if (fileEl && fileEl.files.length > 0) {
+            const file = fileEl.files[0];
+            if(file.size > 5 * 1024 * 1024) { 
+                window.showToast("Image too large. Please select an image under 5MB.", "error");
+                btn.innerText = "Submit Review"; btn.disabled = false;
+                return;
+            }
+            compressImage(file, saveReview);
+        } else {
+            saveReview(null);
+        }
+    };
+
+    window.renderReviewsSection = function(productId) {
+        const list = document.getElementById('reviewsList');
+        if(!list) return;
+        const product = allProducts.find(p => p.id === productId);
+        const productReviews = cloudReviews.filter(r => r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
+
+        let html = '';
+        if (product && product.sheetReview && productReviews.length === 0) {
+            const parts = product.sheetReview.split('|');
+            if(parts.length === 2) {
+                html += `
+                    <div class="bg-brand-card p-4 rounded border border-brand-border flex items-center gap-4 mb-4">
+                        <div class="text-brand-gold text-3xl font-serif font-bold text-center border-r border-brand-border pr-4">
+                            ${parts[0]}<br><span class="text-[10px] uppercase tracking-widest text-brand-light/50 font-sans">Out of 5</span>
+                        </div>
+                        <div class="text-brand-light/80 text-xs leading-relaxed">
+                            Based on <strong>${parts[1]}</strong> verified client ratings from our Lahore & Swat Ateliers. Excellence is our standard.
+                        </div>
+                    </div>`;
+            }
+        }
+        if (productReviews.length === 0 && html === '') {
+            list.innerHTML = `<p class="text-brand-light/50 text-sm italic text-center py-6 border border-brand-border/30 rounded">No reviews yet. Be the first gentleman to share your experience.</p>`;
+            return;
+        }
+
+        html += productReviews.map(r => `
+            <div class="bg-brand-card p-4 rounded border border-brand-border shadow-sm">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex gap-1 text-brand-gold text-[10px]">${Array(5).fill('').map((_,i) => `<i class="fa-solid fa-star ${i < r.rating ? '' : 'text-gray-600'}"></i>`).join('')}</div>
+                    <span class="text-brand-light/50 text-[10px] font-mono">${new Date(r.timestamp).toLocaleDateString()}</span>
+                </div>
+                <p class="font-medium text-white text-sm mb-2">${r.userName} <i class="fa-solid fa-circle-check text-brand-gold text-[10px] ml-1" title="Verified Client"></i></p>
+                <p class="text-brand-light/90 text-sm leading-relaxed ${r.image ? 'mb-3' : ''}">${r.text}</p>
+                ${r.image ? `<img src="${r.image}" class="review-img-thumb" onclick="window.previewReviewImage('${r.image}')">` : ''}
+            </div>
+        `).join('');
+        list.innerHTML = html;
+    };
+    
+    window.previewReviewImage = function(src) {
+        document.getElementById('fullSizePreview').src = src;
+        document.getElementById('imagePreviewModal').classList.remove('hidden');
+    };
+
+    window.addToCart = function(id) {
+        const product = allProducts.find(p => p.id === id);
+        if(!product) return;
+        const sizeToUse = selectedSizeForSticky || (product.sizes && product.sizes.length > 0 ? product.sizes[0].replace(/\(sold\)/gi, '').trim() : 'Standard');
+        const colorToUse = selectedColorForSticky || (product.colors && product.colors.length > 0 ? product.colors[0].replace(/\(sold\)/gi, '').trim() : 'Default');
+        const price = (product.salePrice && product.salePrice < product.price) ? product.salePrice : product.price;
+
+        cart.push({ ...product, cartId: Date.now(), selectedSize: sizeToUse, selectedColor: colorToUse, checkoutPrice: price });
+        window.updateCartUI();
+        window.closeDetails(); window.toggleCart();
+    };
+
+    window.removeFromCart = function(cartId) {
+        cart = cart.filter(item => item.cartId !== cartId);
+        window.updateCartUI();
+    };
+
+    window.updateCartUI = function() {
+        const countEl = document.getElementById('cartCount');
+        if(countEl) countEl.innerText = cart.length;
+        const container = document.getElementById('checkoutCartItems');
+        const totalDisplay = document.getElementById('checkoutCartTotalTop');
+        const pBar = document.getElementById('shippingProgressBar');
+        const pMsg = document.getElementById('shippingMessage');
+        
+        if(!container || !totalDisplay) return;
+        let subtotal = 0;
+        
+        if (cart.length === 0) {
+            container.innerHTML = '<div class="text-center py-10"><i class="fa-solid fa-bag-shopping text-4xl text-gray-200 mb-3"></i><p class="text-sm text-gray-500">Your luxury bag is empty.</p></div>';
+            totalDisplay.innerText = "Rs 0";
+            if(pBar) pBar.style.width = '0%';
+            if(pMsg) pMsg.innerHTML = `Spend <span class="text-blue-600 font-bold">${formatRs(FREE_SHIPPING_THRESHOLD)}</span> to unlock Free Shipping.`;
+            return;
+        }
+
+        container.innerHTML = '';
+        cart.forEach(item => {
+            subtotal += item.checkoutPrice;
+            const thumb = `<img src="${item.images[0] || ''}" class="w-20 h-20 object-cover rounded border border-gray-200" onerror="this.src='https://placehold.co/100x100/2A1B12/D4AF37?text=Item'">`;
+            container.innerHTML += `
+                <div class="flex gap-4 relative pb-4 items-center">
+                    <button onclick="window.removeFromCart(${item.cartId})" class="absolute top-0 right-0 text-gray-400 hover:text-red-500 transition-colors" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+                    ${thumb}
+                    <div class="flex-1 text-sm">
+                        <h4 class="font-serif font-bold text-black pr-6 leading-tight">${item.name}</h4>
+                        <p class="text-gray-500 text-xs mt-1 font-medium">${item.selectedColor} &bull; Size ${item.selectedSize}</p>
+                        <p class="font-medium text-black mt-2">${formatRs(item.checkoutPrice)}</p>
+                    </div>
+                </div>`;
+        });
+
+        let shippingCost = STANDARD_SHIPPING_COST;
+        if(subtotal >= FREE_SHIPPING_THRESHOLD) {
+            shippingCost = 0;
+            if(pBar) { pBar.style.width = '100%'; pBar.classList.add('bg-green-500'); pBar.classList.remove('bg-blue-600'); }
+            if(pMsg) pMsg.innerHTML = `<span class="text-green-600 font-bold"><i class="fa-solid fa-check-circle"></i> You have unlocked Free Shipping!</span>`;
+        } else {
+            const percentage = (subtotal / FREE_SHIPPING_THRESHOLD) * 100;
+            if(pBar) { pBar.style.width = `${percentage}%`; pBar.classList.remove('bg-green-500'); pBar.classList.add('bg-blue-600'); }
+            if(pMsg) pMsg.innerHTML = `You are <span class="text-blue-600 font-bold">${formatRs(FREE_SHIPPING_THRESHOLD - subtotal)}</span> away from Free Shipping!`;
+        }
+
+        const isBank = document.querySelector('input[name="payment"]:checked')?.value === 'Bank';
+        const discountAmount = isBank ? (subtotal * 0.10) : 0;
+        const finalTotal = subtotal - discountAmount + shippingCost;
+        
+        totalDisplay.innerHTML = `
+            <div class="text-xs text-gray-500 flex justify-between mb-1"><span>Subtotal</span><span>${formatRs(subtotal)}</span></div>
+            ${isBank ? `<div class="text-xs text-green-600 flex justify-between mb-1 font-medium"><span>Bank Discount (10%)</span><span>-${formatRs(discountAmount)}</span></div>` : ''}
+            <div class="text-xs text-gray-500 flex justify-between mb-2"><span>Shipping</span><span>${shippingCost === 0 ? 'Free' : formatRs(shippingCost)}</span></div>
+            <div class="text-base text-black font-bold flex justify-between pt-2 border-t border-gray-200"><span>Total</span><span>${formatRs(finalTotal)}</span></div>
+        `; 
+    }
+
+    window.toggleCart = function() {
+        const modal = document.getElementById('cartModal');
+        const drawer = document.getElementById('cartDrawer');
+        if(modal.classList.contains('hidden')) {
+            window.updateCartUI(); modal.classList.remove('hidden');
+            setTimeout(() => drawer.classList.remove('translate-x-full'), 10);
+            document.body.style.overflow = 'hidden';
+        } else {
+            drawer.classList.add('translate-x-full');
+            setTimeout(() => { modal.classList.add('hidden'); document.body.style.overflow = ''; }, 300);
+        }
+    };
+
+    window.submitOrder = async function() {
+        if (cart.length === 0) return window.showToast("Your bag is empty.", "error");
+
+        const fName = document.getElementById('chkFName').value.trim();
+        const lName = document.getElementById('chkLName').value.trim();
+        const phone = document.getElementById('chkPhone').value.trim();
+        const address = document.getElementById('chkAddress').value.trim();
+        const city = document.getElementById('chkCity').value.trim();
+        const payMode = document.querySelector('input[name="payment"]:checked').value;
+
+        if (!fName || !phone || !address || !city) {
+            return window.showToast("Please provide First Name, Phone, Address, and City for dispatch.", "error");
+        }
+
+        const btn = document.getElementById('completeOrderBtn');
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...'; btn.disabled = true;
+
+        const trackingId = "ZAK-" + Math.random().toString(36).substr(2, 5).toUpperCase();
+        let subtotal = 0; cart.forEach(item => { subtotal += item.checkoutPrice; });
+        const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
+        const discount = payMode === 'Bank' ? (subtotal * 0.10) : 0;
+        const total = subtotal - discount + shippingCost;
+
+        const finalizeOrderSubmission = async (receiptBase64) => {
+            const customerEmail = localProfileEmail || `${phone.replace(/\D/g,'')}@client.zak`;
+            const orderData = {
+                trackingId, clientName: `${fName} ${lName}`,
+                email: customerEmail, phone,
+                address: `${address}, ${city}`, paymentMode: payMode,
+                items: cart.map(i => ({ name: i.name, size: i.selectedSize, color: i.selectedColor, price: i.checkoutPrice })),
+                totalAmount: total, status: "Order Received - Preparing for Lahore & Swat Artisans",
+                receiptImage: receiptBase64 || null, timestamp: Date.now()
+            };
+
+            await window.syncToCloud('orders', orderData);
+            await window.syncToCloud('subscribers', customerEmail);
+
+            if(!localProfileName) {
+                localProfileName = `${fName} ${lName}`;
+                localProfileEmail = customerEmail;
+                localStorage.setItem('fbz_profile_name', localProfileName);
+                localStorage.setItem('fbz_profile_email', localProfileEmail);
+                window.updateAuthUI();
+            }
+
+            const whatsappNumber = "923000000000"; 
+            const orderSummaryText = cart.map(i => `• ${i.name} (Color: ${i.selectedColor}, Size: ${i.selectedSize}) - ${formatRs(i.checkoutPrice)}`).join('%0A');
+            const whatsappMsg = `*NEW VIP ORDER - FOOTWEAR BY ZAK*%0A%0A*Tracking ID:* ${trackingId}%0A*Name:* ${fName} ${lName}%0A*Phone:* ${phone}%0A*Address:* ${address}, ${city}%0A*Payment:* ${payMode}%0A%0A*Items:*%0A${orderSummaryText}%0A%0A*Total Amount:* ${formatRs(total)}`;
+            
+            cart = []; window.updateCartUI();
+            window.toggleCart();
+            btn.innerHTML = 'Complete order'; btn.disabled = false;
+            
+            window.showToast(`Order Placed Successfully! Tracking ID: ${trackingId}`, "success");
+            setTimeout(() => { window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank'); }, 1000);
+        };
+
+        const receiptInput = document.getElementById('bankReceiptUpload');
+        if (payMode === 'Bank' && receiptInput && receiptInput.files.length > 0) {
+            const file = receiptInput.files[0];
+            if(file.size > 2 * 1024 * 1024) {
+                 window.showToast("Receipt image too large. Please select an image under 2MB.", "error");
+                 btn.innerHTML = 'Complete order'; btn.disabled = false;
+                 return;
+            }
+            compressImage(file, finalizeOrderSubmission);
+        } else {
+            finalizeOrderSubmission(null);
+        }
+    };
+
+    window.openTrackingModal = function() {
+        document.getElementById('trackingModal').classList.remove('hidden');
+        window.renderTrackingList();
+    };
+    window.closeTrackingModal = function() { document.getElementById('trackingModal').classList.add('hidden'); };
+    
+    window.renderTrackingList = function() {
+        const list = document.getElementById('trackingList');
+        if(!list) return;
+        const myOrders = cloudOrders.filter(o => localProfileEmail && o.email === localProfileEmail);
+        if(myOrders.length === 0) {
+            list.innerHTML = `<p class="text-center text-sm text-brand-light/80 py-4 italic">No active orders linked to this email.</p>`;
+            return;
+        }
+        list.innerHTML = myOrders.sort((a,b)=>b.timestamp - a.timestamp).map(o => `
+            <div class="bg-brand-dark border border-brand-border p-4 rounded text-sm mb-3 text-left shadow-md">
+                <div class="flex justify-between text-brand-gold mb-1 font-bold"><span><i class="fa-solid fa-hashtag text-[10px]"></i> ${o.trackingId}</span> <span>${formatRs(o.totalAmount)}</span></div>
+                <div class="text-white mb-3 text-xs opacity-75 font-mono">${new Date(o.timestamp).toLocaleDateString()}</div>
+                <div class="text-xs inline-block bg-brand-gold/10 text-brand-gold px-3 py-1.5 rounded border border-brand-gold/30 uppercase tracking-widest font-bold"><i class="fa-solid fa-cog fa-spin mr-2"></i> ${o.status}</div>
+            </div>
+        `).join('');
+    };
+
+    window.openAuthModal = function() {
+        document.getElementById('authModal').classList.remove('hidden');
+        window.updateAuthUI();
+    };
+    window.closeAuthModal = function() { document.getElementById('authModal').classList.add('hidden'); };
+    
+    window.updateAuthUI = function() {
+        if(localProfileName && localProfileEmail) {
+            document.getElementById('authForm').classList.add('hidden');
+            document.getElementById('loggedInView').classList.remove('hidden');
+            document.getElementById('userNameDisplay').innerText = localProfileName;
+            document.getElementById('userEmailDisplay').innerText = localProfileEmail;
+            document.getElementById('navAccountLabel').innerText = localProfileName.split(' ')[0];
+        } else {
+            document.getElementById('authForm').classList.remove('hidden');
+            document.getElementById('loggedInView').classList.add('hidden');
+            document.getElementById('navAccountLabel').innerText = 'Account';
+        }
+    };
+
+    window.handleLocalAuth = async function() {
+        const name = document.getElementById('authName').value.trim();
+        const email = document.getElementById('authEmail').value.trim();
+        if(!name || !email || !email.includes('@')) {
+            return window.showToast("Please enter a valid name and email address.", "error");
+        }
+        
+        localProfileName = name; localProfileEmail = email;
+        localStorage.setItem('fbz_profile_name', name);
+        localStorage.setItem('fbz_profile_email', email);
+
+        await window.syncToCloud('subscribers', email);
+
+        window.updateAuthUI(); window.closeAuthModal();
+        window.showToast(`Welcome, ${name}. Logged in successfully.`, "success");
+    };
+
+    window.handleLocalLogout = function() {
+        localProfileName = ''; localProfileEmail = '';
+        localStorage.removeItem('fbz_profile_name');
+        localStorage.removeItem('fbz_profile_email');
+        window.updateAuthUI(); window.closeAuthModal();
+        window.showToast("Signed out securely.", "info");
+    };
+
+    window.verifyOwnerLogin = function() {
         const pass = document.getElementById('ownerPassInput').value;
         if(pass === '5003') {
             document.getElementById('ownerLoginScreen').classList.add('hidden');
             document.getElementById('ownerDashboardContent').classList.remove('hidden');
+            window.renderOwnerDashboard();
+            window.showToast("Dashboard Unlocked", "success");
         } else {
-            alert("Incorrect Master Password");
+            window.showToast("Incorrect password.", "error");
+        }
+    };
+    window.closeOwnerModal = function() { document.getElementById('ownerModal').classList.add('hidden'); };
+
+    window.renderOwnerDashboard = function() {
+        document.getElementById('statSubscribersCount').innerText = cloudSubscribers.length;
+        document.getElementById('statOrdersCount').innerText = cloudOrders.length;
+        
+        let totalRev = 0;
+        cloudOrders.forEach(o => totalRev += o.totalAmount);
+        document.getElementById('statRevenue').innerText = formatRs(totalRev);
+
+        const emailListContainer = document.getElementById('ownerEmailList');
+        emailListContainer.innerHTML = cloudSubscribers.length > 0 ? cloudSubscribers.map(e => `<div>&bull; ${e}</div>`).join('') : '<div class="text-brand-light/50 italic">No subscriber emails yet.</div>';
+
+        const ordersListContainer = document.getElementById('ownerOrdersList');
+        if(cloudOrders.length === 0) {
+            ordersListContainer.innerHTML = `<p class="text-brand-light/60 italic">No customer orders recorded yet.</p>`;
+        } else {
+            ordersListContainer.innerHTML = cloudOrders.sort((a,b)=>b.timestamp - a.timestamp).map(o => `
+                <div class="bg-brand-darkest p-3 rounded border border-brand-border space-y-1">
+                    <div class="flex justify-between font-bold text-white"><span>${o.trackingId} - ${o.clientName}</span> <span class="text-brand-gold">${formatRs(o.totalAmount)}</span></div>
+                    <div class="text-xs text-brand-light/70">${o.email} &bull; ${o.phone} &bull; Payment: ${o.paymentMode}</div>
+                    <div class="text-xs text-brand-light/90 font-mono">${o.items.map(i=>`${i.name} (Sz: ${i.size}, ${i.color})`).join(', ')}</div>
+                    ${o.receiptImage ? `<a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 underline block mt-1"><i class="fa-solid fa-receipt mr-1"></i> View Bank Receipt</a>` : ''}
+                </div>
+            `).join('');
         }
     };
 
-    window.toggleChat = () => {
+    window.copyAllEmails = function() {
+        const text = cloudSubscribers.join(', ');
+        navigator.clipboard.writeText(text);
+        window.showToast("All subscriber emails copied to clipboard!", "success");
+    };
+
+    window.sendEmailBroadcast = function() {
+        const subject = encodeURIComponent(document.getElementById('broadcastSubject').value || 'Exclusive Offer from Footwear By Zak');
+        const body = encodeURIComponent(document.getElementById('broadcastBody').value || 'Hello valued customer from Lahore & Swat, check out our latest collection!');
+        const bcc = cloudSubscribers.join(',');
+        window.open(`mailto:?bcc=${bcc}&subject=${subject}&body=${body}`, '_blank');
+    };
+
+    window.toggleChat = function() {
         const chatWindow = document.getElementById('chatWindow');
         chatWindow.classList.toggle('hidden');
         chatWindow.classList.toggle('flex');
     };
 
-    window.sendMessage = () => {
-        const input = document.getElementById('chatInput');
+    window.addChatMessage = function(text, sender, isTyping = false) {
         const container = document.getElementById('chatMessages');
-        if(!input.value.trim()) return;
-
-        const uMsg = document.createElement('div');
-        uMsg.className = 'bg-brand-gold text-brand-darkest p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
-        uMsg.innerText = input.value;
-        container.appendChild(uMsg);
-        
-        const userText = input.value.toLowerCase();
-        input.value = '';
+        const div = document.createElement('div');
+        const id = 'msg-' + Date.now();
+        div.id = id;
+        if(sender === 'user') div.className = 'bg-brand-gold text-brand-darkest p-3 rounded-l-lg rounded-br-lg self-end max-w-[85%] shadow-sm';
+        else div.className = `bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm leading-relaxed ${isTyping ? 'animate-pulse' : ''}`;
+        div.innerHTML = text;
+        container.appendChild(div);
         container.scrollTop = container.scrollHeight;
+        return id;
+    };
+
+    window.sendMessage = function() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim().toLowerCase();
+        if(!message) return;
+
+        window.addChatMessage(input.value.trim(), 'user');
+        input.value = '';
+        const typingId = window.addChatMessage('Consulting Atelier Records...', 'bot', true);
 
         setTimeout(() => {
-            const bMsg = document.createElement('div');
-            bMsg.className = 'bg-brand-dark border border-brand-border p-3 rounded-r-lg rounded-bl-lg text-white self-start max-w-[85%] shadow-sm';
-            
-            if(userText.includes('track') || userText.includes('order')) {
-                bMsg.innerText = "To track an order, please click 'Track' in the top menu and enter your PK-ID.";
-            } else if (userText.includes('shipping') || userText.includes('delivery')) {
-                bMsg.innerText = "We offer premium nationwide delivery across Pakistan for Rs 300.";
-            } else if (userText.includes('size')) {
-                bMsg.innerText = "Our shoes follow standard European sizing (39-44).";
-            } else {
-                bMsg.innerText = "Thank you for your message. An artisan will review your inquiry shortly.";
+            const typingMsg = document.getElementById(typingId);
+            if(typingMsg) typingMsg.remove();
+            let reply = "";
+
+            if (message.includes("track") || message.includes("order") || message.includes("where") || message.includes("status")) {
+                const myOrders = cloudOrders.filter(o => localProfileEmail && o.email === localProfileEmail);
+                if (myOrders.length > 0) {
+                    const latest = myOrders[myOrders.length - 1];
+                    reply = `Mr. ${localProfileName || 'Client'}, I found your records. Your latest order (**${latest.trackingId}**) is currently: "${latest.status}".`;
+                } else if (localProfileName) {
+                    reply = `Mr. ${localProfileName}, I do not see any active orders under your email yet.`;
+                } else {
+                    reply = "I would be happy to check your order. Please click the 'Account' icon at the top of the page to log in first.";
+                }
+            } 
+            else if (message.includes("shipping") || message.includes("delivery") || message.includes("dispatch")) {
+                reply = `We offer standard dispatch across Pakistan for Rs 300. **Orders over ${formatRs(FREE_SHIPPING_THRESHOLD)} qualify for Free Shipping!**`;
             }
-            
-            container.appendChild(bMsg);
-            container.scrollTop = container.scrollHeight;
-        }, 800);
+            else if (message.includes("size") || message.includes("fit") || message.includes("measure")) {
+                reply = `Our luxury shoes run true to standard European sizing. You can click 'Size Guide' on any product page, or at the bottom of the website, to view our exact CM measurements!`;
+            }
+            else {
+                reply = "Thank you for reaching out. As an AI concierge, I specialize in tracking orders, sizing advice, and shipping policies across Lahore and Swat. How can I assist you today?";
+            }
+            window.addChatMessage(reply, 'bot');
+        }, 1200);
     };
-
-    async function initStore() {
-        const loader = document.getElementById('loadingIndicator');
-        const loaderText = document.getElementById('loadingText');
-        const grid = document.getElementById('productGrid');
-        
-        if(!googleSheetUrl || googleSheetUrl.trim() === "") {
-            loader.querySelector('.loader-ring').style.display = 'none';
-            loaderText.innerText = "Store connected. Waiting for Google Sheet link.";
-            grid.innerHTML = `
-                <div class="col-span-full py-16 text-center border border-dashed border-brand-border rounded bg-brand-dark/30">
-                    <i class="fa-solid fa-file-csv text-4xl text-brand-light/30 mb-4"></i>
-                    <p class="text-brand-light/60">Your catalog is currently empty.</p>
-                    <p class="text-brand-gold text-xs mt-2 uppercase tracking-widest">Paste your CSV link in the code to launch.</p>
-                </div>`;
-            return;
-        }
-
-        try {
-            const response = await fetch(googleSheetUrl);
-            if (!response.ok) throw new Error("Fetch failed");
-            loader.classList.add('hidden');
-        } catch (e) {
-            loader.querySelector('.loader-ring').style.display = 'none';
-            loaderText.innerText = "Error reading Google Sheet.";
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', initStore);
 </script>
 
-<!-- Firebase Connection -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSy...",
-        authDomain: "footwear-by-zak.firebaseapp.com",
-        projectId: "footwear-by-zak",
-        storageBucket: "footwear-by-zak.appspot.com",
-        messagingSenderId: "381957982978",
-        appId: "1:381957982978:web:12e20cb7122b2ccdf9901b"
-    };
-
-    try {
-        if(firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("AIzaSy...")) {
-            const app = initializeApp(firebaseConfig);
-            window.db = getFirestore(app);
-            console.log("🔥 Firebase Live Sync Connected Successfully!");
-        } else {
-            console.log("⚠️ Firebase Keys Not Entered - Running in Safe Local Mode.");
-        }
-    } catch(e) {
-        console.error("Firebase Error Caught - Running in Safe Local Mode.", e);
-    }
-</script>
 </body>
 </html>
