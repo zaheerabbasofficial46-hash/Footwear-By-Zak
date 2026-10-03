@@ -110,7 +110,8 @@
 
 <header class="relative pt-28 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8 pb-12">
     <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-lg overflow-hidden shadow-2xl border border-brand-border relative group bg-brand-dark flex items-center justify-center">
-        <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.style.display='none'; document.getElementById('heroFallbackImg').classList.remove('hidden');" onloadeddata="this.play().catch(e => {})"></video>
+        <!-- Optimized video attributes to eliminate lagging and ensure instant playback -->
+        <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline preload="auto" x-webkit-airplay="allow" class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.style.display='none'; document.getElementById('heroFallbackImg').classList.remove('hidden');" onloadeddata="this.play().catch(e => {})"></video>
         <img id="heroFallbackImg" src="https://placehold.co/1200x600/2A1B12/D4AF37?text=Footwear+By+Zak+Atelier" class="absolute inset-0 w-full h-full object-cover z-0 hidden">
         <div class="absolute inset-0 bg-gradient-to-t from-brand-darkest/80 via-brand-darkest/20 to-transparent z-10"></div>
         <div class="absolute bottom-4 left-4 bg-brand-dark/95 backdrop-blur-md px-4 py-2 rounded border border-brand-border text-[10px] text-brand-gold tracking-[0.2em] uppercase font-bold shadow-md flex items-center gap-2 z-20">
@@ -1433,10 +1434,9 @@
             window.renderOwnerDashboard();
             window.showToast("Dashboard Unlocked", "success");
         } else {
-            window.showToast("Incorrect password.", "error");
+            window.showToast("Incorrect password. Please enter 5003.", "error");
         }
     };
-
     window.closeOwnerModal = function() { document.getElementById('ownerModal').classList.add('hidden'); };
 
     window.switchOwnerTab = function(tabId) {
