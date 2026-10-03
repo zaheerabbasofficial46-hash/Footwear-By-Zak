@@ -603,19 +603,26 @@
     </div>
 </footer>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+ <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAzFwR3-wKC7tbCGnQ8IHleJ8sxkwW5c5g",
-        authDomain: "footwear-by-zak.firebaseapp.com",
-        projectId: "footwear-by-zak",
-        storageBucket: "footwear-by-zak.firebasestorage.app",
-        messagingSenderId: "381957982978",
-        appId: "1:381957982978:web:12e20cb7122b2ccdf9901b"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyAzFwR3-wKC7tbCGNQ8IHLej8sXkwW5c5g",
+  authDomain: "footwear-by-zak.firebaseapp.com",
+  projectId: "footwear-by-zak",
+  storageBucket: "footwear-by-zak.firebasestorage.app",
+  messagingSenderId: "381957982978",
+  appId: "1:381957982978:web:12e20cb7122b2ccdf9901b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Automatically sign in customers securely so orders sync instantly
+signInAnonymously(auth).catch((error) => console.error("Auth error:", error));
 
     let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
     let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
