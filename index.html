@@ -621,10 +621,8 @@
     let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
     let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
     let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
-    let cloudProfiles = JSON.parse(localStorage.getItem('fbz_profiles') || '{}');
-    
-    let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
     let localProfileName = localStorage.getItem('fbz_profile_name') || '';
+    let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
 
     const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv";
     const FREE_SHIPPING_THRESHOLD = 20000;
@@ -652,49 +650,34 @@
                 window.userId = userCredential.user.uid;
                 const docRef = doc(window.db, "store_data", "master_record");
                 
-                getDoc(docRef).then((docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        if(data.orders && data.orders.length > 0) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
-                        if(data.reviews && data.reviews.length > 0) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
-                        if(data.subscribers && data.subscribers.length > 0) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
-                        if(data.profiles) { cloudProfiles = data.profiles; localStorage.setItem('fbz_profiles', JSON.stringify(cloudProfiles)); }
-                        
-                        if(localProfileEmail && cloudProfiles[localProfileEmail]) {
-                            localProfileName = cloudProfiles[localProfileEmail].name;
-                            localStorage.setItem('fbz_profile_name', localProfileName);
-                            window.updateAuthUI();
-                        }
-                    } else {
-                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers, profiles: cloudProfiles }).catch(e => {});
-                    }
-                }).catch(e => {});
-
+                // Real-time listener that automatically syncs mobile orders to your laptop instantly
                 onSnapshot(docRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        if(data.orders) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
-                        if(data.reviews) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
-                        if(data.subscribers) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
-                        if(data.profiles) { 
-                            cloudProfiles = data.profiles; 
-                            localStorage.setItem('fbz_profiles', JSON.stringify(cloudProfiles)); 
-                            if(localProfileEmail && cloudProfiles[localProfileEmail]) {
-                                localProfileName = cloudProfiles[localProfileEmail].name;
-                                localStorage.setItem('fbz_profile_name', localProfileName);
-                                window.updateAuthUI();
-                            }
+                        if(data.orders) { 
+                            cloudOrders = data.orders; 
+                            localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); 
+                        }
+                        if(data.reviews) { 
+                            cloudReviews = data.reviews; 
+                            localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); 
+                        }
+                        if(data.subscribers) { 
+                            cloudSubscribers = data.subscribers; 
+                            localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); 
                         }
                         
                         if(document.getElementById('trackingModal') && !document.getElementById('trackingModal').classList.contains('hidden')) window.renderTrackingList();
                         if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) window.renderOwnerDashboard();
+                    } else {
+                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(e => {});
                     }
                 }, (error) => {});
             }).catch(err => {});
         }
     } catch (error) {}
 
-    window.syncToCloud = async function(collectionName, dataObj, keyToMerge = null, valToMerge = null) {
+    window.syncToCloud = async function(collectionName, dataObj) {
         if(collectionName === 'orders') {
             cloudOrders.push(dataObj);
             localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
@@ -706,9 +689,6 @@
                 cloudSubscribers.push(dataObj);
                 localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers));
             }
-        } else if (collectionName === 'profiles') {
-            cloudProfiles[keyToMerge] = valToMerge;
-            localStorage.setItem('fbz_profiles', JSON.stringify(cloudProfiles));
         }
 
         if(window.userId && window.db) {
@@ -718,9 +698,14 @@
                 if(collectionName === 'subscribers') updatePayload.subscribers = arrayUnion(dataObj);
                 if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
                 if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
-                if(collectionName === 'profiles') updatePayload.profiles = cloudProfiles;
                 await updateDoc(docRef, updatePayload);
-            } catch (e) {}
+            } catch (e) {
+                // If document doesn't exist yet, setDoc creates it
+                try {
+                    const docRef = doc(window.db, "store_data", "master_record");
+                    await setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }, { merge: true });
+                } catch(err) {}
+            }
         }
     };
 
@@ -1410,11 +1395,10 @@
         localStorage.setItem('fbz_profile_name', name);
         localStorage.setItem('fbz_profile_email', email);
 
-        await window.syncToCloud('profiles', email, email, { name, email });
         await window.syncToCloud('subscribers', email);
 
         window.updateAuthUI(); window.closeAuthModal();
-        window.showToast(`Welcome, ${name}. Logged in successfully across devices.`, "success");
+        window.showToast(`Welcome, ${name}. Logged in successfully.`, "success");
     };
 
     window.handleLocalLogout = function() {
@@ -1434,9 +1418,10 @@
             window.renderOwnerDashboard();
             window.showToast("Dashboard Unlocked", "success");
         } else {
-            window.showToast("Incorrect password. Please enter 5003.", "error");
+            window.showToast("Incorrect password.", "error");
         }
     };
+
     window.closeOwnerModal = function() { document.getElementById('ownerModal').classList.add('hidden'); };
 
     window.switchOwnerTab = function(tabId) {
