@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -251,7 +251,7 @@
                         <input type="text" id="chkFName" placeholder="First name" class="shopify-input flex-1">
                         <input type="text" id="chkLName" placeholder="Last name" class="shopify-input flex-1">
                     </div>
-                    <input type="tel" id="chkPhone" placeholder="Phone Number (WhatsApp)" class="shopify-input">
+                    <input type="tel" id="chkPhone" placeholder="Phone Number" class="shopify-input">
                     <input type="text" id="chkAddress" placeholder="Address (Lahore, Swat, etc.)" class="shopify-input">
                     <input type="text" id="chkApartment" placeholder="Apartment, suite, etc. (optional)" class="shopify-input">
                     <div class="flex gap-3">
@@ -314,6 +314,23 @@
                 Complete order
             </button>
         </div>
+    </div>
+</div>
+
+<div id="orderSuccessModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-brand-darkest/90 backdrop-blur-md" onclick="document.getElementById('orderSuccessModal').classList.add('hidden')"></div>
+    <div class="relative bg-brand-card border border-brand-gold w-[90%] md:w-[500px] p-8 rounded-lg z-10 shadow-2xl text-center">
+        <i class="fa-solid fa-circle-check text-6xl text-brand-gold mb-6 animate-pulse"></i>
+        <h2 class="text-3xl font-serif mb-2 text-white">Order <span class="gold-text">Confirmed</span></h2>
+        <p class="text-brand-light/80 text-sm mb-6">Thank you for your purchase. Your order has been securely received by our Atelier and is now being prepared for dispatch.</p>
+        
+        <div class="bg-brand-dark border border-brand-border p-5 rounded-lg mb-8">
+            <p class="text-xs text-brand-light/60 uppercase tracking-widest mb-2 font-bold">Your Official Tracking ID</p>
+            <p class="text-3xl font-mono text-white font-bold tracking-wider" id="successTrackingId">ZAK-XXXXX</p>
+        </div>
+        
+        <p class="text-xs text-brand-light/60 mb-6 italic">You can track your order status anytime using the 'Track' button in the top menu.</p>
+        <button onclick="document.getElementById('orderSuccessModal').classList.add('hidden')" class="btn-gold w-full py-4 rounded font-bold uppercase tracking-widest text-sm shadow-lg">Continue Shopping</button>
     </div>
 </div>
 
@@ -483,7 +500,7 @@
                 <a href="https://tiktok.com/@yourtiktok" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                 <a href="https://instagram.com/yourinstagram" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                 <a href="https://facebook.com/yourfacebook" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://yourshopifylink.com" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Shopify Store"><i class="fa-brands fa-shopify"></i></a>
+                <a href="https://wa.me/923000000000" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="WhatsApp Support"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
         
@@ -559,7 +576,7 @@
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
     
-    // 3. DEFAULT EMPTY CATALOG (Waiting for your Google Sheet)
+    // 3. DEFAULT EMPTY CATALOG
     let allProducts = [];
     let filteredProducts = [];
     let cart = [];
@@ -568,12 +585,10 @@
     let selectedSizeForSticky = null;
     let selectedColorForSticky = null;
     
-    // 4. ATTACH ALL FUNCTIONS TO WINDOW SO THEY NEVER BREAK
     window.allProducts = allProducts;
     window.db = null;
     window.userId = null;
 
-    // We wrap Firebase safely. Even if keys are wrong, the website uses Local Storage without crashing.
     try {
         if(firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR_REAL_KEY")) {
             const app = initializeApp(firebaseConfig);
@@ -619,7 +634,6 @@
     }
 
     window.syncToCloud = async function(collectionName, dataObj) {
-        // ALWAYS save locally first - Guarantees zero data loss
         if(collectionName === 'orders') {
             cloudOrders.push(dataObj);
             localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
@@ -633,7 +647,6 @@
             }
         }
 
-        // Try sending to Firebase if it's connected
         if(window.userId && window.db) {
             try {
                 const docRef = doc(window.db, "store_data", "master_record");
@@ -642,9 +655,7 @@
                 if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
                 if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
                 await updateDoc(docRef, updatePayload);
-            } catch (e) {
-                // Ignore cloud error - Data is already safely saved in LocalStorage!
-            }
+            } catch (e) {}
         }
     };
 
@@ -663,7 +674,6 @@
         setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, 3500);
     };
 
-    // Unbreakable 5-click Owner Panel trigger
     window.ownerClickCount = 0;
     window.ownerClickTimer = null;
     window.handleSecretClick = function() {
@@ -777,7 +787,6 @@
             grid.innerHTML = '<div class="col-span-full py-10 text-center text-brand-light/60">No artisan pieces match this filter.</div>';
             return;
         } else if (allProducts.length === 0) {
-            // Already handled by error/empty state in loadProducts
             return;
         }
 
@@ -1257,17 +1266,15 @@
                 localStorage.setItem('fbz_profile_email', localProfileEmail);
                 window.updateAuthUI();
             }
-
-            const whatsappNumber = "923000000000"; 
-            const orderSummaryText = cart.map(i => `• ${i.name} (Color: ${i.selectedColor}, Size: ${i.selectedSize}) - ${formatRs(i.checkoutPrice)}`).join('%0A');
-            const whatsappMsg = `*NEW VIP ORDER - FOOTWEAR BY ZAK*%0A%0A*Tracking ID:* ${trackingId}%0A*Name:* ${fName} ${lName}%0A*Phone:* ${phone}%0A*Address:* ${address}, ${city}%0A*Payment:* ${payMode}%0A%0A*Items:*%0A${orderSummaryText}%0A%0A*Total Amount:* ${formatRs(total)}`;
             
             cart = []; window.updateCartUI();
             window.toggleCart();
             btn.innerHTML = 'Complete order'; btn.disabled = false;
             
-            window.showToast(`Order Placed Successfully! Tracking ID: ${trackingId}`, "success");
-            setTimeout(() => { window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, '_blank'); }, 1000);
+            // Professional Online Confirmation (Replaces WhatsApp redirect)
+            document.getElementById('successTrackingId').innerText = trackingId;
+            document.getElementById('orderSuccessModal').classList.remove('hidden');
+            window.showToast(`Order Placed Successfully!`, "success");
         };
 
         const receiptInput = document.getElementById('bankReceiptUpload');
