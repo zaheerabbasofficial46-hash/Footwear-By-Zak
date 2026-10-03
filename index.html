@@ -197,7 +197,7 @@
         </div>
     </div>
     
-    <div id="loadingIndicator" class="flex flex-col items-center justify-center py-20">
+    <div id="loadingIndicator" class="flex flex-col items-center justify-center py-20 hidden">
         <div class="loader-ring mb-4"></div>
         <p class="text-brand-light/80 text-sm tracking-widest uppercase">Consulting Atelier Ledger...</p>
     </div>
@@ -623,12 +623,90 @@
     let localProfileName = localStorage.getItem('fbz_profile_name') || '';
     let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
 
-    const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv";
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
     
-    let allProducts = [];
-    let filteredProducts = [];
+    // HARDCODED PRODUCTS ARRAY - NO GOOGLE SHEET FETCH DELAYS OR ERRORS
+    let allProducts = [
+        {
+            id: "zak-01",
+            name: "The Lahore Executive Oxford",
+            price: 24500,
+            salePrice: 21500,
+            category: "Oxfords",
+            stock: "in stock",
+            sizes: ["39", "40", "41", "42", "43", "44"],
+            images: [
+                "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1533867617858-e7d97e06084a?auto=format&fit=crop&w=800&q=80"
+            ],
+            colors: ["Classic Black", "Oxblood Burgundy"],
+            description: "Handcrafted formal oxford shoes made from full-grain calfskin leather, featuring a classic closed lacing system and leather sole.",
+            qtyAvailable: "In Stock - Ready to Dispatch",
+            sold: 42,
+            sheetReview: "4.9|38",
+            dateAdded: Date.now() - 1000000
+        },
+        {
+            id: "zak-02",
+            name: "The Swat Heritage Monk Strap",
+            price: 26000,
+            salePrice: null,
+            category: "Oxfords",
+            stock: "in stock",
+            sizes: ["40", "41", "42", "43"],
+            images: [
+                "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?auto=format&fit=crop&w=800&q=80"
+            ],
+            colors: ["Walnut Brown", "Dark Espresso"],
+            description: "Exquisite double monk strap shoes featuring solid brass buckles and hand-burnished leather finish.",
+            qtyAvailable: "In Stock - Ready to Dispatch",
+            sold: 29,
+            sheetReview: "4.8|24",
+            dateAdded: Date.now() - 2000000
+        },
+        {
+            id: "zak-03",
+            name: "Atelier Gentleman's Loafer",
+            price: 19500,
+            salePrice: 17500,
+            category: "Loafers",
+            stock: "in stock",
+            sizes: ["39", "40", "41", "42", "43", "44"],
+            images: [
+                "https://images.unsplash.com/photo-1533867617858-e7d97e06084a?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80"
+            ],
+            colors: ["Tan Brown", "Navy Blue", "Classic Black"],
+            description: "Sleek slip-on leather loafers designed for effortless elegance and all-day comfort during formal or casual occasions.",
+            qtyAvailable: "In Stock - Ready to Dispatch",
+            sold: 65,
+            sheetReview: "5.0|51",
+            dateAdded: Date.now() - 3000000
+        },
+        {
+            id: "zak-04",
+            name: "The Khyber Chelsea Boot",
+            price: 29000,
+            salePrice: null,
+            category: "Boots",
+            stock: "in stock",
+            sizes: ["41", "42", "43", "44"],
+            images: [
+                "https://images.unsplash.com/photo-1638247025967-b4e38f787b76?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80"
+            ],
+            colors: ["Suede Brown", "Black Leather"],
+            description: "Rugged yet refined ankle boots crafted with elastic side goring and durable stacked heels.",
+            qtyAvailable: "In Stock - Ready to Dispatch",
+            sold: 19,
+            sheetReview: "4.9|15",
+            dateAdded: Date.now() - 4000000
+        }
+    ];
+
+    let filteredProducts = [...allProducts];
     let cart = [];
     let currentReviewRating = 5;
     let activeSlider = null;
@@ -800,70 +878,9 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        loadProducts();
+        window.filterProducts();
+        window.updateAuthUI();
     });
-
-    async function loadProducts() {
-        if(!googleSheetUrl || googleSheetUrl.trim() === "") {
-            document.getElementById('loadingIndicator')?.classList.add('hidden');
-            const grid = document.getElementById('productGrid');
-            if (grid) {
-                grid.innerHTML = '<div class="col-span-full py-10 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">Your store is ready. Please paste your Google Sheet CSV link in the code to load your artisan catalog.</div>';
-            }
-            return;
-        }
-        try {
-            const response = await fetch(googleSheetUrl);
-            if (!response.ok) throw new Error("Sheet fetch unsuccessful");
-            const data = await response.text();
-            const rows = parseCSV(data);
-            allProducts = rows.slice(1).filter(row => row && row[0] && row[1]).map(row => {
-                const media = [row[7], row[8], row[9], row[10]].filter(m => m && m.trim() !== '');
-                return {
-                    id: row[0], name: row[1],
-                    price: parseInt(row[2]) || 0, salePrice: row[3] ? parseInt(row[3]) : null,
-                    category: row[4] || 'Footwear', stock: (row[5] || 'In Stock').toLowerCase(),
-                    sizes: row[6] ? row[6].split(',').map(s => s.trim()) : ['39', '40', '41', '42', '43'],
-                    images: media.length > 0 ? media : ['https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier+Footwear'],
-                    colors: row[11] ? row[11].split(',').map(c => c.trim()) : ['Classic Black', 'Walnut Brown'],
-                    description: row[12] || "Handcrafted with premium leather across Lahore and Swat for the modern gentleman.",
-                    qtyAvailable: row[13] || 'Available',
-                    sold: row[14] ? parseInt(row[14]) : 0, sheetReview: row[15] || null,
-                    dateAdded: Date.now() - Math.floor(Math.random() * 1000000000)
-                };
-            });
-            window.allProducts = allProducts;
-            filteredProducts = [...allProducts];
-            window.filterProducts();
-        } catch (error) {
-            document.getElementById('loadingIndicator')?.classList.add('hidden');
-            const grid = document.getElementById('productGrid');
-            if(grid) grid.innerHTML = '<div class="col-span-full py-10 text-center text-red-400 border border-red-900/30 rounded p-6 bg-red-900/10">Error loading products. Please check if your Google Sheet CSV link is correct and publicly accessible.</div>';
-            allProducts = [];
-            filteredProducts = [];
-        }
-    }
-
-    function parseCSV(text) {
-        const rows = [];
-        let row = [], inQuotes = false, val = '';
-        for (let i = 0; i < text.length; i++) {
-            let char = text[i];
-            if (inQuotes) {
-                if (char === '"') { if (text[i + 1] === '"') { val += '"'; i++; } else { inQuotes = false; } } 
-                else { val += char; }
-            } else {
-                if (char === '"') inQuotes = true;
-                else if (char === ',') { row.push(val.trim()); val = ''; }
-                else if (char === '\n' || char === '\r') {
-                    if(char === '\r' && text[i+1] === '\n') i++;
-                    row.push(val.trim()); rows.push(row); row = []; val = '';
-                } else { val += char; }
-            }
-        }
-        if (val !== '' || row.length > 0) { row.push(val.trim()); rows.push(row); }
-        return rows;
-    }
 
     window.filterProducts = function() {
         const category = document.getElementById('filterCategory').value.toLowerCase();
@@ -879,15 +896,11 @@
     };
 
     window.renderProducts = function() {
-        const loader = document.getElementById('loadingIndicator');
         const grid = document.getElementById('productGrid');
-        if(loader) loader.classList.add('hidden');
         if(!grid) return;
         
-        if (allProducts.length > 0 && filteredProducts.length === 0) {
+        if (filteredProducts.length === 0) {
             grid.innerHTML = '<div class="col-span-full py-10 text-center text-brand-light/60">No artisan pieces match this filter.</div>';
-            return;
-        } else if (allProducts.length === 0) {
             return;
         }
 
@@ -904,11 +917,10 @@
                 let colorHex = '#2A1B12';
                 const lower = c.toLowerCase();
                 if(lower.includes('black')) colorHex = '#111';
-                else if(lower.includes('tan')) colorHex = '#D2B48C';
+                else if(lower.includes('tan') || lower.includes('brown')) colorHex = '#D2B48C';
                 else if(lower.includes('burgundy') || lower.includes('oxblood')) colorHex = '#4A0404';
                 else if(lower.includes('blue') || lower.includes('navy')) colorHex = '#000080';
-                const isColorSold = lower.includes('sold') || c.includes('-');
-                return `<div class="w-3 h-3 rounded-full border border-brand-border/50 ${isColorSold ? 'opacity-30 relative after:content-[\'\'] after:absolute after:w-full after:h-[1px] after:bg-red-500 after:top-1/2 after:-rotate-45' : ''}" style="background-color: ${colorHex};" title="${c}"></div>`;
+                return `<div class="w-3 h-3 rounded-full border border-brand-border/50" style="background-color: ${colorHex};" title="${c}"></div>`;
             }).join('');
 
             grid.innerHTML += `
@@ -945,38 +957,26 @@
         const displayPrice = hasSale ? product.salePrice : product.price;
 
         selectedSizeForSticky = null; selectedColorForSticky = null;
-        let stockWarningHTML = '';
-        
-        const qtyStr = String(product.qtyAvailable || '');
-        const lowStockMatch = qtyStr.match(/\b([1-3])\b/);
-        
-        if(lowStockMatch && !isOut) {
-            stockWarningHTML = `<div class="flex items-center gap-2 text-red-400 text-xs font-bold uppercase tracking-wider mb-4 bg-red-900/20 p-2 rounded border border-red-900/50"><i class="fa-solid fa-fire animate-pulse"></i> High Demand: Only a few pairs left!</div>`;
-        }
 
         const slidesHTML = product.images.map(media => {
             return `<div class="keen-slider__slide w-full h-full min-w-full relative bg-brand-darkest flex items-center justify-center"><img src="${media}" class="w-full max-h-[500px] object-cover" onerror="this.src='https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier'"></div>`;
         }).join('');
 
         const sizesHTML = product.sizes.map((s, i) => {
-            const isSizeSold = s.toLowerCase().includes('sold') || s.includes('-');
-            const cleanSize = s.replace(/\(sold\)/gi, '').trim();
-            const checked = (i===0 && !isSizeSold) ? 'checked' : '';
-            if(checked) selectedSizeForSticky = cleanSize;
+            const checked = (i===0) ? 'checked' : '';
+            if(checked) selectedSizeForSticky = s;
             return `<div>
-                <input type="radio" name="size" id="size-${s}" value="${cleanSize}" class="hidden size-radio" ${checked} ${isSizeSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
-                <label for="size-${s}" class="block w-full text-center py-2.5 border border-brand-border text-sm transition-all rounded-sm bg-brand-dark ${isSizeSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanSize}</label>
+                <input type="radio" name="size" id="size-${s}" value="${s}" class="hidden size-radio" ${checked} onchange="window.updateStickySelection()">
+                <label for="size-${s}" class="block w-full text-center py-2.5 border border-brand-border text-sm transition-all rounded-sm bg-brand-dark cursor-pointer hover:border-brand-gold text-white">${s}</label>
             </div>`;
         }).join('');
 
         const colorsHTML = product.colors.map((c, i) => {
-            const isColorSold = c.toLowerCase().includes('sold') || c.includes('-');
-            const cleanColor = c.replace(/\(sold\)/gi, '').trim();
-            const checked = (i===0 && !isColorSold) ? 'checked' : '';
-            if(checked) selectedColorForSticky = cleanColor;
+            const checked = (i===0) ? 'checked' : '';
+            if(checked) selectedColorForSticky = c;
             return `<div class="flex-1 min-w-[30%]">
-                <input type="radio" name="color" id="color-${i}" value="${cleanColor}" class="hidden color-radio" ${checked} ${isColorSold ? 'disabled' : ''} onchange="window.updateStickySelection()">
-                <label for="color-${i}" class="block w-full text-center py-2.5 border border-brand-border text-xs transition-all rounded-sm whitespace-nowrap px-2 bg-brand-dark ${isColorSold ? 'line-through text-brand-light/30 bg-brand-darkest cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand-gold text-white'}">${cleanColor}</label>
+                <input type="radio" name="color" id="color-${i}" value="${c}" class="hidden color-radio" ${checked} onchange="window.updateStickySelection()">
+                <label for="color-${i}" class="block w-full text-center py-2.5 border border-brand-border text-xs transition-all rounded-sm whitespace-nowrap px-2 bg-brand-dark cursor-pointer hover:border-brand-gold text-white">${c}</label>
             </div>`;
         }).join('');
 
@@ -989,7 +989,6 @@
             </div>
             
             <div class="p-6">
-                ${stockWarningHTML}
                 <div class="text-[10px] text-brand-gold mb-2 tracking-[0.2em] uppercase flex justify-between items-center font-bold">
                     <span>${product.category}</span>
                     <div class="flex text-brand-gold"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
@@ -1001,27 +1000,25 @@
                     ${hasSale ? `<span class="text-brand-light/50 line-through text-sm">${formatRs(product.price)}</span> <span class="bg-brand-gold text-brand-darkest text-[10px] font-bold px-2 py-0.5 rounded ml-2 uppercase tracking-wider">Sale</span>` : ''}
                 </div>
 
-                ${colorsHTML ? `
-                    <div class="mb-6">
-                        <div class="flex justify-between items-center mb-3"><span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Leather Finish</span></div>
-                        <div class="flex flex-wrap gap-2">${colorsHTML}</div>
-                    </div>` : ''}
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-3"><span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Leather Finish</span></div>
+                    <div class="flex flex-wrap gap-2">${colorsHTML}</div>
+                </div>
 
-                ${sizesHTML ? `
-                    <div class="mb-8">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Select Size (EU)</span>
-                            <button onclick="document.getElementById('sizeGuideModal').classList.remove('hidden')" class="text-brand-gold text-xs underline underline-offset-4 hover:text-white transition">Size Guide</button>
-                        </div>
-                        <div class="grid grid-cols-4 gap-2">${sizesHTML}</div>
-                    </div>` : ''}
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs uppercase tracking-widest text-brand-light/80 font-bold">Select Size (EU)</span>
+                        <button onclick="document.getElementById('sizeGuideModal').classList.remove('hidden')" class="text-brand-gold text-xs underline underline-offset-4 hover:text-white transition">Size Guide</button>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">${sizesHTML}</div>
+                </div>
                 
                 <div class="bg-brand-dark/50 border border-brand-border p-4 rounded mb-8">
                     <div class="flex items-start gap-3">
                         <i class="fa-solid fa-circle-info text-brand-gold mt-0.5"></i>
                         <div>
                             <span class="text-xs font-bold text-white uppercase tracking-wider block mb-1">Live Atelier Ledger</span>
-                            <span class="text-brand-light/80 text-xs leading-relaxed font-mono block">${product.qtyAvailable || 'Checking stock...'}</span>
+                            <span class="text-brand-light/80 text-xs leading-relaxed font-mono block">${product.qtyAvailable}</span>
                         </div>
                     </div>
                 </div>
@@ -1069,14 +1066,9 @@
         document.getElementById('stickyProductPrice').innerText = formatRs(displayPrice);
         const addBtn = document.getElementById('stickyAddBtn');
         
-        if (isOut) {
-            addBtn.disabled = true; addBtn.innerHTML = 'Unavailable';
-            addBtn.className = "w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center bg-brand-darkest text-brand-light/50 border border-brand-border cursor-not-allowed";
-        } else {
-            addBtn.disabled = false; addBtn.innerHTML = '<i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag';
-            addBtn.className = "btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center shadow-lg hover:shadow-brand-gold/20";
-            addBtn.onclick = () => window.addToCart(product.id);
-        }
+        addBtn.disabled = false; addBtn.innerHTML = '<i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag';
+        addBtn.className = "btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center shadow-lg hover:shadow-brand-gold/20";
+        addBtn.onclick = () => window.addToCart(product.id);
 
         document.getElementById('detailsModal').classList.remove('hidden');
         drawer.classList.remove('translate-x-full');
@@ -1166,7 +1158,6 @@
 
         const saveReview = async (base64Img) => {
             const newReview = { productId, userName: localProfileName, rating: currentReviewRating, text, image: base64Img || null, timestamp: Date.now() };
-            
             await window.syncToCloud('reviews', newReview);
             
             if(textEl) textEl.value = '';
@@ -1178,13 +1169,7 @@
         };
 
         if (fileEl && fileEl.files.length > 0) {
-            const file = fileEl.files[0];
-            if(file.size > 5 * 1024 * 1024) { 
-                window.showToast("Image too large. Please select an image under 5MB.", "error");
-                btn.innerText = "Submit Review"; btn.disabled = false;
-                return;
-            }
-            compressImage(file, saveReview);
+            compressImage(fileEl.files[0], saveReview);
         } else {
             saveReview(null);
         }
@@ -1238,8 +1223,8 @@
     window.addToCart = function(id) {
         const product = allProducts.find(p => p.id === id);
         if(!product) return;
-        const sizeToUse = selectedSizeForSticky || (product.sizes && product.sizes.length > 0 ? product.sizes[0].replace(/\(sold\)/gi, '').trim() : 'Standard');
-        const colorToUse = selectedColorForSticky || (product.colors && product.colors.length > 0 ? product.colors[0].replace(/\(sold\)/gi, '').trim() : 'Default');
+        const sizeToUse = selectedSizeForSticky || product.sizes[0];
+        const colorToUse = selectedColorForSticky || product.colors[0];
         const price = (product.salePrice && product.salePrice < product.price) ? product.salePrice : product.price;
 
         cart.push({ ...product, cartId: Date.now(), selectedSize: sizeToUse, selectedColor: colorToUse, checkoutPrice: price });
@@ -1378,13 +1363,7 @@
 
         const receiptInput = document.getElementById('bankReceiptUpload');
         if (payMode === 'Bank' && receiptInput && receiptInput.files.length > 0) {
-            const file = receiptInput.files[0];
-            if(file.size > 2 * 1024 * 1024) {
-                 window.showToast("Receipt image too large. Please select an image under 2MB.", "error");
-                 btn.innerHTML = 'Complete order'; btn.disabled = false;
-                 return;
-            }
-            compressImage(file, finalizeOrderSubmission);
+            compressImage(receiptInput.files[0], finalizeOrderSubmission);
         } else {
             finalizeOrderSubmission(null);
         }
@@ -1504,9 +1483,6 @@
                     await updateDoc(docRef, { orders: cloudOrders });
                 } catch(e) {}
             }
-            
-            selectElement.classList.add('border-green-500', 'text-green-500');
-            setTimeout(() => selectElement.classList.remove('border-green-500', 'text-green-500'), 1500);
             window.showToast(`Updated ${trackingId} to: ${newStatus}`, "success");
         }
     };
@@ -1589,23 +1565,20 @@
                             </div>
                         </div>
                     </div>
-                    ${o.receiptImage ? `<div class="mt-3 pt-3 border-t border-brand-border/50"><a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 border border-green-900/50 px-3 py-1.5 rounded hover:bg-green-900/20 transition inline-flex items-center"><i class="fa-solid fa-receipt mr-2"></i> View Bank Receipt</a></div>` : ''}
                 </div>`;
             }).join('');
         }
     };
 
     window.copyAllEmails = function() {
-        const text = cloudSubscribers.join(', ');
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText(cloudSubscribers.join(', '));
         window.showToast("All subscriber emails copied to clipboard!", "success");
     };
 
     window.sendEmailBroadcast = function() {
         const subject = encodeURIComponent(document.getElementById('broadcastSubject').value || 'Exclusive Offer from Footwear By Zak');
         const body = encodeURIComponent(document.getElementById('broadcastBody').value || 'Hello valued customer from Lahore & Swat, check out our latest collection!');
-        const bcc = cloudSubscribers.join(',');
-        window.open(`mailto:?bcc=${bcc}&subject=${subject}&body=${body}`, '_blank');
+        window.open(`mailto:?bcc=${cloudSubscribers.join(',')}&subject=${subject}&body=${body}`, '_blank');
     };
 
     window.toggleChat = function() {
@@ -1646,8 +1619,6 @@
                 if (myOrders.length > 0) {
                     const latest = myOrders[myOrders.length - 1];
                     reply = `Mr. ${localProfileName || 'Client'}, I found your records. Your latest order (**${latest.trackingId}**) is currently: "${latest.status}".`;
-                } else if (localProfileName) {
-                    reply = `Mr. ${localProfileName}, I do not see any active orders under your email yet.`;
                 } else {
                     reply = "I would be happy to check your order. Please click the 'Account' icon at the top of the page to log in first.";
                 }
