@@ -110,8 +110,8 @@
 
 <header class="relative pt-28 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8 pb-12">
     <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-lg overflow-hidden shadow-2xl border border-brand-border relative group bg-brand-dark flex items-center justify-center">
-        <!-- Main Video Header -->
-        <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0"></video>
+        <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.style.display='none'; document.getElementById('heroFallbackImg').classList.remove('hidden');"></video>
+        <img id="heroFallbackImg" src="https://placehold.co/1200x600/2A1B12/D4AF37?text=Footwear+By+Zak+Atelier" class="absolute inset-0 w-full h-full object-cover z-0 hidden">
         <div class="absolute inset-0 bg-gradient-to-t from-brand-darkest/80 via-brand-darkest/20 to-transparent z-10"></div>
         <div class="absolute bottom-4 left-4 bg-brand-dark/95 backdrop-blur-md px-4 py-2 rounded border border-brand-border text-[10px] text-brand-gold tracking-[0.2em] uppercase font-bold shadow-md flex items-center gap-2 z-20">
             <span class="relative flex h-2 w-2">
@@ -325,7 +325,7 @@
 
 <div id="orderSuccessModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-brand-darkest/95 backdrop-blur-md"></div>
-    <div class="relative bg-brand-card border border-brand-gold/50 w-[90%] md:w-[450px] p-8 rounded-lg z-10 shadow-[0_0_50px_rgba(212,175,55,0.15)] text-center animate-slide-up">
+    <div class="relative bg-brand-card border border-brand-gold w-[90%] md:w-[450px] p-8 rounded-lg z-10 shadow-[0_0_50px_rgba(212,175,55,0.15)] text-center animate-slide-up">
         <div class="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
             <i class="fa-solid fa-check text-4xl text-green-500"></i>
         </div>
@@ -387,11 +387,10 @@
     <div class="absolute inset-0 bg-brand-darkest/95 backdrop-blur-md" onclick="window.closeOwnerModal()"></div>
     <div class="relative bg-brand-card border border-brand-gold w-[95%] md:w-[900px] h-[90vh] flex flex-col rounded-lg z-10 shadow-2xl overflow-hidden">
         
-        <!-- Header -->
         <div class="bg-brand-dark p-4 border-b border-brand-border flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded bg-brand-gold/10 flex items-center justify-center border border-brand-gold/30 shadow-inner">
-                    <i class="fa-solid fa-crown text-brand-gold text-lg"></i>
+                    <i class="fa-solid fa-shield-halved text-brand-gold text-lg"></i>
                 </div>
                 <div>
                     <h3 class="font-serif text-xl text-white leading-tight">Master <span class="gold-text">Ledger</span></h3>
@@ -403,7 +402,6 @@
             <button onclick="window.closeOwnerModal()" class="text-brand-light/50 hover:text-white transition transform hover:rotate-90"><i class="fa-solid fa-xmark text-2xl"></i></button>
         </div>
 
-        <!-- Login Screen -->
         <div id="ownerLoginScreen" class="p-8 text-center space-y-4 flex flex-col items-center justify-center h-full">
             <div class="w-16 h-16 rounded-full bg-brand-dark flex items-center justify-center mx-auto mb-2 border border-brand-border">
                 <i class="fa-solid fa-lock text-brand-gold text-2xl"></i>
@@ -413,17 +411,14 @@
             <button onclick="window.verifyOwnerLogin()" class="btn-gold px-8 py-3.5 rounded font-bold uppercase tracking-widest text-sm shadow-lg mt-2">Unlock Ledger</button>
         </div>
 
-        <!-- Dashboard Content -->
         <div id="ownerDashboardContent" class="hidden flex-1 flex flex-col overflow-hidden bg-brand-darkest">
             
-            <!-- Professional Tabs -->
             <div class="flex border-b border-brand-border bg-brand-dark shrink-0 overflow-x-auto custom-scrollbar">
                 <button onclick="window.switchOwnerTab('overview')" id="tabBtn-overview" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-gold border-b-2 border-brand-gold transition-colors hover:bg-brand-darkest"><i class="fa-solid fa-chart-line mr-2"></i> Overview</button>
                 <button onclick="window.switchOwnerTab('orders')" id="tabBtn-orders" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-light/50 border-b-2 border-transparent transition-colors hover:text-white hover:bg-brand-darkest"><i class="fa-solid fa-box-open mr-2"></i> Order Management</button>
                 <button onclick="window.switchOwnerTab('marketing')" id="tabBtn-marketing" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-light/50 border-b-2 border-transparent transition-colors hover:text-white hover:bg-brand-darkest"><i class="fa-solid fa-users mr-2"></i> CRM & Marketing</button>
             </div>
             
-            <!-- Tab 1: Overview & Stats -->
             <div id="tab-overview" class="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-6 block">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-brand-card p-5 rounded border border-brand-border shadow">
@@ -460,7 +455,6 @@
                 </div>
             </div>
 
-            <!-- Tab 2: Order Management -->
             <div id="tab-orders" class="flex-1 overflow-y-auto p-6 custom-scrollbar hidden">
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -474,7 +468,6 @@
                 <div id="ownerOrdersDetailedList" class="space-y-4"></div>
             </div>
 
-            <!-- Tab 3: CRM & Marketing -->
             <div id="tab-marketing" class="flex-1 overflow-y-auto p-6 custom-scrollbar hidden space-y-6">
                 <div class="bg-brand-card p-6 rounded border border-brand-border shadow">
                     <h4 class="font-serif text-lg text-brand-gold mb-1"><i class="fa-solid fa-envelope-open-text mr-2"></i> VIP Email Broadcast</h4>
@@ -1317,7 +1310,7 @@
                 localStorage.setItem('fbz_profile_email', localProfileEmail);
                 window.updateAuthUI();
             }
-            
+
             cart = []; window.updateCartUI();
             window.toggleCart();
             btn.innerHTML = 'Complete order'; btn.disabled = false;
@@ -1420,6 +1413,7 @@
             window.showToast("Incorrect password.", "error");
         }
     };
+
     window.closeOwnerModal = function() { document.getElementById('ownerModal').classList.add('hidden'); };
 
     window.switchOwnerTab = function(tabId) {
@@ -1499,7 +1493,7 @@
 
         const ordersListContainer = document.getElementById('ownerOrdersDetailedList');
         if(cloudOrders.length === 0) {
-            ordersListContainer.innerHTML = `<p class="text-brand-light/60 italic p-6 bg-brand-dark rounded border border-brand-border text-center">No customer orders recorded yet.</p>`;
+            ordersListContainer.innerHTML = `<p class="text-brand-light/60 italic p-6 bg-brand-dark border border-brand-border rounded text-center">No customer orders recorded yet.</p>`;
         } else {
             const statusOptions = ["Order Received", "Crafting at Atelier", "Quality Inspection", "Dispatched (Courier)", "Delivered", "Cancelled"];
             
@@ -1538,7 +1532,7 @@
                             </div>
                         </div>
                     </div>
-                    ${o.receiptImage ? `<div class="mt-3 pt-3 border-t border-brand-border/50"><a href="${o.receiptImage}" target="_blank" class="text-xs bg-blue-900/30 text-blue-400 border border-blue-900/50 px-3 py-1.5 rounded hover:bg-blue-900/50 transition inline-flex items-center"><i class="fa-solid fa-receipt mr-2"></i> View Bank Receipt</a></div>` : ''}
+                    ${o.receiptImage ? `<div class="mt-3 pt-3 border-t border-brand-border/50"><a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 border border-green-900/50 px-3 py-1.5 rounded hover:bg-green-900/20 transition inline-flex items-center"><i class="fa-solid fa-receipt mr-2"></i> View Bank Receipt</a></div>` : ''}
                 </div>`;
             }).join('');
         }
@@ -1602,7 +1596,7 @@
                 }
             } 
             else if (message.includes("shipping") || message.includes("delivery") || message.includes("dispatch")) {
-                reply = `We offer standard dispatch across Pakistan for Rs ${STANDARD_SHIPPING_COST}. **Orders over ${formatRs(FREE_SHIPPING_THRESHOLD)} qualify for Free Shipping!**`;
+                reply = `We offer standard dispatch across Pakistan for Rs 300. **Orders over ${formatRs(FREE_SHIPPING_THRESHOLD)} qualify for Free Shipping!**`;
             }
             else if (message.includes("size") || message.includes("fit") || message.includes("measure")) {
                 reply = `Our luxury shoes run true to standard European sizing. You can click 'Size Guide' on any product page, or at the bottom of the website, to view our exact CM measurements!`;
