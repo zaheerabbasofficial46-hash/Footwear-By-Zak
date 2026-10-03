@@ -603,10 +603,10 @@
     </div>
 </footer>
 
- <script type="module">
+ instantly
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAzFwR3-wKC7tbCGNQ8IHLej8sXkwW5c5g",
@@ -621,8 +621,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Automatically sign in customers securely so orders sync instantly
-signInAnonymously(auth).catch((error) => console.error("Auth error:", error));
+window.db = db;
+window.auth = auth;
+
+signInAnonymously(auth)
+  .then(() => console.log("Authenticated anonymously!"))
+  .catch((error) => console.error("Auth error:", error)); 
+// Automatically sign in customers securely so orders sync rror));
 
     let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
     let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
