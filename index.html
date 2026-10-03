@@ -110,7 +110,7 @@
 
 <header class="relative pt-28 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8 pb-12">
     <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-lg overflow-hidden shadow-2xl border border-brand-border relative group bg-brand-dark flex items-center justify-center">
-        <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.style.display='none'; document.getElementById('heroFallbackImg').classList.remove('hidden');"></video>
+        <video src="gemini_generated_video_bcb4196d.mp4" autoplay muted loop playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.style.display='none'; document.getElementById('heroFallbackImg').classList.remove('hidden');" onloadeddata="this.play().catch(e => {})"></video>
         <img id="heroFallbackImg" src="https://placehold.co/1200x600/2A1B12/D4AF37?text=Footwear+By+Zak+Atelier" class="absolute inset-0 w-full h-full object-cover z-0 hidden">
         <div class="absolute inset-0 bg-gradient-to-t from-brand-darkest/80 via-brand-darkest/20 to-transparent z-10"></div>
         <div class="absolute bottom-4 left-4 bg-brand-dark/95 backdrop-blur-md px-4 py-2 rounded border border-brand-border text-[10px] text-brand-gold tracking-[0.2em] uppercase font-bold shadow-md flex items-center gap-2 z-20">
@@ -620,8 +620,10 @@
     let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
     let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
     let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
-    let localProfileName = localStorage.getItem('fbz_profile_name') || '';
+    let cloudProfiles = JSON.parse(localStorage.getItem('fbz_profiles') || '{}');
+    
     let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
+    let localProfileName = localStorage.getItem('fbz_profile_name') || '';
 
     const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv";
     const FREE_SHIPPING_THRESHOLD = 20000;
@@ -640,7 +642,7 @@
     window.userId = null;
 
     try {
-        if(firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR_REAL_KEY")) {
+        if(firebaseConfig.apiKey) {
             const app = initializeApp(firebaseConfig);
             window.db = getFirestore(app);
             const auth = getAuth(app);
@@ -655,8 +657,15 @@
                         if(data.orders && data.orders.length > 0) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
                         if(data.reviews && data.reviews.length > 0) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
                         if(data.subscribers && data.subscribers.length > 0) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                        if(data.profiles) { cloudProfiles = data.profiles; localStorage.setItem('fbz_profiles', JSON.stringify(cloudProfiles)); }
+                        
+                        if(localProfileEmail && cloudProfiles[localProfileEmail]) {
+                            localProfileName = cloudProfiles[localProfileEmail].name;
+                            localStorage.setItem('fbz_profile_name', localProfileName);
+                            window.updateAuthUI();
+                        }
                     } else {
-                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(e => {});
+                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers, profiles: cloudProfiles }).catch(e => {});
                     }
                 }).catch(e => {});
 
@@ -666,6 +675,15 @@
                         if(data.orders) { cloudOrders = data.orders; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
                         if(data.reviews) { cloudReviews = data.reviews; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
                         if(data.subscribers) { cloudSubscribers = data.subscribers; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                        if(data.profiles) { 
+                            cloudProfiles = data.profiles; 
+                            localStorage.setItem('fbz_profiles', JSON.stringify(cloudProfiles)); 
+                            if(localProfileEmail && cloudProfiles[localProfileEmail]) {
+                                localProfileName = cloudProfiles[localProfileEmail].name;
+                                localStorage.setItem('fbz_profile_name', localProfileName);
+                                window.updateAuthUI();
+                            }
+                        }
                         
                         if(document.getElementById('trackingModal') && !document.getElementById('trackingModal').classList.contains('hidden')) window.renderTrackingList();
                         if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) window.renderOwnerDashboard();
@@ -675,7 +693,7 @@
         }
     } catch (error) {}
 
-    window.syncToCloud = async function(collectionName, dataObj) {
+    window.syncToCloud = async function(collectionName, dataObj, keyToMerge = null, valToMerge = null) {
         if(collectionName === 'orders') {
             cloudOrders.push(dataObj);
             localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
@@ -687,6 +705,9 @@
                 cloudSubscribers.push(dataObj);
                 localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers));
             }
+        } else if (collectionName === 'profiles') {
+            cloudProfiles[keyToMerge] = valToMerge;
+            localStorage.setItem('fbz_profiles', JSON.stringify(cloudProfiles));
         }
 
         if(window.userId && window.db) {
@@ -696,6 +717,7 @@
                 if(collectionName === 'subscribers') updatePayload.subscribers = arrayUnion(dataObj);
                 if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
                 if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
+                if(collectionName === 'profiles') updatePayload.profiles = cloudProfiles;
                 await updateDoc(docRef, updatePayload);
             } catch (e) {}
         }
@@ -1387,10 +1409,11 @@
         localStorage.setItem('fbz_profile_name', name);
         localStorage.setItem('fbz_profile_email', email);
 
+        await window.syncToCloud('profiles', email, email, { name, email });
         await window.syncToCloud('subscribers', email);
 
         window.updateAuthUI(); window.closeAuthModal();
-        window.showToast(`Welcome, ${name}. Logged in successfully.`, "success");
+        window.showToast(`Welcome, ${name}. Logged in successfully across devices.`, "success");
     };
 
     window.handleLocalLogout = function() {
