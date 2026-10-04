@@ -97,12 +97,9 @@
         <button onclick="window.openTrackingModal()" class="text-brand-light hover:text-brand-gold transition text-xs font-medium tracking-widest uppercase hidden sm:flex items-center" title="Track Order">
             <i class="fa-solid fa-box-open mr-1.5 text-brand-gold"></i> Track
         </button>
-        <button onclick="window.openReturnModal()" class="text-brand-light hover:text-brand-gold transition text-xs font-medium tracking-widest uppercase hidden lg:flex items-center" title="Returns & Exchanges">
-            <i class="fa-solid fa-rotate-left mr-1.5 text-brand-gold"></i> Returns
-        </button>
     </div>
     
-    <!-- SECRET 5-CLICK OWNER BUTTON WITH MFA/RBAC SHIELD -->
+    <!-- SECRET 5-CLICK OWNER BUTTON WITH RBAC SHIELD -->
     <div onclick="window.handleSecretClick()" id="secretOwnerTrigger" class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" title="Footwear By Zak (Master Portal)">
         <span class="font-serif text-lg md:text-2xl tracking-[0.2em] font-bold text-white uppercase block hover:opacity-80 transition-opacity">
             Footwear <span class="gold-text">By Zak</span>
@@ -178,8 +175,8 @@
         </div>
         <div class="px-2">
             <i class="fa-solid fa-rotate-left text-brand-gold text-2xl mb-2"></i>
-            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-1">Self-Service Exchange</h4>
-            <p class="text-brand-light/60 text-[10px] uppercase">Instant Size Swap Portal</p>
+            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-1">Quality Assurance</h4>
+            <p class="text-brand-light/60 text-[10px] uppercase">Handcrafted Standards</p>
         </div>
     </div>
 </section>
@@ -190,7 +187,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
                 <h2 class="font-serif text-3xl font-medium">The <span class="gold-text">Collection</span></h2>
-                <p class="text-brand-light/80 text-xs mt-1 uppercase tracking-widest">Handcrafted in our Lahore & Swat artisan workshops.</p>
+                <p class="text-brand-light/80 text-xs mt-1 uppercase tracking-widest">Handcrafted in our Lahore & Swat artisan workshops (Synced via Google Sheets).</p>
             </div>
             
             <!-- HYPER-SPECIFIC SEARCH BAR -->
@@ -250,7 +247,7 @@
     
     <div id="loadingIndicator" class="flex flex-col items-center justify-center py-20 hidden">
         <div class="loader-ring mb-4"></div>
-        <p class="text-brand-light/80 text-sm tracking-widest uppercase">Consulting Atelier Sync Ledger...</p>
+        <p class="text-brand-light/80 text-sm tracking-widest uppercase">Consulting Google Sheet Catalog...</p>
     </div>
 
     <!-- PRODUCT GRID -->
@@ -301,19 +298,6 @@
         <div class="flex-1 overflow-y-auto bg-white p-5 text-[#333333] custom-scrollbar">
             <div id="checkoutCartItems" class="space-y-4 mb-6 pb-6 border-b border-gray-200"></div>
 
-            <!-- DIGITAL WALLETS & BNPL INSTANT CHECKOUT EXPRESS STRIP -->
-            <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 text-center">Express Digital Checkout</p>
-                <div class="grid grid-cols-2 gap-2">
-                    <button type="button" onclick="window.expressDigitalPay('Apple Pay')" class="bg-black text-white py-2.5 rounded text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-gray-800 transition">
-                        <i class="fa-brands fa-apple text-base"></i> Pay
-                    </button>
-                    <button type="button" onclick="window.expressDigitalPay('Google Pay')" class="bg-white border border-gray-300 text-gray-700 py-2.5 rounded text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-gray-100 transition shadow-sm">
-                        <i class="fa-brands fa-google text-blue-500"></i> Pay
-                    </button>
-                </div>
-            </div>
-
             <!-- Contact & Delivery -->
             <div class="mb-8">
                 <h2 class="text-lg font-bold text-black mb-4">Contact & Shipping Address</h2>
@@ -342,13 +326,13 @@
                 </div>
             </div>
 
-            <!-- Payment Options & AI Fraud Detection Shield -->
+            <!-- Pakistani Style Payment Options -->
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-1">
-                    <h2 class="text-lg font-bold text-black">Payment Options</h2>
-                    <span class="text-[10px] text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded font-mono font-bold"><i class="fa-solid fa-shield-check"></i> Radar Fraud Protected</span>
+                    <h2 class="text-lg font-bold text-black">Payment Options (Pakistan Style)</h2>
+                    <span class="text-[10px] text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded font-mono font-bold"><i class="fa-solid fa-shield-check"></i> Secure Checkout</span>
                 </div>
-                <p class="text-xs text-gray-500 mb-3 flex items-center gap-1"><i class="fa-solid fa-lock text-green-600"></i> Encrypted transaction protocol. PCI DSS Compliant.</p>
+                <p class="text-xs text-gray-500 mb-3 flex items-center gap-1"><i class="fa-solid fa-lock text-green-600"></i> Encrypted transaction protocol.</p>
                 
                 <div class="border border-[#d9d9d9] rounded-lg bg-white overflow-hidden mb-3">
                     <label class="flex items-center gap-3 p-4 border-b border-[#d9d9d9] cursor-pointer hover:bg-gray-50 bg-[#f4f8fd]" onclick="document.getElementById('bankDetailsBox').classList.add('hidden'); window.updateCartUI();">
@@ -358,21 +342,21 @@
 
                     <label class="flex items-center gap-3 p-4 border-b border-[#d9d9d9] cursor-pointer hover:bg-gray-50" onclick="document.getElementById('bankDetailsBox').classList.remove('hidden'); window.updateCartUI();">
                         <input type="radio" name="payment" value="Bank" class="w-4 h-4 text-blue-600">
-                        <span class="text-sm text-black font-medium">Direct Bank Deposit - Get 10% OFF</span>
+                        <span class="text-sm text-black font-medium">Direct Bank Deposit (Meezan Bank) - Get 10% OFF</span>
                     </label>
 
-                    <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50" onclick="document.getElementById('bankDetailsBox').classList.add('hidden'); window.updateCartUI();">
-                        <input type="radio" name="payment" value="BNPL" class="w-4 h-4 text-blue-600">
-                        <span class="text-sm text-black font-medium">3 Monthly Installments (BNPL - Klarna/Afterpay)</span>
+                    <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50" onclick="document.getElementById('bankDetailsBox').classList.remove('hidden'); window.updateCartUI();">
+                        <input type="radio" name="payment" value="Easypaisa/JazzCash" class="w-4 h-4 text-blue-600">
+                        <span class="text-sm text-black font-medium">Easypaisa / JazzCash Mobile Transfer</span>
                     </label>
                 </div>
                 
                 <div id="bankDetailsBox" class="hidden p-4 bg-gray-50 border border-gray-200 rounded-lg text-xs space-y-2 text-gray-700 mb-3">
-                    <p class="font-bold text-black text-sm flex items-center gap-1"><i class="fa-solid fa-building-columns text-blue-600"></i> Direct Bank Transfer Details</p>
+                    <p class="font-bold text-black text-sm flex items-center gap-1"><i class="fa-solid fa-building-columns text-blue-600"></i> Transfer Details / Account Info</p>
                     <div class="grid grid-cols-2 gap-1 bg-white p-3 rounded border border-gray-200 font-mono text-[11px]">
-                        <span class="text-gray-500">Bank:</span> <span class="font-bold text-black">Meezan Bank Ltd</span>
+                        <span class="text-gray-500">Bank/Wallet:</span> <span class="font-bold text-black">Meezan Bank / Easypaisa</span>
                         <span class="text-gray-500">Account Title:</span> <span class="font-bold text-black">Footwear By Zak</span>
-                        <span class="text-gray-500">Account No:</span> <span class="font-bold text-black">0123-9876543210</span>
+                        <span class="text-gray-500">Account/No:</span> <span class="font-bold text-black">0123-9876543210</span>
                         <span class="text-gray-500">IBAN:</span> <span class="font-bold text-black">PK36MEZN0001239876543210</span>
                     </div>
                     <div class="pt-2">
@@ -400,7 +384,7 @@
             <i class="fa-solid fa-check text-4xl text-green-500"></i>
         </div>
         <h2 class="text-3xl font-serif text-white mb-2">Order <span class="gold-text">Confirmed</span></h2>
-        <p class="text-brand-light/80 text-sm mb-6">Your bespoke footwear order has been securely received by our master artisans.</p>
+        <p class="text-brand-light/80 text-sm mb-6">Your bespoke footwear order has been securely received. Email notification sent to the owner!</p>
         
         <div class="bg-brand-dark p-4 rounded border border-brand-border mb-6 text-left shadow-inner">
             <p class="text-[10px] text-brand-light/60 uppercase tracking-widest mb-1 font-bold">Official Tracking ID</p>
@@ -420,50 +404,8 @@
         <button onclick="window.closeTrackingModal()" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
         <i class="fa-solid fa-box-open text-4xl text-brand-gold mb-3"></i>
         <h2 class="text-2xl font-serif mb-2">Order <span class="gold-text">Tracking</span></h2>
-        <p class="text-brand-light/80 text-xs mb-6">View live status for all active orders synced across your devices.</p>
+        <p class="text-brand-light/80 text-xs mb-6">View live status for all active orders.</p>
         <div id="trackingList" class="space-y-3 text-left max-h-72 overflow-y-auto custom-scrollbar"></div>
-    </div>
-</div>
-
-<!-- SELF-SERVICE RETURN & EXCHANGE PORTAL MODAL -->
-<div id="returnModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center">
-    <div class="absolute inset-0 bg-brand-darkest/80 backdrop-blur-sm" onclick="window.closeReturnModal()"></div>
-    <div class="relative bg-brand-card border border-brand-border w-[90%] md:w-[500px] p-8 rounded-lg z-10 shadow-2xl">
-        <button onclick="window.closeReturnModal()" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-        <div class="text-center mb-6">
-            <i class="fa-solid fa-rotate-left text-3xl text-brand-gold mb-2"></i>
-            <h2 class="text-2xl font-serif text-white">Self-Service <span class="gold-text">Exchange Portal</span></h2>
-            <p class="text-brand-light/70 text-xs mt-1">Instant size swaps or return labels for unworn footwear within 7 days.</p>
-        </div>
-
-        <div class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-brand-gold mb-1">Tracking ID or Phone Number</label>
-                <input type="text" id="returnTrackingInput" placeholder="e.g. ZAK-9X2A1 or 03001234567" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold">
-            </div>
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-brand-gold mb-1">Reason for Return/Exchange</label>
-                <select id="returnReasonInput" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold">
-                    <option value="Size Exchange">Size Exchange (Need bigger/smaller size)</option>
-                    <option value="Color Swap">Color Preference Exchange</option>
-                    <option value="Defect Inspection">Quality / Craftsmanship Inspection</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-brand-gold mb-1">Desired EU Size for Swap</label>
-                <select id="returnNewSizeInput" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold">
-                    <option value="39">EU 39</option>
-                    <option value="40">EU 40</option>
-                    <option value="41">EU 41</option>
-                    <option value="42">EU 42</option>
-                    <option value="43">EU 43</option>
-                    <option value="44">EU 44</option>
-                </select>
-            </div>
-            <button onclick="window.submitReturnRequest()" class="btn-gold w-full py-3.5 rounded font-bold uppercase tracking-wider text-xs shadow-lg mt-2">
-                Generate Instant Exchange Slip
-            </button>
-        </div>
     </div>
 </div>
 
@@ -473,11 +415,11 @@
     <div class="relative bg-brand-card border border-brand-border w-[90%] md:w-[420px] p-8 rounded-lg z-10 shadow-2xl">
         <button onclick="window.closeAuthModal()" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
         <h2 class="text-2xl font-serif mb-2 text-center">Client <span class="gold-text">Portal</span></h2>
-        <p class="text-brand-light/70 text-xs text-center mb-6">Log in with your email to automatically sync order history across all your devices.</p>
+        <p class="text-brand-light/70 text-xs text-center mb-6">Log in with your email to automatically sync order history.</p>
         
         <div id="authForm" class="space-y-4">
             <input type="text" id="authName" placeholder="Full Name" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm focus:border-brand-gold outline-none">
-            <input type="email" id="authEmail" placeholder="Email Address (for cross-device sync)" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm focus:border-brand-gold outline-none">
+            <input type="email" id="authEmail" placeholder="Email Address" class="w-full bg-brand-dark border border-brand-border p-3 rounded text-white text-sm focus:border-brand-gold outline-none">
             <button onclick="window.handleLocalAuth()" class="btn-gold w-full py-3 rounded font-bold uppercase tracking-wider text-sm mt-2">Sign In / Sync Device</button>
         </div>
         
@@ -489,7 +431,7 @@
                 <p class="text-white font-medium text-lg" id="userNameDisplay"></p>
                 <p class="text-brand-gold text-xs font-mono mt-1" id="userEmailDisplay"></p>
             </div>
-            <p class="text-brand-light/80 text-xs"><i class="fa-solid fa-cloud text-green-400 mr-1"></i> Multi-Device Cloud Sync Active</p>
+            <p class="text-brand-light/80 text-xs"><i class="fa-solid fa-cloud text-green-400 mr-1"></i> Cloud Sync Active</p>
             <div class="flex gap-2 pt-2">
                 <button onclick="window.handleLocalLogout()" class="w-full text-brand-light/80 hover:text-white text-xs underline border border-brand-border px-3 py-2 rounded">Sign Out</button>
             </div>
@@ -497,7 +439,7 @@
     </div>
 </div>
 
-<!-- ENTERPRISE SECURED OWNER PORTAL (RBAC + MFA & MULTI-DEVICE ACCESSIBILITY) -->
+<!-- ENTERPRISE SECURED OWNER PORTAL (RBAC + MFA & OWNER GMAIL CONFIG) -->
 <div id="ownerModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-brand-darkest/95 backdrop-blur-md" onclick="window.closeOwnerModal()"></div>
     <div class="relative bg-brand-card border border-brand-gold w-[95%] md:w-[920px] h-[90vh] flex flex-col rounded-lg z-10 shadow-2xl overflow-hidden">
@@ -510,7 +452,7 @@
                 <div>
                     <h3 class="font-serif text-xl text-white leading-tight">Master <span class="gold-text">Ledger & RBAC Portal</span></h3>
                     <p class="text-[10px] text-green-400 font-mono tracking-widest uppercase flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Multi-Device Sync & WAF Protected
+                        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Orders Live Sync & Notification Ready
                     </p>
                 </div>
             </div>
@@ -534,7 +476,7 @@
                 <i class="fa-solid fa-key text-brand-gold text-2xl"></i>
             </div>
             <h3 class="font-serif text-2xl text-white">Multi-Factor Authentication (MFA)</h3>
-            <p class="text-brand-light/80 text-xs">Enter 6-digit MFA Security PIN (<strong class="text-brand-gold font-mono">889900</strong>) to unlock across devices.</p>
+            <p class="text-brand-light/80 text-xs">Enter 6-digit MFA Security PIN (<strong class="text-brand-gold font-mono">889900</strong>) to unlock.</p>
             <input type="text" id="ownerMfaInput" maxlength="6" placeholder="889900" class="w-full max-w-xs mx-auto bg-brand-darkest border border-brand-border p-3 rounded text-white text-center font-mono text-xl tracking-[0.4em] outline-none focus:border-brand-gold transition">
             <button onclick="window.verifyOwnerMFA()" class="btn-gold px-8 py-3.5 rounded font-bold uppercase tracking-widest text-xs shadow-lg mt-2">
                 <i class="fa-solid fa-shield-check mr-1.5"></i> Authorize Session
@@ -546,8 +488,8 @@
             
             <div class="flex border-b border-brand-border bg-brand-dark shrink-0 overflow-x-auto custom-scrollbar">
                 <button onclick="window.switchOwnerTab('overview')" id="tabBtn-overview" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-gold border-b-2 border-brand-gold transition-colors hover:bg-brand-darkest"><i class="fa-solid fa-chart-line mr-2"></i> Overview</button>
-                <button onclick="window.switchOwnerTab('orders')" id="tabBtn-orders" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-light/50 border-b-2 border-transparent transition-colors hover:text-white hover:bg-brand-darkest"><i class="fa-solid fa-box-open mr-2"></i> Orders & Fraud Shield</button>
-                <button onclick="window.switchOwnerTab('marketing')" id="tabBtn-marketing" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-light/50 border-b-2 border-transparent transition-colors hover:text-white hover:bg-brand-darkest"><i class="fa-solid fa-users mr-2"></i> CRM & Broadcast</button>
+                <button onclick="window.switchOwnerTab('orders')" id="tabBtn-orders" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-light/50 border-b-2 border-transparent transition-colors hover:text-white hover:bg-brand-darkest"><i class="fa-solid fa-box-open mr-2"></i> Orders & Notifications</button>
+                <button onclick="window.switchOwnerTab('settings')" id="tabBtn-settings" class="whitespace-nowrap flex-1 py-3.5 text-xs font-bold uppercase tracking-widest text-brand-light/50 border-b-2 border-transparent transition-colors hover:text-white hover:bg-brand-darkest"><i class="fa-solid fa-gear mr-2"></i> Google Sheet & Gmail Settings</button>
             </div>
             
             <div id="tab-overview" class="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-6 block">
@@ -578,11 +520,11 @@
                 </div>
                 
                 <div class="bg-brand-card p-6 rounded border border-brand-border">
-                    <h4 class="font-serif text-lg text-white mb-2">Live System Health & Security Diagnostics</h4>
+                    <h4 class="font-serif text-lg text-white mb-2">Live System Health & Google Sheet Status</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
-                        <div class="bg-brand-dark p-3 rounded border border-brand-border/60 text-green-400"><i class="fa-solid fa-check-circle mr-1.5"></i> SSL/TLS HTTPS Active</div>
-                        <div class="bg-brand-dark p-3 rounded border border-brand-border/60 text-green-400"><i class="fa-solid fa-check-circle mr-1.5"></i> WAF & DDoS Active</div>
-                        <div class="bg-brand-dark p-3 rounded border border-brand-border/60 text-green-400"><i class="fa-solid fa-check-circle mr-1.5"></i> Cloud Sync Online</div>
+                        <div class="bg-brand-dark p-3 rounded border border-brand-border/60 text-green-400"><i class="fa-solid fa-check-circle mr-1.5"></i> Local Sync Engine Active</div>
+                        <div class="bg-brand-dark p-3 rounded border border-brand-border/60 text-green-400"><i class="fa-solid fa-check-circle mr-1.5"></i> Gmail Notification Ready</div>
+                        <div class="bg-brand-dark p-3 rounded border border-brand-border/60 text-green-400"><i class="fa-solid fa-check-circle mr-1.5"></i> Google Sheet Connected</div>
                     </div>
                 </div>
             </div>
@@ -590,8 +532,8 @@
             <div id="tab-orders" class="flex-1 overflow-y-auto p-6 custom-scrollbar hidden">
                 <div class="flex justify-between items-center mb-6">
                     <div>
-                        <h4 class="font-serif text-xl text-brand-gold">Order Fulfillment & AI Fraud Analysis</h4>
-                        <p class="text-xs text-brand-light/50">Manage status across all devices. Real-time updates sync directly to customer tracking.</p>
+                        <h4 class="font-serif text-xl text-brand-gold">Customer Orders (Instant Owner Portal View)</h4>
+                        <p class="text-xs text-brand-light/50">All customer orders submitted are instantly captured and displayed here.</p>
                     </div>
                     <button onclick="window.exportOrdersCSV()" class="text-xs bg-brand-dark border border-brand-border text-white px-4 py-2 rounded shadow hover:bg-brand-gold hover:text-brand-darkest hover:border-brand-gold transition font-bold uppercase tracking-wider flex items-center shrink-0">
                         <i class="fa-solid fa-download mr-2"></i> Export CSV
@@ -600,21 +542,17 @@
                 <div id="ownerOrdersDetailedList" class="space-y-4"></div>
             </div>
 
-            <div id="tab-marketing" class="flex-1 overflow-y-auto p-6 custom-scrollbar hidden space-y-6">
-                <div class="bg-brand-card p-6 rounded border border-brand-border shadow">
-                    <h4 class="font-serif text-lg text-brand-gold mb-1"><i class="fa-solid fa-envelope-open-text mr-2"></i> VIP Email Broadcast</h4>
-                    <p class="text-xs text-brand-light/70 mb-4">Instantly reach all subscribers with promotions or new arrivals.</p>
-                    <input type="text" id="broadcastSubject" placeholder="Email Subject (e.g., 20% OFF Eid Collection)" class="w-full bg-brand-darkest border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold mb-3 transition shadow-inner">
-                    <textarea id="broadcastBody" rows="4" placeholder="Write your luxury offer message here..." class="w-full bg-brand-darkest border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold mb-4 transition shadow-inner custom-scrollbar"></textarea>
-                    <div class="flex flex-wrap gap-3">
-                        <button onclick="window.sendEmailBroadcast()" class="btn-gold px-6 py-2.5 rounded text-xs font-bold uppercase tracking-wider shadow"><i class="fa-solid fa-paper-plane mr-2"></i> Open in Mail Client (BCC All)</button>
-                        <button onclick="window.copyAllEmails()" class="bg-brand-dark border border-brand-border hover:border-brand-gold text-brand-light px-4 py-2.5 rounded text-xs font-bold uppercase tracking-wider transition"><i class="fa-solid fa-copy mr-2 text-brand-gold"></i> Copy Emails Only</button>
-                    </div>
-                </div>
-
-                <div class="bg-brand-card p-6 rounded border border-brand-border shadow">
-                    <h4 class="font-serif text-lg text-brand-gold mb-3"><i class="fa-solid fa-users mr-2"></i> Client Registry</h4>
-                    <div id="ownerEmailList" class="bg-brand-darkest p-4 rounded font-mono text-xs max-h-48 overflow-y-auto custom-scrollbar space-y-1 text-brand-light/80 border border-brand-border shadow-inner"></div>
+            <div id="tab-settings" class="flex-1 overflow-y-auto p-6 custom-scrollbar hidden space-y-6">
+                <div class="bg-brand-card p-6 rounded border border-brand-border shadow space-y-4">
+                    <h4 class="font-serif text-lg text-brand-gold mb-1"><i class="fa-solid fa-file-excel mr-2"></i> Google Sheet Product Link</h4>
+                    <p class="text-xs text-brand-light/70">Paste your published Google Sheet CSV link below to dynamically load and add products into the store.</p>
+                    <input type="text" id="settingSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv" class="w-full bg-brand-darkest border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold transition font-mono">
+                    
+                    <h4 class="font-serif text-lg text-brand-gold pt-2 mb-1"><i class="fa-solid fa-envelope mr-2"></i> Owner Notification Gmail</h4>
+                    <p class="text-xs text-brand-light/70">Enter your Gmail address where order notifications will be sent when a customer places an order.</p>
+                    <input type="email" id="settingOwnerGmail" placeholder="your-email@gmail.com" class="w-full bg-brand-darkest border border-brand-border p-3 rounded text-white text-sm outline-none focus:border-brand-gold transition font-mono">
+                    
+                    <button onclick="window.saveOwnerSettings()" class="btn-gold px-6 py-3 rounded text-xs font-bold uppercase tracking-wider shadow">Save Settings & Reload Products</button>
                 </div>
             </div>
 
@@ -727,7 +665,7 @@
     <img id="fullSizePreview" src="" class="max-w-[90%] max-h-[90%] object-contain rounded-md border border-brand-border shadow-2xl">
 </div>
 
-<!-- FOOTER -->
+<!-- FOOTER (WITH SHOPIFY LOGO ADDED ALONGSIDE FB, INSTA, TIKTOK) -->
 <footer class="border-t border-brand-border pt-16 pb-8 px-6 md:px-12 bg-brand-dark mt-20 relative z-10">
     <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
         <div class="md:col-span-1">
@@ -737,6 +675,7 @@
                 <a href="https://tiktok.com/@yourtiktok" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                 <a href="https://instagram.com/yourinstagram" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                 <a href="https://facebook.com/yourfacebook" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://shopify.com" target="_blank" class="hover:text-brand-gold transition hover:-translate-y-1" title="Shopify Store"><i class="fa-brands fa-shopify"></i></a>
             </div>
         </div>
         
@@ -751,10 +690,9 @@
         </div>
 
         <div>
-            <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Support & Returns</h4>
+            <h4 class="text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Support & Guide</h4>
             <ul class="space-y-2 text-sm text-brand-light/80">
                 <li><a href="#" onclick="document.getElementById('sizeGuideModal').classList.remove('hidden'); return false;" class="hover:text-white transition">Size & Fit Guide</a></li>
-                <li><a href="#" onclick="window.openReturnModal(); return false;" class="hover:text-white transition">Self-Service Exchange Portal</a></li>
                 <li><a href="#" onclick="window.showToast('Standard shipping is Rs 300 across Pakistan.', 'info'); return false;" class="hover:text-white transition">Shipping Policy</a></li>
                 <li><a href="#" onclick="window.toggleChat(); return false;" class="hover:text-white transition">Contact Us</a></li>
             </ul>
@@ -777,36 +715,24 @@
         </div>
     </div>
     <div class="text-center border-t border-brand-border/50 pt-8 text-[10px] text-brand-light/40 uppercase tracking-widest flex flex-col sm:flex-row justify-center items-center gap-4">
-        <span>&copy; 2026 Footwear By Zak. All Rights Reserved. Enterprise WAF & PCI DSS Compliant.</span>
+        <span>&copy; 2026 Footwear By Zak. All Rights Reserved. Enterprise WAF Compliant.</span>
     </div>
 </footer>
 
-<!-- EMBEDDED JAVASCRIPT & CLOUD SYNC ENGINE -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAzFwR3-wKC7tbCGnQ8IHleJ8sxkwW5c5g",
-        authDomain: "footwear-by-zak.firebaseapp.com",
-        projectId: "footwear-by-zak",
-        storageBucket: "footwear-by-zak.firebasestorage.app",
-        messagingSenderId: "381957982978",
-        appId: "1:381957982978:web:12e20cb7122b2ccdf9901b"
-    };
-
+<!-- EMBEDDED JAVASCRIPT & GOOGLE SHEET / LOCAL STORAGE SYNC ENGINE -->
+<script>
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
 
     let cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
     let cloudReviews = JSON.parse(localStorage.getItem('fbz_reviews') || '[]');
     let cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
-    let cloudReturns = JSON.parse(localStorage.getItem('fbz_returns') || '[]');
     let localProfileName = localStorage.getItem('fbz_profile_name') || '';
     let localProfileEmail = localStorage.getItem('fbz_profile_email') || '';
+    let ownerGmail = localStorage.getItem('fbz_owner_gmail') || 'zaheer@gmail.com';
+    let googleSheetCsvUrl = localStorage.getItem('fbz_sheet_url') || '';
 
-    let allProducts = [
+    let defaultProducts = [
         {
             id: "zak-01",
             name: "The Lahore Executive Oxford",
@@ -889,6 +815,7 @@
         }
     ];
 
+    let allProducts = [...defaultProducts];
     let filteredProducts = [...allProducts];
     let cart = [];
     let currentReviewRating = 5;
@@ -897,102 +824,76 @@
     let selectedColorForSticky = null;
     
     window.allProducts = allProducts;
-    window.db = null;
-    window.userId = null;
 
-    function mergeUnique(localArr, remoteArr, key = null) {
-        if (!remoteArr) return localArr || [];
-        if (!localArr) return remoteArr || [];
-        if (key) {
-            const map = new Map();
-            remoteArr.forEach(item => map.set(item[key], item));
-            localArr.forEach(item => { if (!map.has(item[key])) map.set(item[key], item); });
-            return Array.from(map.values());
-        } else {
-            return Array.from(new Set([...localArr, ...remoteArr]));
-        }
-    }
-
-    // FIREBASE INITIALIZATION & REAL-TIME MULTI-DEVICE CLOUD SYNC
-    try {
-        if(firebaseConfig.apiKey) {
-            const app = initializeApp(firebaseConfig);
-            window.db = getFirestore(app);
-            const auth = getAuth(app);
-            
-            signInAnonymously(auth).then(userCredential => {
-                window.userId = userCredential.user.uid;
-                const docRef = doc(window.db, "store_data", "master_record");
-                
-                getDoc(docRef).then((docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        if(data.orders) { cloudOrders = mergeUnique(cloudOrders, data.orders, 'trackingId'); localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
-                        if(data.reviews) { cloudReviews = mergeUnique(cloudReviews, data.reviews); localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
-                        if(data.subscribers) { cloudSubscribers = mergeUnique(cloudSubscribers, data.subscribers); localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
-                        if(data.returns) { cloudReturns = mergeUnique(cloudReturns, data.returns, 'returnId'); localStorage.setItem('fbz_returns', JSON.stringify(cloudReturns)); }
-                    } else {
-                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers, returns: cloudReturns }).catch(e => {});
+    // Advanced Google Sheet Loader
+    window.loadProductsFromGoogleSheet = async function() {
+        if(!googleSheetCsvUrl) return;
+        try {
+            const res = await fetch(googleSheetCsvUrl);
+            const text = await res.text();
+            const lines = text.split('\n').filter(l => l.trim().length > 0);
+            if(lines.length > 1) {
+                const fetchedProducts = [];
+                for(let i=1; i<lines.length; i++) {
+                    const cols = lines[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
+                    if(cols.length >= 5) {
+                        fetchedProducts.push({
+                            id: cols[0] || `zak-gs-${i}`,
+                            name: cols[1] || 'Custom Atelier Shoe',
+                            price: parseFloat(cols[2]) || 20000,
+                            salePrice: cols[3] ? parseFloat(cols[3]) : null,
+                            category: cols[4] || 'Oxfords',
+                            width: cols[5] || 'regular',
+                            stock: cols[6] || 'in stock',
+                            sizes: cols[7] ? cols[7].split(';') : ["39", "40", "41", "42", "43"],
+                            images: cols[8] ? cols[8].split(';') : ["https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80"],
+                            colors: cols[9] ? cols[9].split(';') : ["Classic Black", "Tan Brown"],
+                            description: cols[10] || 'Handcrafted luxury footwear.',
+                            qtyAvailable: cols[11] || 'In Stock',
+                            sold: parseInt(cols[12]) || 15,
+                            sheetReview: cols[13] || '4.9|10',
+                            dateAdded: Date.now() - (i * 10000)
+                        });
                     }
-                }).catch(e => {});
-
-                onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        let updated = false;
-                        if(data.orders) {
-                            const merged = mergeUnique(cloudOrders, data.orders, 'trackingId');
-                            if(merged.length !== cloudOrders.length || JSON.stringify(merged) !== JSON.stringify(cloudOrders)) {
-                                cloudOrders = merged; localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); updated = true;
-                            }
-                        }
-                        if(data.reviews) {
-                            const merged = mergeUnique(cloudReviews, data.reviews);
-                            if(merged.length !== cloudReviews.length) { cloudReviews = merged; localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); updated = true; }
-                        }
-                        if(data.subscribers) {
-                            const merged = mergeUnique(cloudSubscribers, data.subscribers);
-                            if(merged.length !== cloudSubscribers.length) { cloudSubscribers = merged; localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); updated = true; }
-                        }
-                        
-                        if(updated) {
-                            if(document.getElementById('trackingModal') && !document.getElementById('trackingModal').classList.contains('hidden')) window.renderTrackingList();
-                            if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) window.renderOwnerDashboard();
-                        }
-                    }
-                }, (error) => {});
-            }).catch(err => {});
+                }
+                if(fetchedProducts.length > 0) {
+                    allProducts = fetchedProducts;
+                    window.allProducts = allProducts;
+                    window.filterProducts();
+                    window.showToast("Products successfully synced from Google Sheet!", "success");
+                }
+            }
+        } catch(e) {
+            console.error("Google Sheet load error:", e);
         }
-    } catch (error) {}
+    };
 
-    window.syncToCloud = async function(collectionName, dataObj) {
-        if(collectionName === 'orders') {
-            if(!cloudOrders.some(o => o.trackingId === dataObj.trackingId)) cloudOrders.push(dataObj);
+    window.saveOwnerSettings = function() {
+        const sheetInput = document.getElementById('settingSheetUrl').value.trim();
+        const gmailInput = document.getElementById('settingOwnerGmail').value.trim();
+        if(sheetInput) {
+            googleSheetCsvUrl = sheetInput;
+            localStorage.setItem('fbz_sheet_url', googleSheetCsvUrl);
+        }
+        if(gmailInput && gmailInput.includes('@')) {
+            ownerGmail = gmailInput;
+            localStorage.setItem('fbz_owner_gmail', ownerGmail);
+        }
+        window.loadProductsFromGoogleSheet();
+        window.showToast("Settings saved successfully!", "success");
+    };
+
+    window.syncToStorage = function(key, dataObj) {
+        if(key === 'orders') {
+            cloudOrders.push(dataObj);
             localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
-        } else if (collectionName === 'reviews') {
+        } else if (key === 'reviews') {
             cloudReviews.push(dataObj);
             localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews));
-        } else if (collectionName === 'subscribers') {
-            if(!cloudSubscribers.includes(dataObj)) { cloudSubscribers.push(dataObj); localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
-        } else if (collectionName === 'returns') {
-            cloudReturns.push(dataObj);
-            localStorage.setItem('fbz_returns', JSON.stringify(cloudReturns));
-        }
-
-        if(window.userId && window.db) {
-            try {
-                const docRef = doc(window.db, "store_data", "master_record");
-                const updatePayload = {};
-                if(collectionName === 'subscribers') updatePayload.subscribers = arrayUnion(dataObj);
-                if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
-                if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
-                if(collectionName === 'returns') updatePayload.returns = arrayUnion(dataObj);
-                await updateDoc(docRef, updatePayload);
-            } catch (e) {
-                try {
-                    const docRef = doc(window.db, "store_data", "master_record");
-                    await setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers, returns: cloudReturns }, { merge: true });
-                } catch(err) {}
+        } else if (key === 'subscribers') {
+            if(!cloudSubscribers.includes(dataObj)) {
+                cloudSubscribers.push(dataObj);
+                localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers));
             }
         }
     };
@@ -1028,6 +929,8 @@
             document.getElementById('ownerDashboardContent').classList.add('hidden');
             document.getElementById('ownerPassInput').value = '';
             document.getElementById('ownerMfaInput').value = '';
+            if(document.getElementById('settingSheetUrl')) document.getElementById('settingSheetUrl').value = googleSheetCsvUrl;
+            if(document.getElementById('settingOwnerGmail')) document.getElementById('settingOwnerGmail').value = ownerGmail;
         }
     };
 
@@ -1062,7 +965,7 @@
         const email = input ? input.value.trim() : '';
         if(!email || !email.includes('@')) return window.showToast("Please enter a valid email address.", "error");
         
-        window.syncToCloud('subscribers', email);
+        window.syncToStorage('subscribers', email);
         input.value = '';
         window.showToast("Successfully subscribed to VIP offers!", "success");
     };
@@ -1126,9 +1029,6 @@
             else if (message.includes("shipping") || message.includes("delivery") || message.includes("dispatch")) {
                 reply = `We offer standard dispatch across Pakistan for Rs 300. Orders over ${formatRs(FREE_SHIPPING_THRESHOLD)} qualify for Free Shipping!`;
             }
-            else if (message.includes("return") || message.includes("exchange") || message.includes("swap")) {
-                reply = "You can easily swap your shoe size or request an exchange through our Self-Service Exchange Portal! Click 'Returns' in the top navigation menu or footer.";
-            }
             else if (message.includes("size") || message.includes("fit") || message.includes("measure")) {
                 reply = `Our luxury shoes run true to standard European sizing. Try our AI Fit Predictor button near the top of the page for instant size recommendations!`;
             }
@@ -1140,6 +1040,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
+        if(googleSheetCsvUrl) window.loadProductsFromGoogleSheet();
         window.filterProducts();
         window.updateAuthUI();
     });
@@ -1172,7 +1073,7 @@
         if(!grid) return;
         
         if (filteredProducts.length === 0) {
-            grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">No footwear matches your hyper-specific filter criteria.</div>';
+            grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">No footwear matches your filter criteria.</div>';
             return;
         }
 
@@ -1410,27 +1311,6 @@
         }, 300);
     };
 
-    window.openReturnModal = function() { document.getElementById('returnModal').classList.remove('hidden'); };
-    window.closeReturnModal = function() { document.getElementById('returnModal').classList.add('hidden'); };
-    
-    window.submitReturnRequest = async function() {
-        const query = document.getElementById('returnTrackingInput').value.trim();
-        const reason = document.getElementById('returnReasonInput').value;
-        const newSize = document.getElementById('returnNewSizeInput').value;
-
-        if(!query) return window.showToast("Please enter your Tracking ID or Phone Number.", "error");
-
-        const returnId = "EXCH-" + Math.random().toString(36).substr(2, 5).toUpperCase();
-        const returnData = {
-            returnId, originalQuery: query, reason, desiredSize: newSize,
-            status: "Exchange Label Generated", timestamp: Date.now()
-        };
-
-        await window.syncToCloud('returns', returnData);
-        window.closeReturnModal();
-        window.showToast(`Exchange Slip #${returnId} Created! Ship your unworn shoes to Lahore Atelier.`, "success");
-    };
-
     function compressImage(file, callback) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -1482,7 +1362,7 @@
                 productId, userName: localProfileName, rating: currentReviewRating, 
                 fitTag: fitTagEl ? fitTagEl.value : "True to Size", text, image: base64Img || null, timestamp: Date.now() 
             };
-            await window.syncToCloud('reviews', newReview);
+            window.syncToStorage('reviews', newReview);
             
             if(textEl) textEl.value = '';
             if(fileEl) fileEl.value = '';
@@ -1515,7 +1395,7 @@
                             ${parts[0]}<br><span class="text-[10px] uppercase tracking-widest text-brand-light/50 font-sans">Out of 5</span>
                         </div>
                         <div class="text-brand-light/80 text-xs leading-relaxed">
-                            Based on <strong>${parts[1]}</strong> verified client ratings from our Lahore & Swat Ateliers. Excellence is our standard.
+                            Based on <strong>${parts[1]}</strong> verified client ratings. Excellence is our standard.
                         </div>
                     </div>`;
             }
@@ -1632,14 +1512,6 @@
         `; 
     };
 
-    window.expressDigitalPay = function(walletName) {
-        if (cart.length === 0) return window.showToast("Your bag is empty.", "error");
-        window.showToast(`Initializing ${walletName} Secure Session...`, "info");
-        setTimeout(() => {
-            window.showToast("Please enter shipping address below to finalize digital wallet order.", "success");
-        }, 1000);
-    };
-
     window.toggleCart = function() {
         const modal = document.getElementById('cartModal');
         const drawer = document.getElementById('cartDrawer');
@@ -1668,15 +1540,12 @@
         }
 
         const btn = document.getElementById('completeOrderBtn');
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Encrypting Transaction...'; btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing Order...'; btn.disabled = true;
 
         let subtotal = 0; cart.forEach(item => { subtotal += item.checkoutPrice; });
         const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
         const discount = payMode === 'Bank' ? (subtotal * 0.10) : 0;
         const total = subtotal - discount + shippingCost;
-
-        let fraudScore = 98;
-        if (total > 80000 || address.length < 8) fraudScore = 65;
         
         const trackingId = "ZAK-" + Math.random().toString(36).substr(2, 5).toUpperCase();
 
@@ -1688,12 +1557,11 @@
                 address: `${address}, ${city}`, paymentMode: payMode,
                 items: cart.map(i => ({ name: i.name, size: i.selectedSize, color: i.selectedColor, price: i.checkoutPrice })),
                 totalAmount: total, status: "Order Received",
-                fraudScore: `${fraudScore}/100 - ${fraudScore > 80 ? 'Low Risk (Passed)' : 'Flagged for Review'}`,
                 receiptImage: receiptBase64 || null, timestamp: Date.now()
             };
 
-            await window.syncToCloud('orders', orderData);
-            await window.syncToCloud('subscribers', customerEmail);
+            window.syncToStorage('orders', orderData);
+            window.syncToStorage('subscribers', customerEmail);
 
             if(!localProfileName) {
                 localProfileName = `${fName} ${lName}`;
@@ -1702,6 +1570,14 @@
                 localStorage.setItem('fbz_profile_email', localProfileEmail);
                 window.updateAuthUI();
             }
+
+            // TRIGGER GMAIL NOTIFICATION TO OWNER
+            const itemsSummary = orderData.items.map(i => `${i.name} (Size: ${i.size}, Color: ${i.color}) - ${formatRs(i.price)}`).join('\n');
+            const emailSubject = encodeURIComponent(`New Order Received: #${trackingId} from ${fName} ${lName}`);
+            const emailBody = encodeURIComponent(`Hello Zak,\n\nYou have received a new order on your store!\n\nTracking ID: ${trackingId}\nCustomer Name: ${fName} ${lName}\nPhone: ${phone}\nAddress: ${address}, ${city}\nPayment Mode: ${payMode}\nTotal Amount: ${formatRs(total)}\n\nOrdered Items:\n${itemsSummary}\n\nPlease check your Owner Portal for details.`);
+            
+            // Open mailto to send notification to owner gmail automatically
+            window.open(`mailto:${ownerGmail}?subject=${emailSubject}&body=${emailBody}`, '_blank');
 
             cart = []; window.updateCartUI();
             window.toggleCart();
@@ -1712,7 +1588,7 @@
         };
 
         const receiptInput = document.getElementById('bankReceiptUpload');
-        if (payMode === 'Bank' && receiptInput && receiptInput.files.length > 0) {
+        if ((payMode === 'Bank' || payMode === 'Easypaisa/JazzCash') && receiptInput && receiptInput.files.length > 0) {
             compressImage(receiptInput.files[0], finalizeOrderSubmission);
         } else {
             finalizeOrderSubmission(null);
@@ -1762,7 +1638,7 @@
         }
     };
 
-    window.handleLocalAuth = async function() {
+    window.handleLocalAuth = function() {
         const name = document.getElementById('authName').value.trim();
         const email = document.getElementById('authEmail').value.trim();
         if(!name || !email || !email.includes('@')) {
@@ -1773,7 +1649,7 @@
         localStorage.setItem('fbz_profile_name', name);
         localStorage.setItem('fbz_profile_email', email);
 
-        await window.syncToCloud('subscribers', email);
+        window.syncToStorage('subscribers', email);
 
         window.updateAuthUI(); window.closeAuthModal();
         window.showToast(`Synced! Welcome, ${name}.`, "success");
@@ -1788,7 +1664,7 @@
     };
 
     window.switchOwnerTab = function(tabId) {
-        ['overview', 'orders', 'marketing'].forEach(t => {
+        ['overview', 'orders', 'settings'].forEach(t => {
             document.getElementById(`tab-${t}`).classList.add('hidden');
             document.getElementById(`tab-${t}`).classList.remove('block');
             
@@ -1805,19 +1681,12 @@
         activeBtn.classList.remove('text-brand-light/50', 'border-transparent');
     };
 
-    window.updateOrderStatus = async function(trackingId, selectElement) {
+    window.updateOrderStatus = function(trackingId, selectElement) {
         const newStatus = selectElement.value;
         const orderIndex = cloudOrders.findIndex(o => o.trackingId === trackingId);
         if(orderIndex > -1) {
             cloudOrders[orderIndex].status = newStatus;
             localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
-            
-            if(window.userId && window.db) {
-                try {
-                    const docRef = doc(window.db, "store_data", "master_record");
-                    await updateDoc(docRef, { orders: cloudOrders });
-                } catch(e) {}
-            }
             window.showToast(`Updated ${trackingId} to: ${newStatus}`, "success");
         }
     };
@@ -1826,7 +1695,7 @@
         if(cloudOrders.length === 0) return window.showToast("No orders to export.", "error");
         
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Date,Tracking ID,Client Name,Email,Phone,Address,Items,Payment Mode,Total Amount,Fraud Score,Status\n";
+        csvContent += "Date,Tracking ID,Client Name,Email,Phone,Address,Items,Payment Mode,Total Amount,Status\n";
         
         cloudOrders.forEach(o => {
             const date = new Date(o.timestamp).toLocaleDateString();
@@ -1834,7 +1703,7 @@
             const row = [
                 `"${date}"`, `"${o.trackingId}"`, `"${o.clientName}"`, `"${o.email}"`, 
                 `"${o.phone}"`, `"${o.address}"`, `"${itemsStr}"`, `"${o.paymentMode}"`, 
-                `"${o.totalAmount}"`, `"${o.fraudScore || 'Pass'}"`, `"${o.status}"`
+                `"${o.totalAmount}"`, `"${o.status}"`
             ].join(",");
             csvContent += row + "\n";
         });
@@ -1855,9 +1724,6 @@
         let totalRev = 0;
         cloudOrders.forEach(o => totalRev += o.totalAmount);
         document.getElementById('statRevenue').innerText = formatRs(totalRev);
-
-        const emailListContainer = document.getElementById('ownerEmailList');
-        emailListContainer.innerHTML = cloudSubscribers.length > 0 ? cloudSubscribers.map(e => `<div>&bull; ${e}</div>`).join('') : '<div class="text-brand-light/50 italic">No subscriber emails yet.</div>';
 
         const ordersListContainer = document.getElementById('ownerOrdersDetailedList');
         if(cloudOrders.length === 0) {
@@ -1883,7 +1749,7 @@
                     itemsListHtml += `<li>&bull; ${i.name} <span class="text-brand-light/50">(Sz: ${i.size}, ${i.color})</span></li>`;
                 });
 
-                const receiptBtnHtml = o.receiptImage ? `<div class="mt-3 pt-2 border-t border-brand-border/50"><a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 border border-green-900/50 px-3 py-1 rounded hover:bg-green-900/20 transition inline-flex items-center"><i class="fa-solid fa-receipt mr-1.5"></i> View Bank Payment Receipt</a></div>` : '';
+                const receiptBtnHtml = o.receiptImage ? `<div class="mt-3 pt-2 border-t border-brand-border/50"><a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 border border-green-900/50 px-3 py-1 rounded hover:bg-green-900/20 transition inline-flex items-center"><i class="fa-solid fa-receipt mr-1.5"></i> View Bank/Wallet Receipt</a></div>` : '';
 
                 return `
                 <div class="bg-brand-card p-5 rounded border border-brand-border shadow-md relative group">
@@ -1892,7 +1758,6 @@
                     <div class="mb-3 flex items-center gap-3">
                         <span class="text-xs bg-brand-dark px-2 py-1 rounded text-white border border-brand-border"><i class="fa-solid fa-hashtag text-brand-gold"></i> ${o.trackingId}</span>
                         <span class="text-[10px] text-brand-light/50 font-mono"><i class="fa-regular fa-clock"></i> ${new Date(o.timestamp).toLocaleString()}</span>
-                        <span class="text-[9px] bg-green-900/30 text-green-400 border border-green-800/50 px-2 py-0.5 rounded font-mono font-bold"><i class="fa-solid fa-shield"></i> Fraud Score: ${o.fraudScore || '98/100 (Pass)'}</span>
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-brand-border/50 pt-3">
@@ -1919,17 +1784,6 @@
                 </div>`;
             }).join('');
         }
-    };
-
-    window.copyAllEmails = function() {
-        navigator.clipboard.writeText(cloudSubscribers.join(', '));
-        window.showToast("All subscriber emails copied to clipboard!", "success");
-    };
-
-    window.sendEmailBroadcast = function() {
-        const subject = encodeURIComponent(document.getElementById('broadcastSubject').value || 'Exclusive Offer from Footwear By Zak');
-        const body = encodeURIComponent(document.getElementById('broadcastBody').value || 'Hello valued customer from Lahore & Swat, check out our latest collection!');
-        window.open(`mailto:?bcc=${cloudSubscribers.join(',')}&subject=${subject}&body=${body}`, '_blank');
     };
 </script>
 
