@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -96,7 +96,7 @@
         </button>
     </div>
     
-    <!-- SECRET 5-CLICK OWNER BUTTON WITH MFA/RBAC SHIELD -->
+    <!-- SECRET 5-CLICK OWNER BUTTON -->
     <div onclick="window.handleSecretClick()" id="secretOwnerTrigger" class="absolute left-1/2 -translate-x-1/2 text-center cursor-pointer select-none" title="Footwear By Zak (Master Portal)">
         <span class="font-serif text-lg md:text-2xl tracking-[0.2em] font-bold text-white uppercase block hover:opacity-80 transition-opacity">
             Footwear <span class="gold-text">By Zak</span>
@@ -299,7 +299,7 @@
                 </div>
             </div>
 
-            <!-- Payment Options & AI Fraud Detection Shield -->
+            <!-- Payment Options -->
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-1">
                     <h2 class="text-lg font-bold text-black">Payment Options</h2>
@@ -407,8 +407,7 @@
     </div>
 </div>
 
-<!-- ENTERPRISE SECURED OWNER PORTAL (RBAC + MFA & MULTI-DEVICE ACCESSIBILITY) -->
-<!-- ALL PASSWORD HINTS REMOVED -->
+<!-- ENTERPRISE SECURED OWNER PORTAL -->
 <div id="ownerModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-brand-darkest/95 backdrop-blur-md" onclick="window.closeOwnerModal()"></div>
     <div class="relative bg-brand-card border border-brand-gold w-[95%] md:w-[920px] h-[90vh] flex flex-col rounded-lg z-10 shadow-2xl overflow-hidden">
@@ -710,16 +709,14 @@
     };
 
     // ==========================================
-    // 2. GOOGLE SHEETS INVENTORY LINK (CSV PUBLISH LINK)
-    // REQUIRED: Paste your Google Sheet CSV Link between the quotes below!
+    // 2. GOOGLE SHEETS INVENTORY LINK
     // ==========================================
     const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv"; 
 
     // ==========================================
     // 3. GMAIL NOTIFICATION EMAIL
-    // (Orders will be forwarded to this email automatically)
     // ==========================================
-    const ADMIN_GMAIL_ADDRESS = "your_email@gmail.com"; 
+    const ADMIN_GMAIL_ADDRESS = "zaheerabbasofficial46@gmail.com"; 
 
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
@@ -741,9 +738,8 @@
     window.allProducts = allProducts;
     window.db = null;
 
-    // --- SECURITY FUNCTION: XSS SANITIZATION ---
     function sanitizeInput(str) {
-        if (typeof str !== 'string') return str;
+        if (typeof str !== 'string') return str || '';
         return str.replace(/[&<>"']/g, function(match) {
             const escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' };
             return escapeMap[match];
@@ -755,20 +751,19 @@
         if (!localArr) return remoteArr || [];
         if (key) {
             const map = new Map();
-            remoteArr.forEach(item => map.set(item[key], item));
-            localArr.forEach(item => { if (!map.has(item[key])) map.set(item[key], item); });
+            remoteArr.forEach(item => { if(item && item[key]) map.set(item[key], item); });
+            localArr.forEach(item => { if(item && item[key] && !map.has(item[key])) map.set(item[key], item); });
             return Array.from(map.values());
         } else {
             return Array.from(new Set([...localArr, ...remoteArr]));
         }
     }
 
-    // FIREBASE INITIALIZATION & REAL-TIME MULTI-DEVICE CLOUD SYNC
+    // Initialize Firebase safely with robust error trapping
     try {
-        if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
+        if(firebaseConfig && firebaseConfig.apiKey) {
             const app = initializeApp(firebaseConfig);
-            // BUG 7 FIX: Ad-blockers crash the site if Analytics is blocked. Try-catch shield added.
-            try { const analytics = getAnalytics(app); } catch(e) {}
+            try { getAnalytics(app); } catch(e) {}
             
             window.db = getFirestore(app);
             const auth = getAuth(app);
@@ -779,17 +774,20 @@
                 getDoc(docRef).then((docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        if(data.orders) { cloudOrders = mergeUnique(cloudOrders, data.orders, 'trackingId'); localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
-                        if(data.reviews) { cloudReviews = mergeUnique(cloudReviews, data.reviews); localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
-                        if(data.subscribers) { cloudSubscribers = mergeUnique(cloudSubscribers, data.subscribers); localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                        if(data) {
+                            if(data.orders) { cloudOrders = mergeUnique(cloudOrders, data.orders, 'trackingId'); localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders)); }
+                            if(data.reviews) { cloudReviews = mergeUnique(cloudReviews, data.reviews); localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews)); }
+                            if(data.subscribers) { cloudSubscribers = mergeUnique(cloudSubscribers, data.subscribers); localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+                        }
                     } else {
-                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(e => {});
+                        setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }).catch(() => {});
                     }
-                }).catch(e => {});
+                }).catch(() => {});
 
                 onSnapshot(docRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
+                        if(!data) return;
                         let updated = false;
                         if(data.orders) {
                             const merged = mergeUnique(cloudOrders, data.orders, 'trackingId');
@@ -807,63 +805,59 @@
                         }
                         
                         if(updated) {
-                            if(document.getElementById('trackingModal') && !document.getElementById('trackingModal').classList.contains('hidden')) window.renderTrackingList();
-                            if(document.getElementById('ownerModal') && !document.getElementById('ownerModal').classList.contains('hidden')) window.renderOwnerDashboard();
+                            const trackModal = document.getElementById('trackingModal');
+                            if(trackModal && !trackModal.classList.contains('hidden')) window.renderTrackingList();
+                            const ownerModal = document.getElementById('ownerModal');
+                            if(ownerModal && !ownerModal.classList.contains('hidden')) window.renderOwnerDashboard();
                         }
                     }
-                }, (error) => {});
-            }).catch(err => {});
+                }, () => {});
+            }).catch(() => {});
         }
     } catch (error) {}
 
     window.syncToCloud = async function(collectionName, dataObj) {
-        if(collectionName === 'orders') {
-            if(!cloudOrders.some(o => o.trackingId === dataObj.trackingId)) cloudOrders.push(dataObj);
-            localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
-        } else if (collectionName === 'reviews') {
-            cloudReviews.push(dataObj);
-            localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews));
-        } else if (collectionName === 'subscribers') {
-            if(!cloudSubscribers.includes(dataObj)) { cloudSubscribers.push(dataObj); localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
-        }
+        try {
+            if(collectionName === 'orders') {
+                if(!cloudOrders.some(o => o.trackingId === dataObj.trackingId)) cloudOrders.push(dataObj);
+                localStorage.setItem('fbz_orders', JSON.stringify(cloudOrders));
+            } else if (collectionName === 'reviews') {
+                cloudReviews.push(dataObj);
+                localStorage.setItem('fbz_reviews', JSON.stringify(cloudReviews));
+            } else if (collectionName === 'subscribers') {
+                if(!cloudSubscribers.includes(dataObj)) { cloudSubscribers.push(dataObj); localStorage.setItem('fbz_subscribers', JSON.stringify(cloudSubscribers)); }
+            }
 
-        if(window.db) {
-            try {
+            if(window.db) {
                 const docRef = doc(window.db, "store_data", "master_record");
                 const updatePayload = {};
                 if(collectionName === 'subscribers') updatePayload.subscribers = arrayUnion(dataObj);
                 if(collectionName === 'orders') updatePayload.orders = arrayUnion(dataObj);
                 if(collectionName === 'reviews') updatePayload.reviews = arrayUnion(dataObj);
                 
-                await updateDoc(docRef, updatePayload);
-            } catch (e) {
-                try {
-                    const docRef = doc(window.db, "store_data", "master_record");
+                await updateDoc(docRef, updatePayload).catch(async () => {
                     await setDoc(docRef, { orders: cloudOrders, reviews: cloudReviews, subscribers: cloudSubscribers }, { merge: true });
-                } catch(err) {
-                    console.error("Database Save Failed: ", err);
-                }
+                });
             }
-        }
+        } catch (err) {}
     };
 
-    // BUG 4 FIX: NaN mathematical fix
     const formatRs = (num) => isNaN(parseInt(num)) ? "Rs 0" : "Rs " + parseInt(num).toLocaleString('en-PK');
 
     window.showToast = function(message, type = 'info') {
         const container = document.getElementById('toastContainer');
+        if(!container) return;
         const toast = document.createElement('div');
         let icon = '<i class="fa-solid fa-circle-info text-brand-gold"></i>';
         if(type === 'error') icon = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>';
         if(type === 'success') icon = '<i class="fa-solid fa-circle-check text-green-500"></i>';
         toast.className = `p-4 rounded shadow-2xl text-xs font-medium transform transition-all translate-x-full bg-brand-card border border-brand-border text-white flex items-center gap-3`;
-        toast.innerHTML = `${icon} <span>${message}</span>`;
+        toast.innerHTML = `${icon} <span>${sanitizeInput(message)}</span>`;
         container.appendChild(toast);
         setTimeout(() => toast.classList.remove('translate-x-full'), 10);
         setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, 3500);
     };
 
-    // RBAC & MFA OWNER SECRET TRIGGER (5-CLICK)
     window.ownerClickCount = 0;
     window.ownerClickTimer = null;
     window.handleSecretClick = function() {
@@ -873,20 +867,29 @@
         
         if(window.ownerClickCount >= 5) {
             window.ownerClickCount = 0;
-            document.getElementById('ownerModal').classList.remove('hidden');
-            document.getElementById('ownerLoginScreen').classList.remove('hidden');
-            document.getElementById('ownerMfaScreen').classList.add('hidden');
-            document.getElementById('ownerDashboardContent').classList.add('hidden');
-            document.getElementById('ownerPassInput').value = '';
-            document.getElementById('ownerMfaInput').value = '';
+            const ownerModal = document.getElementById('ownerModal');
+            if(ownerModal) ownerModal.classList.remove('hidden');
+            const loginScr = document.getElementById('ownerLoginScreen');
+            if(loginScr) loginScr.classList.remove('hidden');
+            const mfaScr = document.getElementById('ownerMfaScreen');
+            if(mfaScr) mfaScr.classList.add('hidden');
+            const dashContent = document.getElementById('ownerDashboardContent');
+            if(dashContent) dashContent.classList.add('hidden');
+            const passInput = document.getElementById('ownerPassInput');
+            if(passInput) passInput.value = '';
+            const mfaInput = document.getElementById('ownerMfaInput');
+            if(mfaInput) mfaInput.value = '';
         }
     };
 
     window.verifyOwnerLoginStep1 = function() {
-        const pass = document.getElementById('ownerPassInput').value;
+        const passInput = document.getElementById('ownerPassInput');
+        const pass = passInput ? passInput.value : '';
         if(pass === '5003') {
-            document.getElementById('ownerLoginScreen').classList.add('hidden');
-            document.getElementById('ownerMfaScreen').classList.remove('hidden');
+            const loginScr = document.getElementById('ownerLoginScreen');
+            if(loginScr) loginScr.classList.add('hidden');
+            const mfaScr = document.getElementById('ownerMfaScreen');
+            if(mfaScr) mfaScr.classList.remove('hidden');
             window.showToast("Master Password Verified.", "info");
         } else {
             window.showToast("Incorrect Master Password.", "error");
@@ -894,10 +897,13 @@
     };
 
     window.verifyOwnerMFA = function() {
-        const pin = document.getElementById('ownerMfaInput').value.trim();
+        const mfaInput = document.getElementById('ownerMfaInput');
+        const pin = mfaInput ? mfaInput.value.trim() : '';
         if(pin === '889900') {
-            document.getElementById('ownerMfaScreen').classList.add('hidden');
-            document.getElementById('ownerDashboardContent').classList.remove('hidden');
+            const mfaScr = document.getElementById('ownerMfaScreen');
+            if(mfaScr) mfaScr.classList.add('hidden');
+            const dashContent = document.getElementById('ownerDashboardContent');
+            if(dashContent) dashContent.classList.remove('hidden');
             window.switchOwnerTab('overview');
             window.renderOwnerDashboard();
             window.showToast("MFA Authorized. Master Session Active.", "success");
@@ -906,7 +912,10 @@
         }
     };
 
-    window.closeOwnerModal = function() { document.getElementById('ownerModal').classList.add('hidden'); };
+    window.closeOwnerModal = function() {
+        const ownerModal = document.getElementById('ownerModal');
+        if(ownerModal) ownerModal.classList.add('hidden');
+    };
 
     window.subscribeNewsletter = function() {
         const input = document.getElementById('footerNewsletterEmail');
@@ -914,32 +923,43 @@
         if(!email || !email.includes('@')) return window.showToast("Please enter a valid email address.", "error");
         
         window.syncToCloud('subscribers', email);
-        input.value = '';
+        if(input) input.value = '';
         window.showToast("Successfully subscribed to VIP offers!", "success");
     };
 
-    window.openFitPredictorModal = function() { document.getElementById('fitPredictorModal').classList.remove('hidden'); };
+    window.openFitPredictorModal = function() {
+        const fitModal = document.getElementById('fitPredictorModal');
+        if(fitModal) fitModal.classList.remove('hidden');
+    };
+
     window.calculateAIFit = function() {
-        const brand = document.getElementById('fitPredictorBrand').value;
-        const size = parseInt(document.getElementById('fitPredictorSize').value);
+        const brandEl = document.getElementById('fitPredictorBrand');
+        const sizeEl = document.getElementById('fitPredictorSize');
+        const brand = brandEl ? brandEl.value : 'nike';
+        const size = sizeEl ? parseInt(sizeEl.value) || 8 : 8;
         
         let recommendedEU = 41;
         if (brand === 'nike' || brand === 'adidas') recommendedEU = size + 33;
         else if (brand === 'clarks') recommendedEU = size + 34;
         else recommendedEU = size + 33;
 
-        document.getElementById('aiFitRecommendedSize').innerText = `EU ${recommendedEU}`;
-        document.getElementById('aiFitResult').classList.remove('hidden');
+        const recSizeEl = document.getElementById('aiFitRecommendedSize');
+        if(recSizeEl) recSizeEl.innerText = `EU ${recommendedEU}`;
+        const resEl = document.getElementById('aiFitResult');
+        if(resEl) resEl.classList.remove('hidden');
     };
 
     window.toggleChat = function() {
         const chatWindow = document.getElementById('chatWindow');
-        chatWindow.classList.toggle('hidden');
-        chatWindow.classList.toggle('flex');
+        if(chatWindow) {
+            chatWindow.classList.toggle('hidden');
+            chatWindow.classList.toggle('flex');
+        }
     };
 
     window.addChatMessage = function(text, sender, isTyping = false) {
         const container = document.getElementById('chatMessages');
+        if(!container) return '';
         const div = document.createElement('div');
         const id = 'msg-' + Date.now();
         div.id = id;
@@ -953,6 +973,7 @@
 
     window.sendMessage = function() {
         const input = document.getElementById('chatInput');
+        if(!input) return;
         const message = input.value.trim().toLowerCase();
         if(!message) return;
 
@@ -988,13 +1009,13 @@
     };
 
     async function loadProductsFromGoogleSheet() {
+        const grid = document.getElementById('productGrid');
         if (!GOOGLE_SHEET_CSV_URL || GOOGLE_SHEET_CSV_URL === "PASTE_YOUR_GOOGLE_SHEET_CSV_LINK_HERE") {
-            document.getElementById('productGrid').innerHTML = '<div class="col-span-full py-12 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">Your database is empty. Please link your Google Sheet URL in the Javascript code.</div>';
+            if(grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">Your database is empty. Please link your Google Sheet CSV URL in the Javascript code.</div>';
             return;
         }
 
         try {
-            // BUG 1 FIX: Ghost Product Caching Shield. Appends exact time to bypass slow browser caching.
             const antiCacheUrl = GOOGLE_SHEET_CSV_URL.includes("?") 
                 ? GOOGLE_SHEET_CSV_URL + "&t=" + Date.now() 
                 : GOOGLE_SHEET_CSV_URL + "?t=" + Date.now();
@@ -1004,9 +1025,8 @@
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    if (results.data && results.data.length > 0) {
+                    if (results && results.data && results.data.length > 0) {
                         allProducts = results.data.map((row, index) => {
-                            // BUG 3 FIX: Engine now securely casts all raw data to Strings before parsing.
                             const cleanPrice = parseInt(String(row.price || '0').replace(/\D/g, '')) || 0;
                             const cleanSalePrice = (row.salePrice && String(row.salePrice).trim() !== '') ? parseInt(String(row.salePrice).replace(/\D/g, '')) : null;
 
@@ -1029,10 +1049,13 @@
                         window.allProducts = allProducts;
                         window.filterProducts();
                     }
+                },
+                error: function() {
+                    if(grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">Unable to load Google Sheet CSV. Please check your publish link permissions.</div>';
                 }
             });
         } catch(error) {
-            console.error("Google Sheet Fetch Error: ", error);
+            if(grid) grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-light/60 border border-brand-border/30 rounded p-6 bg-brand-dark/30">Error initializing product catalog.</div>';
         }
     }
 
@@ -1042,21 +1065,24 @@
     });
 
     window.filterProducts = function() {
-        const keyword = (document.getElementById('searchKeyword')?.value || '').toLowerCase().trim();
-        const category = (document.getElementById('filterCategory')?.value || 'all').toLowerCase();
-        const sort = document.getElementById('sortProducts')?.value || 'newest';
+        const searchInput = document.getElementById('searchKeyword');
+        const categorySelect = document.getElementById('filterCategory');
+        const sortSelect = document.getElementById('sortProducts');
+
+        const keyword = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        const category = (categorySelect ? categorySelect.value : 'all').toLowerCase();
+        const sort = sortSelect ? sortSelect.value : 'newest';
 
         filteredProducts = allProducts.filter(p => {
-            const matchesKeyword = !keyword || p.name.toLowerCase().includes(keyword) || p.description.toLowerCase().includes(keyword) || p.category.toLowerCase().includes(keyword);
-            const matchesCategory = category === 'all' || p.category.toLowerCase().includes(category);
+            const matchesKeyword = !keyword || (p.name && p.name.toLowerCase().includes(keyword)) || (p.description && p.description.toLowerCase().includes(keyword)) || (p.category && p.category.toLowerCase().includes(keyword));
+            const matchesCategory = category === 'all' || (p.category && p.category.toLowerCase().includes(category));
             return matchesKeyword && matchesCategory;
         });
         
-        // BUG 5 FIX: Cloned array before sorting to prevent interface mutations
         let sortedArray = [...filteredProducts];
         if(sort === 'price_low') sortedArray.sort((a,b) => (a.salePrice || a.price) - (b.salePrice || b.price));
         else if(sort === 'price_high') sortedArray.sort((a,b) => (b.salePrice || b.price) - (a.salePrice || a.price));
-        else if(sort === 'newest') sortedArray.sort((a,b) => b.dateAdded - a.dateAdded);
+        else if(sort === 'newest') sortedArray.sort((a,b) => (b.dateAdded || 0) - (a.dateAdded || 0));
         
         filteredProducts = sortedArray;
         window.renderProducts();
@@ -1076,10 +1102,10 @@
             const isOut = product.stock === 'out of stock';
             const hasSale = product.salePrice && product.salePrice < product.price;
             const displayPrice = hasSale ? product.salePrice : product.price;
-            const mainMedia = product.images[0];
-            const hoverMedia = product.images.length > 1 ? product.images[1] : mainMedia;
+            const mainMedia = product.images && product.images[0] ? product.images[0] : '';
+            const hoverMedia = product.images && product.images.length > 1 ? product.images[1] : mainMedia;
 
-            const swatches = product.colors.map(c => {
+            const swatches = (product.colors || []).map(c => {
                 let colorHex = '#2A1B12';
                 const lower = c.toLowerCase();
                 if(lower.includes('black')) colorHex = '#111';
@@ -1124,16 +1150,18 @@
         if(!product) return;
         const drawer = document.getElementById('detailsDrawer');
         const content = document.getElementById('detailsContent');
+        if(!drawer || !content) return;
+
         const hasSale = product.salePrice && product.salePrice < product.price;
         const displayPrice = hasSale ? product.salePrice : product.price;
 
         selectedSizeForSticky = null; selectedColorForSticky = null;
 
-        const slidesHTML = product.images.map(media => {
+        const slidesHTML = (product.images || []).map(media => {
             return `<div class="keen-slider__slide w-full h-full min-w-full relative bg-brand-darkest flex items-center justify-center"><img src="${media}" class="w-full max-h-[500px] object-cover" onerror="this.src='https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier'"></div>`;
         }).join('');
 
-        const sizesHTML = product.sizes.map((s, i) => {
+        const sizesHTML = (product.sizes || []).map((s, i) => {
             const checked = (i===0) ? 'checked' : '';
             if(checked) selectedSizeForSticky = s;
             return `<div>
@@ -1142,7 +1170,7 @@
             </div>`;
         }).join('');
 
-        const colorsHTML = product.colors.map((c, i) => {
+        const colorsHTML = (product.colors || []).map((c, i) => {
             const checked = (i===0) ? 'checked' : '';
             if(checked) selectedColorForSticky = c;
             return `<div class="flex-1 min-w-[30%]">
@@ -1154,7 +1182,6 @@
         const widthTagText = product.width === 'wide' ? 'Wide Comfort Width' : 'Regular Width';
         const saleBadgeHTML = hasSale ? `<span class="text-brand-light/50 line-through text-sm">${formatRs(product.price)}</span> <span class="bg-brand-gold text-brand-darkest text-[10px] font-bold px-2 py-0.5 rounded ml-2 uppercase tracking-wider">Sale</span>` : '';
 
-        // BUG 2 FIX: Rewrote submitReview call parameter to securely target the exact button object avoiding ReferenceErrors
         content.innerHTML = `
             <div class="relative w-full aspect-square md:aspect-[4/5] bg-brand-darkest overflow-hidden border-b border-brand-border shrink-0 spin-360-container" id="spinContainer">
                 <div id="productSlider" class="keen-slider h-full w-full flex">${slidesHTML}</div>
@@ -1165,7 +1192,7 @@
             
             <div class="p-6">
                 <div class="text-[10px] text-brand-gold mb-2 tracking-[0.2em] uppercase flex justify-between items-center font-bold">
-                    <span>${product.category} &bull; ${widthTagText}</span>
+                    <span>${sanitizeInput(product.category)} &bull; ${widthTagText}</span>
                     <div class="flex text-brand-gold"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
                 </div>
                 
@@ -1260,31 +1287,30 @@
             </div>
         `;
 
-        document.getElementById('stickyProductName').innerText = product.name;
-        document.getElementById('stickyProductPrice').innerText = formatRs(displayPrice);
+        const nameEl = document.getElementById('stickyProductName');
+        if(nameEl) nameEl.innerText = product.name;
+        const priceEl = document.getElementById('stickyProductPrice');
+        if(priceEl) priceEl.innerText = formatRs(displayPrice);
         const addBtn = document.getElementById('stickyAddBtn');
         
-        addBtn.disabled = false; addBtn.innerHTML = '<i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag';
-        addBtn.className = "btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center shadow-lg hover:shadow-brand-gold/20";
-        addBtn.onclick = () => window.addToCart(product.id);
+        if(addBtn) {
+            addBtn.disabled = false; 
+            addBtn.innerHTML = '<i class="fa-solid fa-bag-shopping mr-2"></i> Add to Bag';
+            addBtn.className = "btn-gold w-full py-4 rounded-sm font-bold tracking-widest uppercase text-sm flex justify-center items-center shadow-lg hover:shadow-brand-gold/20";
+            addBtn.onclick = () => window.addToCart(product.id);
+        }
 
-        document.getElementById('detailsModal').classList.remove('hidden');
-        drawer.classList.remove('translate-x-full');
+        const detailsModal = document.getElementById('detailsModal');
+        if(detailsModal) detailsModal.classList.remove('hidden');
+        if(drawer) drawer.classList.remove('translate-x-full');
         document.body.style.overflow = 'hidden';
 
         window.renderReviewsSection(id);
 
-        if(product.images.length > 1) {
+        if(product.images && product.images.length > 1) {
             setTimeout(() => {
                 if(activeSlider) activeSlider.destroy();
-                activeSlider = new KeenSlider("#productSlider", {
-                    loop: true,
-                    slideChanged(s) {
-                        const current = s.track.details.rel;
-                        const dots = document.getElementById('sliderDots')?.children;
-                        if(dots) { for(let i=0; i<dots.length; i++){ dots[i].className = `w-2 h-2 rounded-full transition-all ${i===current ? 'bg-brand-gold w-4' : 'bg-white/50'}`; } }
-                    }
-                });
+                activeSlider = new KeenSlider("#productSlider", { loop: true });
             }, 100);
         }
     };
@@ -1300,7 +1326,8 @@
         const drawer = document.getElementById('detailsDrawer');
         if(drawer) drawer.classList.add('translate-x-full');
         setTimeout(() => {
-            document.getElementById('detailsModal').classList.add('hidden');
+            const detailsModal = document.getElementById('detailsModal');
+            if(detailsModal) detailsModal.classList.add('hidden');
             document.body.style.overflow = '';
             if(activeSlider) { activeSlider.destroy(); activeSlider = null; }
         }, 300);
@@ -1330,7 +1357,8 @@
             window.showToast("Please log in with your email first to leave a review.", "info");
             return;
         }
-        document.getElementById('reviewFormContainer').classList.toggle('hidden');
+        const revForm = document.getElementById('reviewFormContainer');
+        if(revForm) revForm.classList.toggle('hidden');
     };
     
     window.setRating = function(stars) {
@@ -1348,7 +1376,6 @@
         const fitTagEl = document.querySelector('input[name="fitTag"]:checked');
         
         const text = sanitizeInput(textEl ? textEl.value.trim() : '');
-        
         if(!text) return window.showToast("Please write a review text.", "error");
 
         if(btnElement) { btnElement.innerText = "Saving Data..."; btnElement.disabled = true; }
@@ -1368,7 +1395,7 @@
             window.renderReviewsSection(productId);
         };
 
-        if (fileEl && fileEl.files.length > 0) {
+        if (fileEl && fileEl.files && fileEl.files.length > 0) {
             compressImage(fileEl.files[0], saveReview);
         } else {
             saveReview(null);
@@ -1378,11 +1405,10 @@
     window.renderReviewsSection = function(productId) {
         const list = document.getElementById('reviewsList');
         if(!list) return;
-        const product = allProducts.find(p => p.id === productId);
-        const productReviews = cloudReviews.filter(r => r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
+        const productReviews = cloudReviews.filter(r => r.r && r.productId === productId).sort((a,b) => b.timestamp - a.timestamp);
 
         let html = '';
-        if (productReviews.length === 0 && html === '') {
+        if (productReviews.length === 0) {
             list.innerHTML = `<p class="text-brand-light/50 text-sm italic text-center py-6 border border-brand-border/30 rounded">No reviews yet. Be the first gentleman to share your experience.</p>`;
             return;
         }
@@ -1411,8 +1437,10 @@
     };
     
     window.previewReviewImage = function(src) {
-        document.getElementById('fullSizePreview').src = src;
-        document.getElementById('imagePreviewModal').classList.remove('hidden');
+        const prevImg = document.getElementById('fullSizePreview');
+        if(prevImg) prevImg.src = src;
+        const prevModal = document.getElementById('imagePreviewModal');
+        if(prevModal) prevModal.classList.remove('hidden');
     };
 
     window.addToCart = function(id) {
@@ -1424,7 +1452,8 @@
 
         cart.push({ ...product, cartId: Date.now(), selectedSize: sizeToUse, selectedColor: colorToUse, checkoutPrice: price });
         window.updateCartUI();
-        window.closeDetails(); window.toggleCart();
+        window.closeDetails(); 
+        window.toggleCart();
     };
 
     window.removeFromCart = function(cartId) {
@@ -1481,7 +1510,6 @@
             if(pMsg) pMsg.innerHTML = `You are <span class="text-blue-600 font-bold">${formatRs(FREE_SHIPPING_THRESHOLD - subtotal)}</span> away from Free Shipping!`;
         }
 
-        // BUG 6 FIX: Fallback applied to payment radio selection incase click speed causes error
         const paymentRadio = document.querySelector('input[name="payment"]:checked');
         const isBank = paymentRadio ? paymentRadio.value === 'Bank' : false;
         
@@ -1499,6 +1527,7 @@
     window.toggleCart = function() {
         const modal = document.getElementById('cartModal');
         const drawer = document.getElementById('cartDrawer');
+        if(!modal || !drawer) return;
         if(modal.classList.contains('hidden')) {
             window.updateCartUI(); modal.classList.remove('hidden');
             setTimeout(() => drawer.classList.remove('translate-x-full'), 10);
@@ -1512,12 +1541,19 @@
     window.submitOrder = async function() {
         if (cart.length === 0) return window.showToast("Your bag is empty.", "error");
 
-        const fName = sanitizeInput(document.getElementById('chkFName').value.trim());
-        const lName = sanitizeInput(document.getElementById('chkLName').value.trim());
-        const email = sanitizeInput(document.getElementById('chkEmail').value.trim());
-        const phone = sanitizeInput(document.getElementById('chkPhone').value.trim());
-        const address = sanitizeInput(document.getElementById('chkAddress').value.trim());
-        const city = sanitizeInput(document.getElementById('chkCity').value.trim());
+        const fNameInput = document.getElementById('chkFName');
+        const lNameInput = document.getElementById('chkLName');
+        const emailInput = document.getElementById('chkEmail');
+        const phoneInput = document.getElementById('chkPhone');
+        const addressInput = document.getElementById('chkAddress');
+        const cityInput = document.getElementById('chkCity');
+
+        const fName = sanitizeInput(fNameInput ? fNameInput.value.trim() : '');
+        const lName = sanitizeInput(lNameInput ? lNameInput.value.trim() : '');
+        const email = sanitizeInput(emailInput ? emailInput.value.trim() : '');
+        const phone = sanitizeInput(phoneInput ? phoneInput.value.trim() : '');
+        const address = sanitizeInput(addressInput ? addressInput.value.trim() : '');
+        const city = sanitizeInput(cityInput ? cityInput.value.trim() : '');
         const paymentRadio = document.querySelector('input[name="payment"]:checked');
         const payMode = paymentRadio ? paymentRadio.value : 'COD';
 
@@ -1526,7 +1562,7 @@
         }
 
         const btn = document.getElementById('completeOrderBtn');
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Encrypting Transaction...'; btn.disabled = true;
+        if(btn) { btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Encrypting Transaction...'; btn.disabled = true; }
 
         let subtotal = 0; cart.forEach(item => { subtotal += item.checkoutPrice; });
         const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
@@ -1568,7 +1604,7 @@
                         Items: cart.map(i => `${i.name} (Sz: ${i.selectedSize}, ${i.selectedColor})`).join(' | '),
                         Address: `${address}, ${city}`
                     })
-                }).catch(err => console.log("Silent Notification Error"));
+                }).catch(() => {});
             }
 
             if(!localProfileName) {
@@ -1581,14 +1617,16 @@
 
             cart = []; window.updateCartUI();
             window.toggleCart();
-            btn.innerHTML = 'Complete order'; btn.disabled = false;
+            if(btn) { btn.innerHTML = 'Complete order'; btn.disabled = false; }
             
-            document.getElementById('successTrackingId').innerText = trackingId;
-            document.getElementById('orderSuccessModal').classList.remove('hidden');
+            const successIdEl = document.getElementById('successTrackingId');
+            if(successIdEl) successIdEl.innerText = trackingId;
+            const successModal = document.getElementById('orderSuccessModal');
+            if(successModal) successModal.classList.remove('hidden');
         };
 
         const receiptInput = document.getElementById('bankReceiptUpload');
-        if (payMode === 'Bank' && receiptInput && receiptInput.files.length > 0) {
+        if (payMode === 'Bank' && receiptInput && receiptInput.files && receiptInput.files.length > 0) {
             compressImage(receiptInput.files[0], finalizeOrderSubmission);
         } else {
             finalizeOrderSubmission(null);
@@ -1596,10 +1634,14 @@
     };
 
     window.openTrackingModal = function() {
-        document.getElementById('trackingModal').classList.remove('hidden');
+        const trackingModal = document.getElementById('trackingModal');
+        if(trackingModal) trackingModal.classList.remove('hidden');
         window.renderTrackingList();
     };
-    window.closeTrackingModal = function() { document.getElementById('trackingModal').classList.add('hidden'); };
+    window.closeTrackingModal = function() {
+        const trackingModal = document.getElementById('trackingModal');
+        if(trackingModal) trackingModal.classList.add('hidden');
+    };
     
     window.renderTrackingList = function() {
         const list = document.getElementById('trackingList');
@@ -1611,38 +1653,51 @@
         }
         
         let sortedMyOrders = [...myOrders];
-        list.innerHTML = sortedMyOrders.sort((a,b)=>b.timestamp - a.timestamp).map(o => `
+        list.innerHTML = sortedMyOrders.sort((a,b)=>(b.timestamp || 0) - (a.timestamp || 0)).map(o => `
             <div class="bg-brand-dark border border-brand-border p-4 rounded text-sm mb-3 text-left shadow-md">
-                <div class="flex justify-between text-brand-gold mb-1 font-bold"><span><i class="fa-solid fa-hashtag text-[10px]"></i> ${o.trackingId}</span> <span>${formatRs(o.totalAmount)}</span></div>
-                <div class="text-white mb-3 text-xs opacity-75 font-mono">${new Date(o.timestamp).toLocaleDateString()}</div>
-                <div class="text-xs inline-block bg-brand-gold/10 text-brand-gold px-3 py-1 rounded border border-brand-gold/30 uppercase tracking-widest font-bold"><i class="fa-solid fa-circle-dot mr-1.5 text-green-400"></i> ${o.status}</div>
+                <div class="flex justify-between text-brand-gold mb-1 font-bold"><span><i class="fa-solid fa-hashtag text-[10px]"></i> ${sanitizeInput(o.trackingId)}</span> <span>${formatRs(o.totalAmount)}</span></div>
+                <div class="text-white mb-3 text-xs opacity-75 font-mono">${new Date(o.timestamp || Date.now()).toLocaleDateString()}</div>
+                <div class="text-xs inline-block bg-brand-gold/10 text-brand-gold px-3 py-1 rounded border border-brand-gold/30 uppercase tracking-widest font-bold"><i class="fa-solid fa-circle-dot mr-1.5 text-green-400"></i> ${sanitizeInput(o.status)}</div>
             </div>
         `).join('');
     };
 
     window.openAuthModal = function() {
-        document.getElementById('authModal').classList.remove('hidden');
+        const authModal = document.getElementById('authModal');
+        if(authModal) authModal.classList.remove('hidden');
         window.updateAuthUI();
     };
-    window.closeAuthModal = function() { document.getElementById('authModal').classList.add('hidden'); };
+    window.closeAuthModal = function() {
+        const authModal = document.getElementById('authModal');
+        if(authModal) authModal.classList.add('hidden');
+    };
     
     window.updateAuthUI = function() {
+        const authForm = document.getElementById('authForm');
+        const loggedInView = document.getElementById('loggedInView');
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        const userEmailDisplay = document.getElementById('userEmailDisplay');
+        const navAccountLabel = document.getElementById('navAccountLabel');
+
         if(localProfileName && localProfileEmail) {
-            document.getElementById('authForm').classList.add('hidden');
-            document.getElementById('loggedInView').classList.remove('hidden');
-            document.getElementById('userNameDisplay').innerText = localProfileName;
-            document.getElementById('userEmailDisplay').innerText = localProfileEmail;
-            document.getElementById('navAccountLabel').innerText = localProfileName.split(' ')[0];
+            if(authForm) authForm.classList.add('hidden');
+            if(loggedInView) loggedInView.classList.remove('hidden');
+            if(userNameDisplay) userNameDisplay.innerText = localProfileName;
+            if(userEmailDisplay) userEmailDisplay.innerText = localProfileEmail;
+            if(navAccountLabel) navAccountLabel.innerText = localProfileName.split(' ')[0];
         } else {
-            document.getElementById('authForm').classList.remove('hidden');
-            document.getElementById('loggedInView').classList.add('hidden');
-            document.getElementById('navAccountLabel').innerText = 'Account';
+            if(authForm) authForm.classList.remove('hidden');
+            if(loggedInView) loggedInView.classList.add('hidden');
+            if(navAccountLabel) navAccountLabel.innerText = 'Account';
         }
     };
 
     window.handleLocalAuth = async function() {
-        const name = sanitizeInput(document.getElementById('authName').value.trim());
-        const email = sanitizeInput(document.getElementById('authEmail').value.trim());
+        const authNameInput = document.getElementById('authName');
+        const authEmailInput = document.getElementById('authEmail');
+
+        const name = sanitizeInput(authNameInput ? authNameInput.value.trim() : '');
+        const email = sanitizeInput(authEmailInput ? authEmailInput.value.trim() : '');
         
         if(!name || !email || !email.includes('@')) {
             return window.showToast("Please enter a valid name and email address.", "error");
@@ -1668,20 +1723,30 @@
 
     window.switchOwnerTab = function(tabId) {
         ['overview', 'orders', 'marketing'].forEach(t => {
-            document.getElementById(`tab-${t}`).classList.add('hidden');
-            document.getElementById(`tab-${t}`).classList.remove('block');
+            const tabEl = document.getElementById(`tab-${t}`);
+            if(tabEl) {
+                tabEl.classList.add('hidden');
+                tabEl.classList.remove('block');
+            }
             
             const btn = document.getElementById(`tabBtn-${t}`);
-            btn.classList.remove('text-brand-gold', 'border-brand-gold');
-            btn.classList.add('text-brand-light/50', 'border-transparent');
+            if(btn) {
+                btn.classList.remove('text-brand-gold', 'border-brand-gold');
+                btn.classList.add('text-brand-light/50', 'border-transparent');
+            }
         });
         
-        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-        document.getElementById(`tab-${tabId}`).classList.add('block');
+        const activeTab = document.getElementById(`tab-${tabId}`);
+        if(activeTab) {
+            activeTab.classList.remove('hidden');
+            activeTab.classList.add('block');
+        }
         
         const activeBtn = document.getElementById(`tabBtn-${tabId}`);
-        activeBtn.classList.add('text-brand-gold', 'border-brand-gold');
-        activeBtn.classList.remove('text-brand-light/50', 'border-transparent');
+        if(activeBtn) {
+            activeBtn.classList.add('text-brand-gold', 'border-brand-gold');
+            activeBtn.classList.remove('text-brand-light/50', 'border-transparent');
+        }
     };
 
     window.updateOrderStatus = async function(trackingId, selectElement) {
@@ -1708,12 +1773,12 @@
         csvContent += "Date,Tracking ID,Client Name,Email,Phone,Address,Items,Payment Mode,Total Amount,Fraud Score,Status\n";
         
         cloudOrders.forEach(o => {
-            const date = new Date(o.timestamp).toLocaleDateString();
-            const itemsStr = o.items.map(i => `${i.name} (${i.size} - ${i.color})`).join(' | ');
+            const date = new Date(o.timestamp || Date.now()).toLocaleDateString();
+            const itemsStr = (o.items || []).map(i => `${i.name} (${i.size} - ${i.color})`).join(' | ');
             const row = [
-                `"${date}"`, `"${o.trackingId}"`, `"${o.clientName}"`, `"${o.email}"`, 
-                `"${o.phone}"`, `"${o.address}"`, `"${itemsStr}"`, `"${o.paymentMode}"`, 
-                `"${o.totalAmount}"`, `"${o.fraudScore || 'Pass'}"`, `"${o.status}"`
+                `"${date}"`, `"${sanitizeInput(o.trackingId)}"`, `"${sanitizeInput(o.clientName)}"`, `"${sanitizeInput(o.email)}"`, 
+                `"${sanitizeInput(o.phone)}"`, `"${sanitizeInput(o.address)}"`, `"${itemsStr}"`, `"${sanitizeInput(o.paymentMode)}"`, 
+                `"${o.totalAmount || 0}"`, `"${sanitizeInput(o.fraudScore || 'Pass')}"`, `"${sanitizeInput(o.status)}"`
             ].join(",");
             csvContent += row + "\n";
         });
@@ -1728,84 +1793,90 @@
     };
 
     window.renderOwnerDashboard = function() {
-        document.getElementById('statSubscribersCount').innerText = cloudSubscribers.length;
-        document.getElementById('statOrdersCount').innerText = cloudOrders.length;
+        const subCountEl = document.getElementById('statSubscribersCount');
+        if(subCountEl) subCountEl.innerText = cloudSubscribers.length;
+        const ordCountEl = document.getElementById('statOrdersCount');
+        if(ordCountEl) ordCountEl.innerText = cloudOrders.length;
         
         let totalRev = 0;
-        cloudOrders.forEach(o => totalRev += o.totalAmount);
-        document.getElementById('statRevenue').innerText = formatRs(totalRev);
+        cloudOrders.forEach(o => totalRev += (o.totalAmount || 0));
+        const revEl = document.getElementById('statRevenue');
+        if(revEl) revEl.innerText = formatRs(totalRev);
 
         const emailListContainer = document.getElementById('ownerEmailList');
-        emailListContainer.innerHTML = cloudSubscribers.length > 0 ? cloudSubscribers.map(e => `<div>&bull; ${sanitizeInput(e)}</div>`).join('') : '<div class="text-brand-light/50 italic">No subscriber emails yet.</div>';
+        if(emailListContainer) {
+            emailListContainer.innerHTML = cloudSubscribers.length > 0 ? cloudSubscribers.map(e => `<div>&bull; ${sanitizeInput(e)}</div>`).join('') : '<div class="text-brand-light/50 italic">No subscriber emails yet.</div>';
+        }
 
         const ordersListContainer = document.getElementById('ownerOrdersDetailedList');
-        if(cloudOrders.length === 0) {
-            ordersListContainer.innerHTML = `<p class="text-brand-light/60 italic p-6 bg-brand-dark border border-brand-border rounded text-center">No customer orders recorded yet.</p>`;
-        } else {
-            const statusOptions = ["Order Received", "Crafting at Atelier", "Quality Inspection", "Dispatched (Courier)", "Delivered", "Cancelled"];
-            
-            // Fix sorting mutation bug here
-            let safeOrders = [...cloudOrders];
-            ordersListContainer.innerHTML = safeOrders.sort((a,b)=>b.timestamp - a.timestamp).map(o => {
-                const currentStatus = o.status || '';
+        if(ordersListContainer) {
+            if(cloudOrders.length === 0) {
+                ordersListContainer.innerHTML = `<p class="text-brand-light/60 italic p-6 bg-brand-dark border border-brand-border rounded text-center">No customer orders recorded yet.</p>`;
+            } else {
+                const statusOptions = ["Order Received", "Crafting at Atelier", "Quality Inspection", "Dispatched (Courier)", "Delivered", "Cancelled"];
                 
-                let selectOptionsHtml = '';
-                statusOptions.forEach(s => {
-                    const selected = (currentStatus.includes(s) || (currentStatus.includes('Received') && s === 'Order Received')) ? 'selected' : '';
-                    selectOptionsHtml += `<option value="${s}" ${selected}>${s}</option>`;
-                });
-
-                const selectHtml = `<select onchange="window.updateOrderStatus('${o.trackingId}', this)" class="bg-brand-darkest border border-brand-border text-xs text-brand-gold font-bold p-2 rounded outline-none focus:border-brand-gold transition shadow-inner">
-                    ${selectOptionsHtml}
-                </select>`;
-
-                let itemsListHtml = '';
-                o.items.forEach(i => {
-                    itemsListHtml += `<li>&bull; ${sanitizeInput(i.name)} <span class="text-brand-light/50">(Sz: ${sanitizeInput(i.size)}, ${sanitizeInput(i.color)})</span></li>`;
-                });
-
-                const receiptBtnHtml = o.receiptImage ? `<div class="mt-3 pt-2 border-t border-brand-border/50"><a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 border border-green-900/50 px-3 py-1 rounded hover:bg-green-900/20 transition inline-flex items-center"><i class="fa-solid fa-receipt mr-1.5"></i> View Bank Payment Receipt</a></div>` : '';
-
-                const mailToLink = `mailto:${sanitizeInput(o.email)}?subject=Your%20Footwear%20By%20Zak%20Order%20${o.trackingId}`;
-
-                return `
-                <div class="bg-brand-card p-5 rounded border border-brand-border shadow-md relative group">
-                    <div class="absolute top-4 right-4">${selectHtml}</div>
+                let safeOrders = [...cloudOrders];
+                ordersListContainer.innerHTML = safeOrders.sort((a,b)=>(b.timestamp || 0) - (a.timestamp || 0)).map(o => {
+                    const currentStatus = o.status || '';
                     
-                    <div class="mb-3 flex items-center gap-3">
-                        <span class="text-xs bg-brand-dark px-2 py-1 rounded text-white border border-brand-border"><i class="fa-solid fa-hashtag text-brand-gold"></i> ${o.trackingId}</span>
-                        <span class="text-[10px] text-brand-light/50 font-mono"><i class="fa-regular fa-clock"></i> ${new Date(o.timestamp).toLocaleString()}</span>
-                        <span class="text-[9px] bg-green-900/30 text-green-400 border border-green-800/50 px-2 py-0.5 rounded font-mono font-bold"><i class="fa-solid fa-shield"></i> Fraud Score: ${o.fraudScore || '98/100 (Pass)'}</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-brand-border/50 pt-3">
-                        <div>
-                            <p class="text-white font-bold text-sm mb-1">${sanitizeInput(o.clientName)}</p>
-                            <p class="text-brand-light/70 text-xs mb-0.5"><i class="fa-solid fa-phone text-brand-gold/50 w-4"></i> ${sanitizeInput(o.phone)}</p>
-                            
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <p class="text-brand-light/70 text-xs"><i class="fa-solid fa-envelope text-brand-gold/50 w-4"></i> ${sanitizeInput(o.email)}</p>
-                                <a href="${mailToLink}" class="bg-brand-gold/20 text-brand-gold text-[10px] px-2 py-0.5 rounded border border-brand-gold/40 hover:bg-brand-gold hover:text-brand-darkest transition uppercase font-bold tracking-wider inline-block">Reply via Email</a>
-                            </div>
+                    let selectOptionsHtml = '';
+                    statusOptions.forEach(s => {
+                        const selected = (currentStatus.includes(s) || (currentStatus.includes('Received') && s === 'Order Received')) ? 'selected' : '';
+                        selectOptionsHtml += `<option value="${s}" ${selected}>${s}</option>`;
+                    });
 
-                            <p class="text-brand-light/70 text-xs"><i class="fa-solid fa-location-dot text-brand-gold/50 w-4"></i> ${sanitizeInput(o.address)}</p>
+                    const selectHtml = `<select onchange="window.updateOrderStatus('${sanitizeInput(o.trackingId)}', this)" class="bg-brand-darkest border border-brand-border text-xs text-brand-gold font-bold p-2 rounded outline-none focus:border-brand-gold transition shadow-inner">
+                        ${selectOptionsHtml}
+                    </select>`;
+
+                    let itemsListHtml = '';
+                    (o.items || []).forEach(i => {
+                        itemsListHtml += `<li>&bull; ${sanitizeInput(i.name)} <span class="text-brand-light/50">(Sz: ${sanitizeInput(i.size)}, ${sanitizeInput(i.color)})</span></li>`;
+                    });
+
+                    const receiptBtnHtml = o.receiptImage ? `<div class="mt-3 pt-2 border-t border-brand-border/50"><a href="${o.receiptImage}" target="_blank" class="text-xs text-green-400 border border-green-900/50 px-3 py-1 rounded hover:bg-green-900/20 transition inline-flex items-center"><i class="fa-solid fa-receipt mr-1.5"></i> View Bank Payment Receipt</a></div>` : '';
+
+                    const mailToLink = `mailto:${sanitizeInput(o.email)}?subject=Your%20Footwear%20By%20Zak%20Order%20${sanitizeInput(o.trackingId)}`;
+
+                    return `
+                    <div class="bg-brand-card p-5 rounded border border-brand-border shadow-md relative group">
+                        <div class="absolute top-4 right-4">${selectHtml}</div>
+                        
+                        <div class="mb-3 flex items-center gap-3">
+                            <span class="text-xs bg-brand-dark px-2 py-1 rounded text-white border border-brand-border"><i class="fa-solid fa-hashtag text-brand-gold"></i> ${sanitizeInput(o.trackingId)}</span>
+                            <span class="text-[10px] text-brand-light/50 font-mono"><i class="fa-regular fa-clock"></i> ${new Date(o.timestamp || Date.now()).toLocaleString()}</span>
+                            <span class="text-[9px] bg-green-900/30 text-green-400 border border-green-800/50 px-2 py-0.5 rounded font-mono font-bold"><i class="fa-solid fa-shield"></i> Fraud Score: ${sanitizeInput(o.fraudScore || '98/100 (Pass)')}</span>
                         </div>
-                        <div>
-                            <div class="bg-brand-darkest p-2.5 rounded border border-brand-border/50 h-full">
-                                <p class="text-[10px] text-brand-gold uppercase tracking-widest font-bold mb-1 border-b border-brand-border/50 pb-1">Order Items</p>
-                                <ul class="text-xs text-brand-light/90 font-mono space-y-1 mb-2">
-                                    ${itemsListHtml}
-                                </ul>
-                                <div class="flex justify-between items-end border-t border-brand-border/50 pt-1 mt-auto">
-                                    <span class="text-[10px] text-brand-light/50 uppercase">${o.paymentMode}</span>
-                                    <span class="text-sm font-bold text-brand-gold">${formatRs(o.totalAmount)}</span>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-brand-border/50 pt-3">
+                            <div>
+                                <p class="text-white font-bold text-sm mb-1">${sanitizeInput(o.clientName)}</p>
+                                <p class="text-brand-light/70 text-xs mb-0.5"><i class="fa-solid fa-phone text-brand-gold/50 w-4"></i> ${sanitizeInput(o.phone)}</p>
+                                
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <p class="text-brand-light/70 text-xs"><i class="fa-solid fa-envelope text-brand-gold/50 w-4"></i> ${sanitizeInput(o.email)}</p>
+                                    <a href="${mailToLink}" class="bg-brand-gold/20 text-brand-gold text-[10px] px-2 py-0.5 rounded border border-brand-gold/40 hover:bg-brand-gold hover:text-brand-darkest transition uppercase font-bold tracking-wider inline-block">Reply via Email</a>
+                                </div>
+
+                                <p class="text-brand-light/70 text-xs"><i class="fa-solid fa-location-dot text-brand-gold/50 w-4"></i> ${sanitizeInput(o.address)}</p>
+                            </div>
+                            <div>
+                                <div class="bg-brand-darkest p-2.5 rounded border border-brand-border/50 h-full">
+                                    <p class="text-[10px] text-brand-gold uppercase tracking-widest font-bold mb-1 border-b border-brand-border/50 pb-1">Order Items</p>
+                                    <ul class="text-xs text-brand-light/90 font-mono space-y-1 mb-2">
+                                        ${itemsListHtml}
+                                    </ul>
+                                    <div class="flex justify-between items-end border-t border-brand-border/50 pt-1 mt-auto">
+                                        <span class="text-[10px] text-brand-light/50 uppercase">${sanitizeInput(o.paymentMode)}</span>
+                                        <span class="text-sm font-bold text-brand-gold">${formatRs(o.totalAmount)}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    ${receiptBtnHtml}
-                </div>`;
-            }).join('');
+                        ${receiptBtnHtml}
+                    </div>`;
+                }).join('');
+            }
         }
     };
 
@@ -1815,11 +1886,13 @@
     };
 
     window.sendEmailBroadcast = function() {
-        const subject = encodeURIComponent(document.getElementById('broadcastSubject').value || 'Exclusive Offer from Footwear By Zak');
-        const body = encodeURIComponent(document.getElementById('broadcastBody').value || 'Hello valued customer from Lahore & Swat, check out our latest collection!');
+        const subInput = document.getElementById('broadcastSubject');
+        const bodyInput = document.getElementById('broadcastBody');
+        const subject = encodeURIComponent(subInput ? subInput.value : 'Exclusive Offer from Footwear By Zak');
+        const body = encodeURIComponent(bodyInput ? bodyInput.value : 'Hello valued customer from Lahore & Swat, check out our latest collection!');
         window.open(`mailto:?bcc=${cloudSubscribers.join(',')}&subject=${subject}&body=${body}`, '_blank');
     };
 </script>
 
 </body>
-</html> 
+</html>
