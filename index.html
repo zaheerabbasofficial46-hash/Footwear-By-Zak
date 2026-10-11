@@ -919,7 +919,20 @@
             window.switchOwnerTab('overview');
             window.renderOwnerDashboard();
             window.showToast('Owner session active.', 'success');
-        } catch (e) { window.showToast('Incorrect owner credentials.', 'error'); }
+        } catch (e) {
+            const code = (e && e.code) || 'unknown';
+            const msgs = {
+                'auth/invalid-credential': 'Wrong email or password. The email must match OWNER_EMAIL and the user in Firebase.',
+                'auth/wrong-password': 'Wrong password for the owner user.',
+                'auth/user-not-found': 'No Firebase user with the OWNER_EMAIL address. Add it under Authentication > Users.',
+                'auth/invalid-email': 'OWNER_EMAIL is not a valid email address.',
+                'auth/operation-not-allowed': 'Email/Password sign-in is not enabled in Firebase Authentication.',
+                'auth/too-many-requests': 'Too many attempts. Wait a few minutes and try again.',
+                'auth/network-request-failed': 'No connection to Firebase. Check your internet.'
+            };
+            console.warn('Owner sign-in failed:', code, e);
+            window.showToast((msgs[code] || 'Sign-in failed.') + ' (' + code + ')', 'error');
+        }
         document.getElementById('ownerPassInput').value = '';
     };
     window.verifyOwnerMFA = function() {};
