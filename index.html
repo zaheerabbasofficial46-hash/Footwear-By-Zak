@@ -8,7 +8,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Footwear By Zak | Handcrafted Men's Leather Shoes">
     <meta property="og:description" content="Handcrafted men's leather footwear from Lahore and Swat. Cash on delivery across Pakistan.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#128094;</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%91%9E%3C/text%3E%3C/svg%3E"></svg>">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>FOOTWEAR BY ZAK | Master Handcrafted Men's Leather Atelier</title>
     
@@ -769,6 +769,14 @@
         u = String(u || '').trim();
         return /^(https?:\/\/|data:image\/(png|jpe?g|webp|gif);base64,)/i.test(u) ? sanitizeInput(u) : '';
     }
+    const optOut = s => /\(\s*out of stock\s*\)/i.test(String(s));
+    const optLabel = s => String(s).replace(/\s*\(\s*out of stock\s*\)\s*/ig, '').trim();
+    const cleanImages = (raw, name) => {
+        const all = String(raw || '').split(',').map(i => i.trim()).filter(Boolean);
+        const ok = all.filter(i => /^(https?:\/\/|data:image\/)/i.test(i));
+        if (all.length !== ok.length) console.warn('Product "' + name + '": the images column has entries that are not web links:', all.filter(i => !ok.includes(i)));
+        return ok.length ? ok : ["https://placehold.co/600x750/2A1B12/D4AF37?text=No+Image"];
+    };
     const isProductOut = p => String(p.stock || '').toLowerCase().trim() === 'out of stock';
     const saveLocal = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -804,7 +812,7 @@
         try { getAnalytics(app); } catch (e) {}
         window.db = getFirestore(app);
         fbAuth = getAuth(app);
-        fbReady = signInAnonymously(fbAuth).catch(() => null);
+        fbReady = signInAnonymously(fbAuth).catch(e => { console.warn('Anonymous sign-in failed (' + (e && e.code) + '). Enable Anonymous in Firebase > Authentication > Sign-in method.'); return null; });
         fbReady.then(() => {
             onSnapshot(collection(window.db, 'reviews'), snap => {
                 cloudReviews = snap.docs.map(d => d.data());
@@ -941,7 +949,7 @@
         document.getElementById('ownerModal').classList.add('hidden');
         if (adminUnsubs.length) {
             adminUnsubs.forEach(u => u()); adminUnsubs = [];
-            try { await signOut(fbAuth); fbReady = signInAnonymously(fbAuth).catch(() => null); } catch (e) {}
+            try { await signOut(fbAuth); fbReady = signInAnonymously(fbAuth).catch(e => { console.warn('Anonymous sign-in failed (' + (e && e.code) + '). Enable Anonymous in Firebase > Authentication > Sign-in method.'); return null; }); } catch (e) {}
             cloudOrders = JSON.parse(localStorage.getItem('fbz_orders') || '[]');
             cloudSubscribers = JSON.parse(localStorage.getItem('fbz_subscribers') || '[]');
         }
@@ -1061,14 +1069,16 @@
                                 category: row.category || 'Oxfords',
                                 width: String(row.width || 'regular').toLowerCase().trim(),
                                 stock: String(row.stock || 'in stock').toLowerCase().trim(),
-                                sizes: row.sizes ? String(row.sizes).split(',').map(s=>s.trim()) : ["39", "40", "41", "42", "43", "44"],
-                                colors: row.colors ? String(row.colors).split(',').map(c=>c.trim()) : ["Classic Black"],
+                                _allOut: false,
+                                sizes: row.sizes ? String(row.sizes).split(',').map(s=>s.trim()).filter(Boolean) : ["39", "40", "41", "42", "43", "44"],
+                                colors: row.colors ? String(row.colors).split(',').map(c=>c.trim()).filter(Boolean) : ["Classic Black"],
                                 description: row.description || "Handcrafted leather formal footwear.",
-                                images: row.images ? String(row.images).split(',').map(i=>i.trim()) : ["https://placehold.co/600x750/2A1B12/D4AF37?text=No+Image"],
+                                images: cleanImages(row.images, row.name),
                                 qtyAvailable: row.qtyAvailable || "In Stock - Ready to Dispatch",
                                 dateAdded: Date.now() - (index * 1000)
                             };
                         });
+                        allProducts.forEach(pr => { if ((pr.sizes.length && pr.sizes.every(optOut)) || (pr.colors.length && pr.colors.every(optOut))) pr.stock = 'out of stock'; });
                         window.allProducts = allProducts;
                         cart = cart.filter(it => {
                             const p = allProducts.find(x => x.id === it.id);
@@ -1191,21 +1201,25 @@
             return `<div class="keen-slider__slide w-full h-full min-w-full relative bg-brand-darkest flex items-center justify-center"><img src="${safeUrl(media)}" alt="Product photo" class="w-full max-h-[500px] object-cover" onerror="this.src='https://placehold.co/600x600/2A1B12/D4AF37?text=Atelier'"></div>`;
         }).join('');
 
+        const firstSize = product.sizes.findIndex(s => !optOut(s));
+        const firstColor = product.colors.findIndex(c => !optOut(c));
         const sizesHTML = product.sizes.map((s, i) => {
-            const checked = (i===0) ? 'checked' : '';
-            if(checked) selectedSizeForSticky = s;
+            const out = optOut(s);
+            const checked = (i===firstSize) ? 'checked' : '';
+            if(checked) selectedSizeForSticky = optLabel(s);
             return `<div>
-                <input type="radio" name="size" id="size-${i}" value="${sanitizeInput(s)}" class="hidden size-radio" ${checked} onchange="window.updateStickySelection()">
-                <label for="size-${i}" class="block w-full text-center py-2.5 border border-brand-border text-sm transition-all rounded-sm bg-brand-dark cursor-pointer hover:border-brand-gold text-white">${sanitizeInput(s)}</label>
+                <input type="radio" name="size" id="size-${i}" value="${sanitizeInput(optLabel(s))}" class="hidden size-radio" ${checked} ${out ? 'disabled' : ''} onchange="window.updateStickySelection()">
+                <label for="size-${i}" class="block w-full text-center py-2.5 border border-brand-border text-sm transition-all rounded-sm bg-brand-dark ${out ? 'opacity-40 line-through cursor-not-allowed' : 'cursor-pointer hover:border-brand-gold'} text-white" ${out ? 'title="Sold out"' : ''}>${sanitizeInput(optLabel(s))}</label>
             </div>`;
         }).join('');
 
         const colorsHTML = product.colors.map((c, i) => {
-            const checked = (i===0) ? 'checked' : '';
-            if(checked) selectedColorForSticky = c;
+            const out = optOut(c);
+            const checked = (i===firstColor) ? 'checked' : '';
+            if(checked) selectedColorForSticky = optLabel(c);
             return `<div class="flex-1 min-w-[30%]">
-                <input type="radio" name="color" id="color-${i}" value="${sanitizeInput(c)}" class="hidden color-radio" ${checked} onchange="window.updateStickySelection()">
-                <label for="color-${i}" class="block w-full text-center py-2.5 border border-brand-border text-xs transition-all rounded-sm whitespace-nowrap px-2 bg-brand-dark cursor-pointer hover:border-brand-gold text-white">${sanitizeInput(c)}</label>
+                <input type="radio" name="color" id="color-${i}" value="${sanitizeInput(optLabel(c))}" class="hidden color-radio" ${checked} ${out ? 'disabled' : ''} onchange="window.updateStickySelection()">
+                <label for="color-${i}" class="block w-full text-center py-2.5 border border-brand-border text-xs transition-all rounded-sm whitespace-nowrap px-2 bg-brand-dark ${out ? 'opacity-40 line-through cursor-not-allowed' : 'cursor-pointer hover:border-brand-gold'} text-white" ${out ? 'title="Sold out"' : ''}>${sanitizeInput(optLabel(c))}</label>
             </div>`;
         }).join('');
 
@@ -1491,8 +1505,8 @@
         const product = allProducts.find(p => p.id === id);
         if(!product) return;
         if (isProductOut(product)) return window.showToast('Sorry, this item is out of stock.', 'error');
-        const sizeToUse = selectedSizeForSticky || (product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'Standard');
-        const colorToUse = selectedColorForSticky || (product.colors && product.colors.length > 0 ? product.colors[0] : 'Standard');
+        const sizeToUse = selectedSizeForSticky || optLabel((product.sizes || []).find(s => !optOut(s)) || 'Standard');
+        const colorToUse = selectedColorForSticky || optLabel((product.colors || []).find(c => !optOut(c)) || 'Standard');
         const price = (product.salePrice && product.salePrice < product.price) ? product.salePrice : product.price;
 
         cart.push({ ...product, cartId: ++cartSeq, selectedSize: sizeToUse, selectedColor: colorToUse, checkoutPrice: price });
