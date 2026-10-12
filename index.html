@@ -9,7 +9,6 @@
     <meta property="og:title" content="Footwear By Zak | Handcrafted Men's Leather Shoes">
     <meta property="og:description" content="Handcrafted men's leather footwear from Lahore and Swat. Cash on delivery across Pakistan.">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%91%9E%3C/text%3E%3C/svg%3E"></svg>">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>FOOTWEAR BY ZAK | Master Handcrafted Men's Leather Atelier</title>
     
     <!-- Tailwind CSS -->
@@ -882,6 +881,8 @@
             () => window.showToast('Orders access denied. Check your Firestore rules.', 'error')));
         adminUnsubs.push(onSnapshot(collection(window.db, 'subscribers'), snap => { cloudSubscribers = snap.docs.map(d => d.data().email).filter(Boolean); window.renderOwnerDashboard(); }, () => {}));
     }
+
+    const formatRs = (num) => isNaN(parseInt(num)) ? "Rs 0" : "Rs " + parseInt(num).toLocaleString('en-PK');
 
     window.showToast = function(message, type = 'info') {
         const container = document.getElementById('toastContainer');
