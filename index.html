@@ -186,6 +186,37 @@
 </section>
 
 <!-- MAIN COLLECTION CATALOG -->
+<section id="styleStudio" class="py-16 px-6 md:px-12 max-w-7xl mx-auto relative z-10">
+    <div class="text-center mb-10">
+        <p class="text-brand-gold text-xs uppercase tracking-[0.3em] mb-2">Style Studio</p>
+        <h2 class="text-3xl md:text-4xl font-serif">See Our Shoes With Your Outfit</h2>
+        <p class="text-brand-light/60 text-sm mt-3">Pick an outfit, then swipe through the collection.</p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="flex flex-col items-center">
+            <div class="flex gap-2 mb-4">
+                <button id="ssBtnShalwar" onclick="window.ssSetOutfit('shalwar')" class="px-4 py-2 rounded text-xs uppercase tracking-wider border border-brand-border transition">Shalwar Kameez</button>
+                <button id="ssBtnPant" onclick="window.ssSetOutfit('pant')" class="px-4 py-2 rounded text-xs uppercase tracking-wider border border-brand-border transition">Pant Shirt</button>
+            </div>
+            <div id="ssSwatches" class="flex gap-2 mb-5"></div>
+            <div id="ssStage" class="relative w-64 select-none" style="touch-action: pan-y;">
+                <div id="ssStatue"></div>
+                <div id="ssShoeFrame" class="absolute left-1/2 -translate-x-1/2 w-28 h-28 rounded-full overflow-hidden border-2 border-brand-gold bg-brand-dark shadow-2xl" style="bottom:-6px;">
+                    <img id="ssShoeImg" src="" alt="" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+        <div class="text-center md:text-left">
+            <div id="ssInfo" class="min-h-[170px] flex flex-col justify-center"></div>
+            <div class="flex items-center justify-center md:justify-start gap-3 mt-6">
+                <button onclick="window.ssMove(-1)" aria-label="Previous shoe" class="w-11 h-11 rounded-full border border-brand-border hover:border-brand-gold hover:text-brand-gold transition"><i class="fa-solid fa-chevron-left"></i></button>
+                <span id="ssCounter" class="text-xs font-mono text-brand-light/60 w-14 text-center"></span>
+                <button onclick="window.ssMove(1)" aria-label="Next shoe" class="w-11 h-11 rounded-full border border-brand-border hover:border-brand-gold hover:text-brand-gold transition"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+</section>
+
 <main id="collection" class="py-16 px-6 md:px-12 max-w-7xl mx-auto relative z-10">
     <div class="flex flex-col gap-6 mb-8 border-b border-brand-border pb-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
@@ -732,7 +763,7 @@
     // 3. GMAIL NOTIFICATION EMAIL
     // (Orders will be forwarded to this email automatically)
     // ==========================================
-    const ADMIN_GMAIL_ADDRESS = "zaheerabbasofficial46@gmail.com"; 
+    const ADMIN_GMAIL_ADDRESS = "your_email@gmail.com"; 
 
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
@@ -796,7 +827,7 @@
     // ==========================================
     // OWNER LOGIN: create this user in Firebase Console > Authentication > Email/Password
     // ==========================================
-    const OWNER_EMAIL = "zaheerabbasofficial46@gmail.com";
+    const OWNER_EMAIL = "your_email@gmail.com";
 
     let fbAuth = null, fbReady = Promise.resolve(null), adminUnsubs = [];
     let myOrderIds = JSON.parse(localStorage.getItem('fbz_my_ids') || 'null');
@@ -1090,6 +1121,7 @@
                         });
                         window.updateCartUI();
                         window.filterProducts();
+                        ssIndex = 0; window.ssRender(0); window.ssStart();
                     }
                 }
             });
@@ -1943,6 +1975,115 @@
         if (!document.getElementById('cartModal').classList.contains('hidden')) return window.toggleCart();
         if (!document.getElementById('detailsModal').classList.contains('hidden')) return window.closeDetails();
     });
+
+    // ==========================================
+    // STYLE STUDIO: statue in shalwar kameez / pant shirt, sliding through YOUR shoes
+    // ==========================================
+    const SS_COLORS = [
+        { n: 'Cream', c: '#E8DCC4' }, { n: 'White', c: '#F2F2EE' }, { n: 'Black', c: '#1F1F24' },
+        { n: 'Navy', c: '#1E2A4A' }, { n: 'Olive', c: '#5B6040' }
+    ];
+    let ssOutfit = 'shalwar', ssColor = 0, ssIndex = 0, ssTimer = null, ssHover = false;
+    const ssShoes = () => (window.allProducts || []).filter(p => !isProductOut(p));
+
+    function ssSvg() {
+        const col = SS_COLORS[ssColor].c;
+        const hex = col.replace('#', '');
+        const lum = (parseInt(hex.slice(0,2),16)*0.299 + parseInt(hex.slice(2,4),16)*0.587 + parseInt(hex.slice(4,6),16)*0.114);
+        const pants = lum < 90 ? '#D6C8AC' : '#2B2D3A';
+        const stone = 'url(#ssStone)';
+        let outfit = '';
+        if (ssOutfit === 'shalwar') {
+            outfit = `
+                <path d="M82 296 L158 296 L170 488 L128 488 L120 340 L112 488 L70 488 Z" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+                <rect x="70" y="474" width="42" height="9" fill="rgba(0,0,0,.12)"/><rect x="128" y="474" width="42" height="9" fill="rgba(0,0,0,.12)"/>
+                <path d="M72 108 Q120 92 168 108 L180 150 L176 296 Q120 312 64 296 L60 150 Z" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+                <path d="M72 108 L50 128 L42 236 L66 238 L78 152 Z" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+                <path d="M168 108 L190 128 L198 236 L174 238 L162 152 Z" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+                <path d="M108 96 Q120 120 132 96" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="2"/>
+                <line x1="120" y1="112" x2="120" y2="170" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+                <ellipse cx="54" cy="248" rx="9" ry="13" fill="${stone}"/><ellipse cx="186" cy="248" rx="9" ry="13" fill="${stone}"/>`;
+        } else {
+            outfit = `
+                <path d="M72 300 L168 300 L162 488 L128 488 L120 344 L112 488 L78 488 Z" fill="${pants}" stroke="rgba(0,0,0,.3)" stroke-width="1"/>
+                <rect x="72" y="298" width="96" height="9" fill="rgba(0,0,0,.35)"/><rect x="113" y="298" width="14" height="9" fill="#D4AF37"/>
+                <path d="M70 108 Q120 92 170 108 L176 160 L172 302 L68 302 L64 160 Z" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+                <path d="M70 108 L48 128 L40 262 L62 264 L76 160 Z" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+                <path d="M170 108 L192 128 L200 262 L178 264 L164 160 Z" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+                <path d="M104 96 L120 126 L100 112 Z M136 96 L120 126 L140 112 Z" fill="rgba(255,255,255,.85)" stroke="rgba(0,0,0,.3)" stroke-width="1"/>
+                <line x1="120" y1="126" x2="120" y2="300" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+                <circle cx="120" cy="160" r="1.8" fill="rgba(0,0,0,.45)"/><circle cx="120" cy="196" r="1.8" fill="rgba(0,0,0,.45)"/><circle cx="120" cy="232" r="1.8" fill="rgba(0,0,0,.45)"/><circle cx="120" cy="268" r="1.8" fill="rgba(0,0,0,.45)"/>
+                <ellipse cx="51" cy="276" rx="9" ry="13" fill="${stone}"/><ellipse cx="189" cy="276" rx="9" ry="13" fill="${stone}"/>`;
+        }
+        return `<svg viewBox="0 0 240 540" class="w-full h-auto" role="img" aria-label="Statue wearing ${ssOutfit === 'shalwar' ? 'shalwar kameez' : 'pant shirt'}">
+            <defs><linearGradient id="ssStone" x1="0" x2="1"><stop offset="0" stop-color="#EADFC9"/><stop offset="1" stop-color="#A99677"/></linearGradient></defs>
+            <ellipse cx="120" cy="522" rx="96" ry="12" fill="rgba(0,0,0,.45)"/>
+            <ellipse cx="120" cy="50" rx="25" ry="31" fill="${stone}"/>
+            <rect x="109" y="76" width="22" height="24" fill="${stone}"/>
+            <ellipse cx="94" cy="496" rx="22" ry="9" fill="${stone}"/><ellipse cx="146" cy="496" rx="22" ry="9" fill="${stone}"/>
+            ${outfit}
+        </svg>`;
+    }
+
+    window.ssRender = function(dir) {
+        const statue = document.getElementById('ssStatue'); if (!statue) return;
+        statue.innerHTML = ssSvg();
+        ['Shalwar', 'Pant'].forEach(k => {
+            const b = document.getElementById('ssBtn' + k);
+            const on = (k === 'Shalwar') === (ssOutfit === 'shalwar');
+            b.className = 'px-4 py-2 rounded text-xs uppercase tracking-wider border transition ' + (on ? 'border-brand-gold bg-brand-gold text-brand-darkest font-bold' : 'border-brand-border text-brand-light hover:border-brand-gold');
+        });
+        document.getElementById('ssSwatches').innerHTML = SS_COLORS.map((s, i) =>
+            `<button aria-label="${s.n}" title="${s.n}" onclick="window.ssSetColor(${i})" class="w-7 h-7 rounded-full border-2 ${i === ssColor ? 'border-brand-gold' : 'border-brand-border'}" style="background:${s.c}"></button>`).join('');
+
+        const shoes = ssShoes();
+        const frame = document.getElementById('ssShoeFrame'), info = document.getElementById('ssInfo'), counter = document.getElementById('ssCounter');
+        if (!shoes.length) {
+            frame.classList.add('hidden'); counter.textContent = '';
+            info.innerHTML = '<p class="text-brand-light/60 text-sm">Our shoes will appear here as soon as the collection is published.</p>';
+            return;
+        }
+        frame.classList.remove('hidden');
+        ssIndex = ((ssIndex % shoes.length) + shoes.length) % shoes.length;
+        const p = shoes[ssIndex];
+        const img = document.getElementById('ssShoeImg');
+        img.src = safeUrl(p.images && p.images[0]); img.alt = p.name;
+        if (dir && img.animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            img.animate([{ transform: `translateX(${dir * 70}px)`, opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }], { duration: 380, easing: 'ease-out' });
+        }
+        const hasSale = p.salePrice && p.salePrice < p.price;
+        info.innerHTML = `
+            <p class="text-brand-gold text-xs uppercase tracking-[0.25em] mb-2">${sanitizeInput(p.category)}</p>
+            <h3 class="text-2xl md:text-3xl font-serif mb-3">${sanitizeInput(p.name)}</h3>
+            <p class="text-xl mb-5">${hasSale ? `<span class="text-brand-light/50 text-sm line-through mr-2">${formatRs(p.price)}</span>` : ''}<span class="text-brand-gold font-medium">${formatRs(hasSale ? p.salePrice : p.price)}</span></p>
+            <div><button data-id="${sanitizeInput(p.id)}" onclick="window.openDetails(this.dataset.id)" class="btn-gold px-6 py-3 rounded text-xs font-bold uppercase tracking-wider">View &amp; Add to Bag</button></div>`;
+        counter.textContent = (ssIndex + 1) + ' / ' + shoes.length;
+    };
+    window.ssSetOutfit = function(o) { ssOutfit = o; window.ssRender(0); };
+    window.ssSetColor = function(i) { ssColor = i; window.ssRender(0); };
+    window.ssMove = function(step, auto) {
+        ssIndex += step; window.ssRender(step);
+        if (!auto) window.ssStart();
+    };
+    window.ssStart = function() {
+        clearInterval(ssTimer);
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        ssTimer = setInterval(() => { if (!ssHover && !document.hidden && ssShoes().length > 1) window.ssMove(1, true); }, 4500);
+    };
+    (function() {
+        const sec = document.getElementById('styleStudio'); if (!sec) return;
+        sec.addEventListener('pointerenter', () => { ssHover = true; });
+        sec.addEventListener('pointerleave', () => { ssHover = false; });
+        let x0 = null;
+        const stage = document.getElementById('ssStage');
+        stage.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+        stage.addEventListener('touchend', e => {
+            if (x0 === null) return;
+            const dx = e.changedTouches[0].clientX - x0; x0 = null;
+            if (Math.abs(dx) > 40) window.ssMove(dx < 0 ? 1 : -1);
+        });
+        window.ssRender(0);
+    })();
 </script>
 
 </body>
