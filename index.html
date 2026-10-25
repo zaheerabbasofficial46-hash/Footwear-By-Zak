@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -754,7 +754,6 @@ window.addEventListener('error', function (e) {
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
     // ==========================================
@@ -854,28 +853,74 @@ window.addEventListener('error', function (e) {
     // ==========================================
     const OWNER_EMAIL = "zaheerabbasofficial46@gmail.com";
 
+    // The database is reached through plain HTTPS requests (Firestore REST API).
+    // Ad blockers and Brave Shields cut the Firebase streaming connection, but they do not block these.
+    const FS_BASE = 'https://firestore.googleapis.com/v1/projects/' + firebaseConfig.projectId + '/databases/(default)/documents';
+
     let fbAuth = null, fbReady = Promise.resolve(null), adminUnsubs = [];
     let myOrderIds = JSON.parse(localStorage.getItem('fbz_my_ids') || 'null');
     if (!Array.isArray(myOrderIds)) {
-        myOrderIds = cloudOrders.filter(o => myOrderIds.includes(o.trackingId)).map(o => o.trackingId);
+        myOrderIds = cloudOrders.filter(o => localProfileEmail && o.email === localProfileEmail).map(o => o.trackingId);
         saveLocal('fbz_my_ids', myOrderIds);
     }
     const emailKey = e => String(e).toLowerCase().replace(/[^a-z0-9]/g, '_');
 
+    const fsEnc = v => {
+        if (v === null || v === undefined) return { nullValue: null };
+        if (typeof v === 'string') return { stringValue: v };
+        if (typeof v === 'boolean') return { booleanValue: v };
+        if (typeof v === 'number') return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+        if (Array.isArray(v)) return { arrayValue: { values: v.map(fsEnc) } };
+        return { mapValue: { fields: fsFields(v) } };
+    };
+    const fsFields = o => { const f = {}; Object.keys(o).forEach(k => { if (o[k] !== undefined) f[k] = fsEnc(o[k]); }); return f; };
+    const fsDec = v => {
+        if ('stringValue' in v) return v.stringValue;
+        if ('integerValue' in v) return Number(v.integerValue);
+        if ('doubleValue' in v) return v.doubleValue;
+        if ('booleanValue' in v) return v.booleanValue;
+        if ('arrayValue' in v) return (v.arrayValue.values || []).map(fsDec);
+        if ('mapValue' in v) return fsObj(v.mapValue.fields || {});
+        if ('timestampValue' in v) return v.timestampValue;
+        return null;
+    };
+    const fsObj = f => { const o = {}; Object.keys(f).forEach(k => { o[k] = fsDec(f[k]); }); return o; };
+    async function fsFetch(path, opts = {}, allow404 = false) {
+        await fbReady;
+        const user = fbAuth && fbAuth.currentUser;
+        if (!user) throw new Error('not-signed-in');
+        const token = await user.getIdToken();
+        const res = await fetch(FS_BASE + path, { ...opts, headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } });
+        if (res.status === 404 && allow404) return null;
+        if (!res.ok) { const err = new Error('firestore-' + res.status); err.status = res.status; throw err; }
+        return res.json();
+    }
+    async function fsList(name) {
+        const out = []; let pageToken = '';
+        do {
+            const d = await fsFetch('/' + name + '?pageSize=300' + (pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''));
+            (d.documents || []).forEach(doc => out.push(fsObj(doc.fields || {})));
+            pageToken = d.nextPageToken || '';
+        } while (pageToken);
+        return out;
+    }
+    const fsCreate = (name, id, obj) => fsFetch('/' + name + '?documentId=' + encodeURIComponent(id), { method: 'POST', body: JSON.stringify({ fields: fsFields(obj) }) });
+
     try {
         const app = initializeApp(firebaseConfig);
         try { getAnalytics(app); } catch (e) {}
-        window.db = getFirestore(app);
         fbAuth = getAuth(app);
         fbReady = signInAnonymously(fbAuth).catch(e => { console.warn('Anonymous sign-in failed (' + (e && e.code) + '). Enable Anonymous in Firebase > Authentication > Sign-in method.'); return null; });
-        fbReady.then(() => {
-            onSnapshot(collection(window.db, 'reviews'), snap => {
-                cloudReviews = snap.docs.map(d => d.data());
-                saveLocal('fbz_reviews', cloudReviews);
-                if (window.currentReviewProduct && document.getElementById('reviewsList')) window.renderReviewsSection(window.currentReviewProduct);
-            }, () => {});
-        });
     } catch (error) { console.warn('Cloud unavailable', error); }
+
+    async function loadReviews() {
+        try {
+            cloudReviews = await fsList('reviews');
+            saveLocal('fbz_reviews', cloudReviews);
+            if (window.currentReviewProduct && document.getElementById('reviewsList')) window.renderReviewsSection(window.currentReviewProduct);
+        } catch (e) { console.warn('Reviews could not be loaded', e); }
+    }
+    fbReady.then(() => { loadReviews(); setInterval(loadReviews, 60000); });
 
     window.syncToCloud = async function(collectionName, dataObj) {
         if (collectionName === 'orders') {
@@ -884,24 +929,24 @@ window.addEventListener('error', function (e) {
         } else if (collectionName === 'subscribers') {
             if (!cloudSubscribers.includes(dataObj)) { cloudSubscribers.push(dataObj); saveLocal('fbz_subscribers', cloudSubscribers); }
         }
-        if (!window.db) return false;
         try {
-            await fbReady;
-            if (collectionName === 'orders') await setDoc(doc(window.db, 'orders', dataObj.trackingId), dataObj);
+            if (collectionName === 'orders') await fsCreate('orders', dataObj.trackingId, dataObj);
             else if (collectionName === 'reviews') {
-                await setDoc(doc(window.db, 'reviews', dataObj.timestamp + '_' + Math.random().toString(36).slice(2, 8)), dataObj);
+                await fsCreate('reviews', dataObj.timestamp + '_' + Math.random().toString(36).slice(2, 8), dataObj);
                 if (!cloudReviews.some(r => r.timestamp === dataObj.timestamp && r.productId === dataObj.productId)) cloudReviews.push(dataObj);
             }
-            else if (collectionName === 'subscribers') await setDoc(doc(window.db, 'subscribers', emailKey(dataObj)), { email: dataObj, timestamp: Date.now() });
+            else if (collectionName === 'subscribers') await fsCreate('subscribers', emailKey(dataObj), { email: dataObj, timestamp: Date.now() });
             return true;
-        } catch (e) { console.warn('Sync failed:', collectionName, e); return false; }
+        } catch (e) {
+            if (collectionName === 'subscribers' && e.status === 409) return true;
+            console.warn('Sync failed:', collectionName, e);
+            return false;
+        }
     };
 
     window.fetchOrderById = async function(id) {
-        if (!window.db) return null;
-        await fbReady;
-        const snap = await getDoc(doc(window.db, 'orders', id));
-        return snap.exists() ? snap.data() : null;
+        const d = await fsFetch('/orders/' + encodeURIComponent(id), {}, true);
+        return d ? fsObj(d.fields || {}) : null;
     };
 
     window.refreshMyOrders = async function() {
@@ -933,9 +978,20 @@ window.addEventListener('error', function (e) {
     async function ownerSignIn(password) {
         await signInWithEmailAndPassword(fbAuth, OWNER_EMAIL, password);
         adminUnsubs.forEach(u => u()); adminUnsubs = [];
-        adminUnsubs.push(onSnapshot(collection(window.db, 'orders'), snap => { cloudOrders = snap.docs.map(d => d.data()); window.ownerNotice(''); window.renderOwnerDashboard(); },
-            () => window.ownerNotice('Cannot read orders. In Firebase > Firestore > Rules, make sure the email in the rules is exactly your owner email, then click Publish.')));
-        adminUnsubs.push(onSnapshot(collection(window.db, 'subscribers'), snap => { cloudSubscribers = snap.docs.map(d => d.data().email).filter(Boolean); window.renderOwnerDashboard(); }, () => {}));
+        const pull = async () => {
+            try {
+                cloudOrders = await fsList('orders');
+                try { cloudSubscribers = (await fsList('subscribers')).map(s => s.email).filter(Boolean); } catch (e) {}
+                window.ownerNotice('');
+                window.renderOwnerDashboard();
+            } catch (e) {
+                window.ownerNotice('Cannot read orders. In Firebase > Firestore > Rules, make sure the email in the rules is exactly your owner email, then click Publish.');
+            }
+        };
+        window.refreshOwnerData = pull;
+        await pull();
+        const timer = setInterval(pull, 20000);
+        adminUnsubs.push(() => clearInterval(timer));
     }
 
     const formatRs = (num) => isNaN(parseInt(num)) ? "Rs 0" : "Rs " + parseInt(num).toLocaleString('en-PK');
@@ -1868,8 +1924,9 @@ window.addEventListener('error', function (e) {
         const newStatus = selectElement.value;
         if (!allowed.includes(newStatus)) return;
         try {
-            await updateDoc(doc(window.db, 'orders', trackingId), { status: newStatus });
+            await fsFetch('/orders/' + encodeURIComponent(trackingId) + '?updateMask.fieldPaths=status', { method: 'PATCH', body: JSON.stringify({ fields: { status: { stringValue: newStatus } } }) });
             window.showToast(`Updated ${trackingId} to: ${newStatus}`, "success");
+            if (window.refreshOwnerData) window.refreshOwnerData();
         } catch (e) { window.showToast("Could not update the order. Are you signed in as owner?", "error"); }
     };
 
@@ -2271,4 +2328,4 @@ window.addEventListener('error', function (e) {
 </script>
 
 </body>
-</html>
+</html> 
