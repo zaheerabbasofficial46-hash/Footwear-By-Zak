@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -333,8 +333,8 @@ window.addEventListener('error', function (e) {
                     <input type="tel" id="chkPhone" placeholder="Phone Number *" class="shopify-input">
                     <input type="text" id="chkAddress" placeholder="Full Delivery Address (Lahore, Swat, etc.) *" class="shopify-input">
                     <div class="flex gap-3">
-                        <input type="text" id="chkCity" placeholder="City *" class="shopify-input flex-1">
-                        <input type="text" id="chkPostal" placeholder="Postal Code (Optional)" class="shopify-input w-1/3">
+                        <input type="text" id="chkCity" placeholder="City *" autocomplete="address-level2" class="shopify-input" style="flex:2 1 0; min-width:0; width:auto;">
+                        <input type="text" id="chkPostal" placeholder="Postal Code (Optional)" autocomplete="postal-code" class="shopify-input" style="flex:1 1 0; min-width:0; width:auto;">
                     </div>
                 </div>
             </div>
@@ -779,7 +779,7 @@ window.addEventListener('error', function (e) {
     // 3. GMAIL NOTIFICATION EMAIL
     // (Orders will be forwarded to this email automatically)
     // ==========================================
-    const ADMIN_GMAIL_ADDRESS = "zaheerabbasofficial46@gmail.com"; 
+    const ADMIN_GMAIL_ADDRESS = "zaheerabbasofficial@gmail.com"; 
 
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
@@ -826,7 +826,14 @@ window.addEventListener('error', function (e) {
     const optOut = s => /\(\s*out of stock\s*\)/i.test(String(s));
     const optLabel = s => String(s).replace(/\s*\(\s*out of stock\s*\)\s*/ig, '').trim();
     const cleanImages = (raw, name) => {
-        const all = String(raw || '').split(',').map(i => i.trim()).filter(Boolean);
+        const fixLink = u => {
+            if (/^www\./i.test(u)) u = 'https://' + u;
+            let m = u.match(/drive\.google\.com\/file\/d\/([\w-]+)/) || u.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([\w-]+)/);
+            if (m) return 'https://lh3.googleusercontent.com/d/' + m[1] + '=w1000';
+            if (/dropbox\.com\//i.test(u)) { const base = u.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace(/[?&]dl=0/, ''); return base + (base.includes('?') ? '&raw=1' : '?raw=1'); }
+            return u;
+        };
+        const all = String(raw || '').split(/[,\n\s]+/).map(i => i.trim()).filter(Boolean).map(fixLink);
         const ok = all.filter(i => /^(https?:\/\/|data:image\/)/i.test(i));
         if (all.length !== ok.length) console.warn('Product "' + name + '": the images column has entries that are not web links:', all.filter(i => !ok.includes(i)));
         return ok.length ? ok : ["https://placehold.co/600x750/2A1B12/D4AF37?text=No+Image"];
@@ -1744,8 +1751,11 @@ window.addEventListener('error', function (e) {
         const paymentRadio = document.querySelector('input[name="payment"]:checked');
         const payMode = paymentRadio ? paymentRadio.value : 'COD';
 
-        if (!fName || !phone || !address || !city || !email) {
-            return window.showToast("Please fill in First Name, Email, Phone Number, Address, and City.", "error");
+        const missing = [['chkFName', fName, 'First Name'], ['chkEmail', email, 'Email'], ['chkPhone', phone, 'Phone Number'], ['chkAddress', address, 'Address'], ['chkCity', city, 'City']].filter(x => !x[1]);
+        if (missing.length) {
+            const el = document.getElementById(missing[0][0]);
+            if (el) { el.focus(); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.style.borderColor = '#d93025'; setTimeout(() => { el.style.borderColor = ''; }, 3000); }
+            return window.showToast("Please enter your " + missing.map(x => x[2]).join(', ') + ".", "error");
         }
 
         if (!EMAIL_RE.test(email)) return window.showToast("Please enter a valid email address.", "error");
@@ -2328,4 +2338,4 @@ window.addEventListener('error', function (e) {
 </script>
 
 </body>
-</html> 
+</html>
