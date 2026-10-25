@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -774,7 +774,7 @@ window.addEventListener('error', function (e) {
     // 2. GOOGLE SHEETS INVENTORY LINK (CSV PUBLISH LINK)
     // REQUIRED: Paste your Google Sheet CSV Link between the quotes below!
     // ==========================================
-    const GOOGLE_SHEET_CSV_URL = https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv""; 
+    const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWNTJIjCMOOJX7qaM9hoAiJb20E_gUZAsfXkjcZmZaR0r6YqOic1QE6bpA6Hfzem9s59jgwdX58z0d/pub?output=csv"; 
 
     // ==========================================
     // 3. GMAIL NOTIFICATION EMAIL
@@ -1101,10 +1101,10 @@ window.addEventListener('error', function (e) {
         }
         return u;
     }
-    const HEADER_MAP = { id:'id', name:'name', title:'name', productname:'name', price:'price', saleprice:'salePrice', sale:'salePrice',
+    const HEADER_MAP = { id:'id', name:'name', title:'name', productname:'name', price:'price', originalprice:'price', regularprice:'price', mrp:'price', oldprice:'price', saleprice:'salePrice', sale:'salePrice',
         category:'category', width:'width', stock:'stock', status:'stock', sizes:'sizes', size:'sizes', colors:'colors', color:'colors',
         colours:'colors', colour:'colors', description:'description', images:'images', image:'images', photos:'images', photo:'images',
-        imageurl:'images', imageurls:'images', qtyavailable:'qtyAvailable' };
+        imageurl:'images', imageurls:'images', qtyavailable:'qtyAvailable', qtyavalble:'qtyAvailable', qty:'qtyAvailable', quantity:'qtyAvailable' };
 
     async function loadProductsFromGoogleSheet() {
         if (!GOOGLE_SHEET_CSV_URL || GOOGLE_SHEET_CSV_URL === "PASTE_YOUR_GOOGLE_SHEET_CSV_LINK_HERE") {
@@ -1143,9 +1143,9 @@ window.addEventListener('error', function (e) {
                                 salePrice: cleanSalePrice,
                                 category: row.category || 'Oxfords',
                                 width: String(row.width || 'regular').toLowerCase().trim(),
-                                stock: String(row.stock || 'in stock').toLowerCase().trim(),
+                                stock: /^(out of stock|sold out|soldout|out)$/.test(String(row.stock || '').toLowerCase().trim()) ? 'out of stock' : 'in stock',
                                 _allOut: false,
-                                sizes: row.sizes ? String(row.sizes).split(',').map(s=>s.trim()).filter(Boolean) : ["39", "40", "41", "42", "43", "44"],
+                                sizes: (row.sizes ? String(row.sizes).split(',').map(s=>s.trim()).filter(Boolean) : ["39", "40", "41", "42", "43", "44"]).map(s => (!optOut(s) && String(row.stock || '').split(',').some(x => optOut(x) && optLabel(x) === s)) ? s + '(out of stock)' : s),
                                 colors: row.colors ? String(row.colors).split(',').map(c=>c.trim()).filter(Boolean) : ["Classic Black"],
                                 description: row.description || "Handcrafted leather formal footwear.",
                                 images: cleanImages(row.images, row.name),
@@ -2271,4 +2271,4 @@ window.addEventListener('error', function (e) {
 </script>
 
 </body>
-</html> 
+</html>
