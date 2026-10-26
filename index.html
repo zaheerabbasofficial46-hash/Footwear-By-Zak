@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -2052,34 +2052,64 @@ window.addEventListener('error', function (e) {
         window.open(`mailto:?bcc=${cloudSubscribers.join(',')}&subject=${subject}&body=${body}`, '_blank');
     };
 
+    const POLICY_UPDATED = '26 October 2026';
+    const contactLine = () => {
+        const wa = String(WHATSAPP_NUMBER).replace(/\D/g, '');
+        return wa.length >= 10 ? `WhatsApp (+${wa}) or the Contact Us chat on this website` : 'the Contact Us chat on this website';
+    };
     const POLICIES = {
-        shipping: { title: 'Shipping Policy', body: [
-            `Standard courier delivery across Pakistan costs ${formatRs(STANDARD_SHIPPING_COST)}.`,
-            `Orders of ${formatRs(FREE_SHIPPING_THRESHOLD)} or more ship free.`,
-            'Delivery takes 2-4 business days after dispatch. You receive a Tracking ID when you order.',
-            'Cash on Delivery is available. Pay the rider when you receive your shoes.' ] },
-        returns: { title: 'Returns & Exchange', body: [
-            'Exchange for a different size within 7 days of delivery, if the shoes are unworn and in the original box.',
-            'If your pair arrives damaged or with a defect, contact us within 48 hours with photos and we will replace it.',
-            'To start an exchange, use the Contact Us chat and quote your Tracking ID.',
-            'Shipping for size exchanges is paid by the customer. Defective items are on us.' ] },
-        privacy: { title: 'Privacy Policy', body: [
-            'We collect your name, email, phone, address and order details to deliver your order.',
-            'Your email may be used to send offers about new collections. Ask us any time to be removed.',
-            'Data is stored securely with Google Firebase. We never sell your information.',
-            'We only share your address and phone number with the courier delivering your order.' ] }
+        shipping: { title: 'Shipping Policy', sections: () => [
+            { h: 'Where we deliver', p: ['We deliver across Pakistan through trusted courier partners.'] },
+            { h: 'Delivery time', p: ['Orders are prepared and dispatched within 1 to 3 working days. Delivery usually takes a further 2 to 4 working days, depending on your city. Remote areas may take longer.'] },
+            { h: 'Shipping charges', p: [`Standard delivery costs ${formatRs(STANDARD_SHIPPING_COST)} per order. Orders of ${formatRs(FREE_SHIPPING_THRESHOLD)} or more qualify for free delivery. The delivery charge is shown before you place your order.`] },
+            { h: 'Order tracking', p: ['After you order, you receive a Tracking ID. Use Track Order on our website at any time to see your order status.'] },
+            { h: 'Cash on Delivery', p: ['You pay the courier when your parcel arrives. Please keep your phone reachable and have the exact amount ready. Parcels refused without a valid reason, or orders that cannot be reached after repeated attempts, may be cancelled.'] },
+            { h: 'Receiving your parcel', p: ['Please check that the parcel is sealed when it arrives. If it looks damaged, tell us immediately and take photos or record an unboxing video. This helps us resolve any issue quickly.'] },
+            { h: 'Delays', p: ['Weather, holidays and courier issues can delay delivery. We will help you track your order if it is late.'] }
+        ] },
+        returns: { title: 'Returns & Exchange Policy', sections: () => [
+            { h: 'Our promise', p: ['Each pair is handcrafted from leather. We want you to be happy with your shoes, so we offer easy exchanges.'] },
+            { h: 'Exchanges', p: ['You may request a size or colour exchange within 7 days of receiving your order.'], items: ['The shoes must be unworn, unwashed and in their original box and packaging.', 'You need your Order ID.', 'Exchanges are subject to stock availability.', 'The courier charge for an exchange is paid by the customer.'] },
+            { h: 'Damaged or incorrect items', p: ['If your pair arrives damaged, has a manufacturing defect, or is not what you ordered, contact us within 48 hours of delivery with photos. We will replace it or arrange a refund, and we cover the courier charge.'] },
+            { h: 'Not covered', items: ['Shoes that have been worn, damaged or altered after delivery.', 'Normal differences in leather grain, shade and small marks. These are natural to handcrafted leather and are not defects.', 'Requests made after the periods above.'] },
+            { h: 'Refunds', p: ['Approved refunds are sent to you by bank or mobile wallet transfer within 5 to 7 working days after we receive and inspect the item. Your original delivery charge is not refunded, except for damaged or incorrect items.'] },
+            { h: 'Cancelling an order', p: [`You can cancel before your order is dispatched by contacting us with your Order ID. If you paid in advance, the full amount will be refunded.`] },
+            { h: 'How to request', p: [`Contact us through ${contactLine()}, and include your Order ID and clear photos where needed.`] }
+        ] },
+        privacy: { title: 'Privacy Policy', sections: () => [
+            { h: 'Who we are', p: ['Footwear By Zak is a handcrafted leather footwear brand in Pakistan. This policy explains how we handle your information when you use this website.'] },
+            { h: 'Information we collect', items: ['Name, email address, phone number and delivery address, which you give us when you order.', 'Order details, such as the shoes, sizes, colours, payment method and total.', 'Payment receipt photos, if you pay by bank or mobile wallet transfer.', 'Reviews and photos you choose to submit.', 'Basic usage data, such as pages visited, to help us improve the website.'] },
+            { h: 'How we use it', items: ['To process, deliver and track your order.', 'To contact you about your order or a problem with it.', 'To send you updates and offers about new collections, if you have signed up. You can ask us to stop at any time.', 'To prevent fraud and keep the website secure.'] },
+            { h: 'Who we share it with', p: ['We do not sell your information. We share only what is needed with courier companies to deliver your parcel, and with the technology services we use to run the website, such as Google Firebase for storage and an email service that sends us your order details.'] },
+            { h: 'Payments', p: ['We do not collect or store card details on this website. Payment is by cash on delivery or by transfer to our bank or mobile wallet account.'] },
+            { h: 'Storage and security', p: ['Your data is stored on secure servers. Access to customer information is limited to the store owner. This website uses an encrypted HTTPS connection. No system is completely risk free, but we take reasonable steps to protect your information.'] },
+            { h: 'Data on your device', p: ['The website saves your shopping bag, profile details and order IDs on your own device so they are there when you return. You can clear them by clearing your browser data.'] },
+            { h: 'Your choices', p: [`You can ask us to see, correct or delete the information we hold about you by contacting us through ${contactLine()}. Some order records may be kept for as long as needed for accounting and delivery disputes.`] },
+            { h: 'Children', p: ['This website is for adult customers. We do not knowingly collect information from children.'] },
+            { h: 'Changes', p: ['We may update this policy from time to time. The date at the top shows when it was last changed.'] }
+        ] }
     };
     window.openPolicy = function(key) {
-        const p = POLICIES[key]; if (!p) return;
+        const pol = POLICIES[key]; if (!pol) return;
         let m = document.getElementById('policyModal');
         if (!m) { m = document.createElement('div'); m.id = 'policyModal'; m.className = 'fixed inset-0 z-[120] flex items-center justify-center'; document.body.appendChild(m); }
-        m.innerHTML = `<div class="absolute inset-0 bg-brand-darkest/80 backdrop-blur-sm" onclick="document.getElementById('policyModal').classList.add('hidden')"></div>
-            <div class="relative bg-brand-card border border-brand-border w-[92%] md:w-[520px] max-h-[85vh] overflow-y-auto custom-scrollbar p-8 rounded-lg z-10 shadow-2xl">
-                <button aria-label="Close" onclick="document.getElementById('policyModal').classList.add('hidden')" class="absolute top-4 right-4 text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-                <h2 class="text-2xl font-serif mb-5 text-center">${p.title}</h2>
-                <ul class="space-y-3 text-sm text-brand-light/80 leading-relaxed">${p.body.map(x => `<li class="flex gap-2"><i class="fa-solid fa-check text-brand-gold mt-1 text-xs"></i><span>${x}</span></li>`).join('')}</ul>
+        const body = pol.sections().map(s => `
+            <div class="mb-5">
+                <h3 class="text-brand-gold text-xs font-bold uppercase tracking-[0.18em] mb-2">${s.h}</h3>
+                ${(s.p || []).map(x => `<p class="text-sm text-brand-light/80 leading-relaxed mb-2">${x}</p>`).join('')}
+                ${s.items ? `<ul class="space-y-2">${s.items.map(x => `<li class="flex gap-2 text-sm text-brand-light/80 leading-relaxed"><i class="fa-solid fa-check text-brand-gold mt-1 text-[10px]"></i><span>${x}</span></li>`).join('')}</ul>` : ''}
+            </div>`).join('');
+        m.innerHTML = `<div class="absolute inset-0 bg-brand-darkest/85 backdrop-blur-sm" onclick="document.getElementById('policyModal').classList.add('hidden')"></div>
+            <div class="relative bg-brand-card border border-brand-border w-[94%] md:w-[620px] max-h-[88vh] flex flex-col rounded-lg z-10 shadow-2xl">
+                <div class="flex items-start justify-between gap-4 p-6 pb-4 border-b border-brand-border shrink-0">
+                    <div><h2 class="text-2xl font-serif">${pol.title}</h2><p class="text-[11px] text-brand-light/50 mt-1">Footwear By Zak &bull; Last updated ${POLICY_UPDATED}</p></div>
+                    <button aria-label="Close" onclick="document.getElementById('policyModal').classList.add('hidden')" class="text-brand-light/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div class="p-6 overflow-y-auto custom-scrollbar">${body}</div>
+                <div class="p-4 border-t border-brand-border shrink-0"><button onclick="document.getElementById('policyModal').classList.add('hidden')" class="btn-gold w-full py-3 rounded text-xs font-bold uppercase tracking-wider">Close</button></div>
             </div>`;
         m.classList.remove('hidden');
+        const sc = m.querySelector('.overflow-y-auto'); if (sc) sc.scrollTop = 0;
     };
 
     document.addEventListener('keydown', e => {
@@ -2342,4 +2372,4 @@ window.addEventListener('error', function (e) {
 </script>
 
 </body>
-</html>
+</html> 
