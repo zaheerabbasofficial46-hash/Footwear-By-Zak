@@ -326,16 +326,13 @@ window.addEventListener('error', function (e) {
                 <h2 class="text-lg font-bold text-black mb-4">Contact & Shipping Address</h2>
                 <div class="space-y-3">
                     <div class="flex gap-3">
-                        <input type="text" id="chkFName" placeholder="First name *" class="shopify-input flex-1">
-                        <input type="text" id="chkLName" placeholder="Last name" class="shopify-input flex-1">
+                        <input type="text" id="chkFName" autocomplete="given-name" placeholder="First name *" class="shopify-input flex-1">
+                        <input type="text" id="chkLName" autocomplete="family-name" placeholder="Last name" class="shopify-input flex-1">
                     </div>
-                    <input type="email" id="chkEmail" placeholder="Email Address *" class="shopify-input">
-                    <input type="tel" id="chkPhone" placeholder="Phone Number *" class="shopify-input">
-                    <input type="text" id="chkAddress" placeholder="Full Delivery Address (Lahore, Swat, etc.) *" class="shopify-input">
-                    <div class="flex gap-3">
-                        <input type="text" id="chkCity" placeholder="City *" autocomplete="address-level2" class="shopify-input" style="flex:2 1 0; min-width:0; width:auto;">
-                        <input type="text" id="chkPostal" placeholder="Postal Code (Optional)" autocomplete="postal-code" class="shopify-input" style="flex:1 1 0; min-width:0; width:auto;">
-                    </div>
+                    <input type="email" id="chkEmail" inputmode="email" autocomplete="email" placeholder="Email Address *" class="shopify-input">
+                    <input type="tel" id="chkPhone" inputmode="tel" autocomplete="tel" placeholder="Phone Number *" class="shopify-input">
+                    <input type="text" id="chkAddress" placeholder="Full Delivery Address with City (e.g. House 5, Street 2, Mingora, Swat) *" autocomplete="street-address" class="shopify-input">
+                    <input type="text" id="chkPostal" placeholder="Postal Code (Optional)" autocomplete="postal-code" inputmode="numeric" class="shopify-input">
                 </div>
             </div>
 
@@ -397,6 +394,7 @@ window.addEventListener('error', function (e) {
 
         <div class="p-5 bg-[#f5f5f5] border-t border-[#e5e5e5] shrink-0">
             <div class="mb-3 text-black" id="checkoutSummaryBreakdown"></div>
+            <p class="text-[11px] text-gray-500 text-center mb-3 leading-relaxed">By placing your order you agree to our <a href="#" onclick="window.openPolicy('shipping'); return false;" class="underline">Shipping</a>, <a href="#" onclick="window.openPolicy('returns'); return false;" class="underline">Returns &amp; Exchange</a> and <a href="#" onclick="window.openPolicy('privacy'); return false;" class="underline">Privacy</a> policies.</p>
             <button onclick="window.submitOrder()" id="completeOrderBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-semibold text-lg transition-colors flex justify-center items-center shadow-sm">
                 Complete order
             </button>
@@ -779,7 +777,8 @@ window.addEventListener('error', function (e) {
     // 3. GMAIL NOTIFICATION EMAIL
     // (Orders will be forwarded to this email automatically)
     // ==========================================
-    const ADMIN_GMAIL_ADDRESS = "zaheerabbasofficial46@gmail.com"; 
+    // Order emails go through FormSubmit. This ID replaces your plain email address, so it is not visible in the page.
+    const ORDER_EMAIL_ID = "14f9347df1c6897fc3b7e2d1d84369ae";
 
     const FREE_SHIPPING_THRESHOLD = 20000;
     const STANDARD_SHIPPING_COST = 300;
@@ -1747,11 +1746,12 @@ window.addEventListener('error', function (e) {
         const email = document.getElementById('chkEmail').value.trim();
         const phone = document.getElementById('chkPhone').value.trim();
         const address = document.getElementById('chkAddress').value.trim();
-        const city = document.getElementById('chkCity').value.trim();
+        const postal = (document.getElementById('chkPostal') || { value: '' }).value.trim();
+        const fullAddress = postal ? `${address}, ${postal}` : address;
         const paymentRadio = document.querySelector('input[name="payment"]:checked');
         const payMode = paymentRadio ? paymentRadio.value : 'COD';
 
-        const missing = [['chkFName', fName, 'First Name'], ['chkEmail', email, 'Email'], ['chkPhone', phone, 'Phone Number'], ['chkAddress', address, 'Address'], ['chkCity', city, 'City']].filter(x => !x[1]);
+        const missing = [['chkFName', fName, 'First Name'], ['chkEmail', email, 'Email'], ['chkPhone', phone, 'Phone Number'], ['chkAddress', address, 'Address with City']].filter(x => !x[1]);
         if (missing.length) {
             const el = document.getElementById(missing[0][0]);
             if (el) { el.focus(); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.style.borderColor = '#d93025'; setTimeout(() => { el.style.borderColor = ''; }, 3000); }
@@ -1782,7 +1782,7 @@ window.addEventListener('error', function (e) {
             const orderData = {
                 trackingId, clientName: `${fName} ${lName}`,
                 email: customerEmail, phone,
-                address: `${address}, ${city}`, paymentMode: payMode,
+                address: `${fullAddress}`, paymentMode: payMode,
                 items: cart.map(i => ({ productId: i.id, name: i.name, size: i.selectedSize, color: i.selectedColor, price: i.checkoutPrice })),
                 totalAmount: total, subtotal: subtotal, shipping: shippingCost, discount: discount, status: "Order Received",
                 fraudScore: `${fraudScore}/100 - ${fraudScore > 80 ? 'Low Risk (Passed)' : 'Flagged for Review'}`,
@@ -1798,20 +1798,24 @@ window.addEventListener('error', function (e) {
             myOrderIds.push(trackingId); saveLocal('fbz_my_ids', myOrderIds);
             await window.syncToCloud('subscribers', customerEmail);
 
-            if(ADMIN_GMAIL_ADDRESS && ADMIN_GMAIL_ADDRESS.includes('@')) {
-                fetch(`https://formsubmit.co/ajax/${ADMIN_GMAIL_ADDRESS}`, {
+            if (ORDER_EMAIL_ID) {
+                fetch(`https://formsubmit.co/ajax/${ORDER_EMAIL_ID}`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({
-                        _subject: `New Footwear By Zak Order: ${trackingId}`,
-                        email: customerEmail,      
-                        _replyto: customerEmail,   
-                        Client_Name: `${fName} ${lName}`,
-                        Phone: phone,
-                        Total_Amount: formatRs(total),
-                        Payment_Mode: payMode,
-                        Items: cart.map(i => `${i.name} (Sz: ${i.selectedSize}, ${i.selectedColor})`).join(' | '),
-                        Address: `${address}, ${city}`
+                        _subject: `New Order ${trackingId} - ${formatRs(total)} - ${fName} ${lName}`,
+                        _template: "table",
+                        _captcha: "false",
+                        _replyto: customerEmail,
+                        _autoresponse: `Hello ${fName},\n\nThank you for ordering from Footwear By Zak. Your order is confirmed.\n\nOrder ID: ${trackingId}\nTotal: ${formatRs(total)} (${payMode === 'COD' ? 'Cash on Delivery' : payMode})\nDelivery to: ${fullAddress}\n\nYou can check your order status any time with your Order ID using Track Order on ${location.origin}\n\nWe will contact you on ${phone} if we need anything.\n\nWarm regards,\nFootwear By Zak`,
+                        "Order ID": trackingId,
+                        "Customer": `${fName} ${lName}`,
+                        "Phone": phone,
+                        email: customerEmail,
+                        "Address": `${fullAddress}`,
+                        "Items": cart.map(i => `${i.name} (Size ${i.selectedSize}, ${i.selectedColor}) - ${formatRs(i.checkoutPrice)}`).join(' | '),
+                        "Payment": payMode === 'COD' ? 'Cash on Delivery' : payMode,
+                        "Total": formatRs(total)
                     })
                 }).catch(err => console.log("Silent Notification Error"));
             }
