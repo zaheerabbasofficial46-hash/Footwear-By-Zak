@@ -89,7 +89,7 @@
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
     </style>
 <script>
-window.FBZ_BUILD = '2026-10-26-F';
+window.FBZ_BUILD = '2026-10-26-G';
 document.addEventListener('DOMContentLoaded', function () {
   if (location.hash.indexOf('debug') < 0) return;
   var b = document.createElement('div');
@@ -840,8 +840,11 @@ window.addEventListener('error', function (e) {
             if (/dropbox\.com\//i.test(u)) { const base = u.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace(/[?&]dl=0/, ''); return base + (base.includes('?') ? '&raw=1' : '?raw=1'); }
             return u;
         };
-        const all = String(raw || '').split(/[,\n\s]+/).map(i => i.trim()).filter(Boolean).map(fixLink);
-        const ok = all.filter(i => /^(https?:\/\/|data:image\/)/i.test(i));
+        let rawText = String(raw || '');
+        const srcs = [...rawText.matchAll(/src\s*=\s*["']([^"']+)["']/gi)].map(m => m[1]);
+        if (srcs.length) rawText = srcs.join(',');
+        const all = rawText.split(/[,\n\s]+/).map(i => i.trim()).filter(Boolean).map(fixLink);
+        const ok = all.filter(i => /^(https?:\/\/|data:image\/)/i.test(i) && !/^https?:\/\/(www\.)?ibb\.co\//i.test(i));
         if (all.length !== ok.length) console.warn('Product "' + name + '": the images column has entries that are not web links:', all.filter(i => !ok.includes(i)));
         return ok.length ? ok : ["https://placehold.co/600x750/2A1B12/D4AF37?text=No+Image"];
     };
