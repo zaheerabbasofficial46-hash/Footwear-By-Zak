@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -89,6 +89,14 @@
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
     </style>
 <script>
+window.FBZ_BUILD = '2026-10-26-F';
+document.addEventListener('DOMContentLoaded', function () {
+  if (location.hash.indexOf('debug') < 0) return;
+  var b = document.createElement('div');
+  b.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;background:#111;color:#0f0;font:11px monospace;padding:4px 8px;border-radius:4px';
+  b.textContent = 'Build ' + window.FBZ_BUILD;
+  document.body.appendChild(b);
+});
 window.addEventListener('error', function (e) {
   try {
     if (location.hash.indexOf('debug') < 0) return;
@@ -2372,4 +2380,4 @@ window.addEventListener('error', function (e) {
 </script>
 
 </body>
-</html> 
+</html>
